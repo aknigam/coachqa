@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MathJax TeX Test Page</title>
+
+<!-- Mathjax config start -->
+<script type="text/javascript"
+	src="/resources/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		extensions: ["tex2jax.js"],
+		jax: ["input/TeX","output/HTML-CSS"],
+		tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
+</script>
+<script type="text/javascript" src="/resources/js/Mathjax/MathJax.js"></script>
+<!-- Mathjax config end -->
+
+<script type="text/javascript">
+
+function refreshMath() {	
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);	
+}
+
+</script>
+</head>
+<body id="editor" contenteditable="true">
+
+<!-- copy paste always happens inside body. new element added is same as the next or the previous element.
+it also retains styling, need to think of a way in which styling can be removing while copy pasting.  -->
+<div id="editordiv">
+This is inline equation $\sqrt[v]{wefd}$
+</div>
+
+</body>
+</html>
