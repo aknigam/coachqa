@@ -16,13 +16,13 @@ public class QuestionServiceImpl implements QuestionService {
 	private QuestionDAO questionDao; 
 	 
 	@Override
-	public void addQuestion() {
+	public void postQuestion() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void updateQuestions() {
+	public void updateQuestion() {
 		// TODO Auto-generated method stub
 
 	}
@@ -60,6 +60,24 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public void updateStats(Question question) {
 		questionDao.updateStats(question);		
+	}
+
+	@Override
+	public void requestionAnswerFrom() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void rateQuestion() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteQuestion() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

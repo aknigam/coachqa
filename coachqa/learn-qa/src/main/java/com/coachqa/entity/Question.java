@@ -15,8 +15,11 @@ public class Question implements java.io.Serializable {
 	private int questionLevelId;
 	private AppUser postedBy;
 	private int refQuestionStatusId;
+	
 	private String title;
 	private String content;
+	private byte[] image;
+	
 	private Integer noOfViews;
 	private Date postDate;
 	private Date lastActiveDate;

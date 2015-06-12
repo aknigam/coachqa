@@ -11,7 +11,10 @@ public class Answer implements java.io.Serializable {
 	private int answeredByUserId;
 	private int questionId;
 	private Integer votes;
+	
 	private String content;
+	private byte[] audio;
+	private byte[] video;
 
 	public Answer() {
 	}
