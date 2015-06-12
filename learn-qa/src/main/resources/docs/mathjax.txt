@@ -1,0 +1,15 @@
+
+
+
+Inline is show as below:
+------------------------
+	span.MathJax_Preview
+	span.MathJax_Element-<n>-Frame
+	script.MathJax_Element-<n>
+	
+Newline math expressions are show as below:
+-------------------------------------------
+	span.MathJax_Preview
+	div.MathJax_Display
+		span.MathJax_Element-<n>-Frame
+	script.MathJax_Element-<n>

@@ -1,0 +1,62 @@
+
+<div class="grid_10">
+
+	<div style="padding-left:10px; padding-top:10px; border-style: solid;border-width: 1px;">
+	<h2>${question.getTitle()}</h2>
+	<table>
+	<tr><td>Posted by: ${question.getPostedBy().getFirstName() +" "+ question.getPostedBy().getMiddleName() +" "+ question.getPostedBy().getLastName()}</td></tr>
+	<tr><td>Post date: ${question.getPostDate()}</td></tr>
+	<tr><td>No. of views: ${question.getNoOfViews()}</td></tr>
+	<tr><td>Last active date: ${question.getLastActiveDate()}</td></tr>
+	<tr><td>${question.getContent()}</td></tr>
+	
+	</table>
+	</div>
+	
+	<hr/>
+	<div >
+	<h2>Answers</h2>
+	<#list question.getAnswers() as a >
+	<div style="padding-left:10px; padding-top:10px; border-style: solid;border-width: 1px;">${a.getContent()}</div>
+	<hr />
+	</#list>
+
+	<div>Add answer to this question</div>
+
+	<form id="addanswerform" action="/questions/answer/submit"
+		method="POST">
+		<input type="text" hidden="true" name="questionId"
+			value=${question.getQuestionId()} />
+		<table>
+			<tr>
+				<td><textarea id="wysiwygTextarea" name="content"
+						aria-hidden="true" style="display: none;"></textarea></td>
+				<td><iframe id="wysiwygTextarea_ifr" src='/question_frm.html'
+						frameborder="5" allowtransparency="true"
+						style="width: 100%; height: 100%; display: block;" tabindex="100"></iframe></td>
+			</tr>
+		</table>
+		<input type="submit">
+	</form>
+	</div>
+
+	<p>
+		To insert math click here <a href="javascript:void(0)"
+			onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">here</a>
+	</p>
+	<div id="light" class="white_content">
+		<p>This is the lightbox content.</p>
+
+		<textarea id="texteditor" rows="10" cols="70"
+			oninput="textAreaOnInput()"> $\sqrt[2]{3}$ </textarea>
+		<div id="preview">
+			<p id="previewPara"></p>
+		</div>
+		<p>
+			<a href="javascript:void(0)" onclick="insertMath()">Close</a>
+		</p>
+	</div>
+	<div id="fade" class="black_overlay"></div>
+
+</div>
+
