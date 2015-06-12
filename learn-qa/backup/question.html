@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Math editing example</title>
+<style>
+.black_overlay {
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 1001;
+	-moz-opacity: 0.8;
+	opacity: .80;
+	filter: alpha(opacity = 80);
+}
+
+.white_content {
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 25%;
+	width: 50%;
+	height: 50%;
+	padding: 16px;
+	border: 16px solid orange;
+	background-color: white;
+	z-index: 1002;
+	overflow: auto;
+}
+</style>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+<script type="text/javascript"
+	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script>
+
+function bold() {
+	var x = document.getElementById("myframe");
+    var y = (x.contentWindow || x.contentDocument);
+    if (y.document)y = y.document;
+    
+    // y.body.style.backgroundColor = "red";
+    
+	var strng = y.createElement("strong")
+	var node = y.createTextNode("This is new.");
+	strng.appendChild(node);
+	var element = y.getElementById("editor");
+	element.appendChild(strng);
+}
+
+function insertMath()
+{
+
+	document.getElementById('light').style.display='none';
+	document.getElementById('fade').style.display='none';
+	
+	var mathTextToBeInserted = document.getElementById("texteditor").value;
+	
+	
+	var x = document.getElementById("myframe");
+	
+    var y = (x.contentWindow || x.contentDocument);
+    if (y.document)y = y.document;
+    
+	var insertMathdiv = y.createElement("div")
+	content = document.getElementById("previewPara").innerHTML;
+	insertMathdiv.innerHTML = mathTextToBeInserted;
+	var element = y.getElementById("editor");
+	element.appendChild(insertMathdiv);
+	
+	document.getElementById('myframe').contentWindow.refreshMath();
+	
+}
+
+function textAreaOnInput()
+{
+	
+	var content = document.getElementById("texteditor").value;
+	
+	document.getElementById("previewPara").innerHTML = content;
+	
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);	
+	
+}
+
+</script>
+</head>
+
+<body>
+
+	<iframe id="myframe" src="question_frm.html"></iframe>
+
+
+	<div>
+		<button type="button" onclick="bold()">Bold</button>
+	</div>
+
+	<p>
+		To insert math click here <a href="javascript:void(0)"
+			onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">here</a>
+	</p>
+	<div id="light" class="white_content">
+		<p>This is the lightbox content.</p>
+
+		<textarea id="texteditor" rows="10" cols="70"
+			oninput="textAreaOnInput()">
+$\sqrt[2]{3}$
+	</textarea>
+
+		<div id="preview">
+			<p id="previewPara">testing ...</p>
+		</div>
+		<p>
+			<a href="javascript:void(0)" onclick="insertMath()">Close</a>
+		</p>
+	</div>
+	<div id="fade" class="black_overlay"></div>
+
+
+</body>
+</html>
