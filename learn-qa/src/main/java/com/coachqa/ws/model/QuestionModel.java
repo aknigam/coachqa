@@ -19,6 +19,8 @@ public class QuestionModel implements java.io.Serializable {
 	private Integer noOfViews;
 	private Date postDate;
 	private Date lastActiveDate;
+
+	// this won't be available at the time of posting the question
 	private Integer votes;
 	private boolean isPublic;
 	private Integer classroomId;

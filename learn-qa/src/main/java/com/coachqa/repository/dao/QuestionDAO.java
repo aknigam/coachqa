@@ -4,9 +4,11 @@ import com.coachqa.entity.Question;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
 
+import java.util.Map;
+
 public interface QuestionDAO {
 
-	Question addQuestion(QuestionModel model);
+	Integer addQuestion(QuestionModel model);
 
 	Question getQuestionById(Integer questionId);
 
@@ -14,4 +16,9 @@ public interface QuestionDAO {
 
 	void updateStats(Question question);
 
+	Map<Integer,Boolean> getVotedQuestions(Integer userId);
+
+	void vote(Integer questionId, Integer userId, boolean upOrDown);
+
+	Map<Integer,Boolean> getVotedAnswers(Integer userId);
 }

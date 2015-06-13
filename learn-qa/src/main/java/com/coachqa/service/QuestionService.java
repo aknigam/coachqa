@@ -1,8 +1,11 @@
 package com.coachqa.service;
 
 import com.coachqa.entity.Question;
+import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
+
+import java.util.List;
 
 public interface QuestionService {
 	
@@ -29,11 +32,12 @@ public interface QuestionService {
 	 * @param classroom - in case this is a restricted question
 	 * @param subject - math, physics, chemistry etc
 	 * @param tags - like algebra, mechanics etc. Like a sub-category of subject.
-	 * @param question content 
+	 * @param question content g
 	 * 
 	 */
 
-	void postQuestion();
+	//void postQuestion();
+	Integer addQuestion(Integer userId,  QuestionModel model);
 	
 	
 	/**
@@ -47,19 +51,22 @@ public interface QuestionService {
 	 * when can the question be updated and who can update
 	 * Only the user who 
 	 */
-	void updateQuestion();
+	void updateQuestion(Integer userId, Integer questionId, String questionContent);
 	
 	/**
 	 * Ability to do the rating of difficulty level - EASY, MEDIUM , TOUGH
 	 * Only some privileged users will be able to do so
+	 * @param appUserId
+	 * @param questionId
+	 * @param meduim
 	 */
-	void rateQuestion();
+	void rateQuestion(Integer userId, Integer questionId, QuestionRatingEnum meduim);
 	
 	
 	/**
 	 * Only user who added the question can delete it.
 	 */
-	void deleteQuestion();
+	void deleteQuestion(Integer userId, Integer questionId);
 	
 	/**
 	 * Search fields:
@@ -72,16 +79,20 @@ public interface QuestionService {
 	void searchQuestion();
 	
 	
-	void shareQuestionByEmail();
+	void shareQuestionByEmail(Integer questionId);
 	
-	Question addQuestion( QuestionModel model);
 
-	Question submitAnswer(AnswerModel model);
+
+	Question submitAnswer(Integer userId, AnswerModel model);
 
 	Question getQuestionById(Integer questionId);
 
 	void updateStats(Question question);
-	
-	
 
+
+	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
+
+	void voteQuestion(Integer userId, Integer questionId, boolean upOrDown);
+
+	void voteAnswer(Integer appUserId, Integer questionId, boolean upOrDown);
 }
