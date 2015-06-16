@@ -4,7 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,9 @@ import com.coachqa.service.UserService;
 import com.coachqa.ws.model.UserModel;
 import com.coachqa.ws.model.builder.UserModelBuilder;
 import com.coachqa.ws.util.WSUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -102,8 +107,9 @@ public class UserControllor {
 		else 
 			return "FALSE";
 		
-	}	
-	
+	}
+
+
 	
 	
 	

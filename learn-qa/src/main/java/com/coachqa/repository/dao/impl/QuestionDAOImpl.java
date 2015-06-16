@@ -38,9 +38,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
-    @CachePut(value="questions", key="model")
+    @CachePut(value="questions", key="questionId")
 	@Override
-	public Integer addQuestion(QuestionModel model) {
+	public Question addQuestion(QuestionModel model) {
 
 		return questionAddSproc.addQuestion(model);
 

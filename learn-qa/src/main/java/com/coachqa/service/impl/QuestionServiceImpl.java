@@ -26,7 +26,8 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public Integer addQuestion(Integer userId, QuestionModel model) {
 
-		Integer questionId =  questionDao.addQuestion(model);
+		Question question = questionDao.addQuestion(model);
+		Integer questionId = question.getQuestionId();
 		questionPostPublisher.questionPosted(questionId);
 		return questionId;
 

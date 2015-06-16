@@ -50,7 +50,7 @@ public class QuestionAddSproc
 	}
 
 
-	public Integer addQuestion(QuestionModel model) {
+	public Question addQuestion(QuestionModel model) {
 		MapSqlParameterSource in = new MapSqlParameterSource();
 		in.addValue(P_POSTEDBY, model.getPostedBy());
 		in.addValue(P_TITLE, model.getTitle());
@@ -60,7 +60,7 @@ public class QuestionAddSproc
 		Map<String, Object> out = addOrUpdateUserSproc.execute(in);
 		
 		List<Question> result = (List<Question>) out.get("question");
-		return result.get(0).getQuestionId();
+		return result.get(0);
 	}
 
 

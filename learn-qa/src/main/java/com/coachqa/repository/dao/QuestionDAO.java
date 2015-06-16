@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface QuestionDAO {
 
-	Integer addQuestion(QuestionModel model);
+	Question addQuestion(QuestionModel model);
 
 	Question getQuestionById(Integer questionId);
 
