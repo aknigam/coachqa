@@ -145,5 +145,23 @@
   </dependencies>
   <build>
     <finalName>learn-qa</finalName>
+	  <plugins>
+		  <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-compiler-plugin</artifactId>
+			  <version>3.3</version>
+			  <configuration>
+				  <source>7</source>
+				  <target>7</target>
+			  </configuration>
+		  </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <configuration>
+                  <failOnMissingWebXml>false</failOnMissingWebXml>
+              </configuration>
+          </plugin>
+	  </plugins>
   </build>
 </project>
