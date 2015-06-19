@@ -38,15 +38,16 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
-    @CachePut(value="questions", key="questionId")
+    // @CachePut(value="questions", key="#questionId")
 	@Override
-	public Question addQuestion(QuestionModel model) {
+	public Question addQuestion(QuestionModel question) {
 
-		return questionAddSproc.addQuestion(model);
+		return questionAddSproc.addQuestion(question);
+
 
 	}
 
-    @Cacheable(value="questions", key="questionId")
+    // @Cacheable(value="questions", key="#questionId")
 	@Override
 	public Question getQuestionById(Integer questionId) {
 		return questionGetSproc.getQuestionById(questionId);

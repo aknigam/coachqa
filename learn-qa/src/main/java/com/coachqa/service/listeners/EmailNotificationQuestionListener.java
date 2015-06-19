@@ -1,14 +1,21 @@
 package com.coachqa.service.listeners;
 
-
-public class QuestionPostPublisher {
-
+/**
+ * Created by anigam on 6/17/15.
+ */
+public class EmailNotificationQuestionListener implements QuestionPostListener {
+    
+    @Override
     public void questionPosted(Integer questionId) {
+
     }
 
+    @Override
     public void questionUpdated(Integer questionId) {
+
     }
 
+    @Override
     public void questionAnswered(int questionId) {
 
     }

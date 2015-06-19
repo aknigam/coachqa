@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Question implements java.io.Serializable {
 
-	private Integer questionId;
+	public Integer questionId;
 	private int refSubjectId;
 	private int questionLevelId;
 	private AppUser postedBy;

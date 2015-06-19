@@ -87,9 +87,6 @@ public interface QuestionService {
 
 	Question getQuestionById(Integer questionId);
 
-	void updateStats(Question question);
-
-
 	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
 
 	void voteQuestion(Integer userId, Integer questionId, boolean upOrDown);

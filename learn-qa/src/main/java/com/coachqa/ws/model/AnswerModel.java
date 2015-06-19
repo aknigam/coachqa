@@ -13,6 +13,9 @@ public class AnswerModel implements java.io.Serializable {
 	private Integer votes;
 	private String content;
 
+	private byte[] audio;
+	private byte[] video;
+
 	public AnswerModel() {
 	}
 

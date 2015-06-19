@@ -98,7 +98,7 @@ public class QuestionControllor {
 	public ModelAndView getQuestion(@PathVariable(value ="id")Integer questionId)
 	{
 		Question question = questionService.getQuestionById(questionId);
-		questionService.updateStats(question);
+		// questionService.updateStats(question);
 		ModelMap model = new ModelMap("question", question);
 		ModelAndView modelAndView = new ModelAndView("question", model);
 		return modelAndView;
