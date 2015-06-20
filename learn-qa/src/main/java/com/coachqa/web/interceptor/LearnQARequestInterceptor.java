@@ -31,8 +31,8 @@ public class LearnQARequestInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	
-	@Override
-	public void postHandle(HttpServletRequest request,
+	//@Override
+	public void postHandlea(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		

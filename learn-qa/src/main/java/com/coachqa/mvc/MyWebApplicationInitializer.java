@@ -1,5 +1,6 @@
 package com.coachqa.mvc;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.ServletContext;
@@ -10,6 +11,7 @@ import javax.servlet.ServletException;
  * http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/SpringServletContainerInitializer.html
  * http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/WebApplicationInitializer.html
  */
+@Order(2)
 public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
@@ -20,7 +22,7 @@ public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatc
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class[] { SecurityConfig.class };
     }
 
     @Override

@@ -57,14 +57,20 @@ public class UserControllor {
 		UserModel userModel = UserModelBuilder.build(appUser);
 		return userModel;
 	}
-	
 
-	
-	@RequestMapping(value="/login",method = RequestMethod.POST)
-	public ModelAndView login(String username, HttpServletRequest request)
+
+	@RequestMapping(value="/login",method = RequestMethod.GET)
+	public ModelAndView login()
+	{
+		return new ModelAndView("login");
+
+	}
+
+	@RequestMapping(value="/home",method = RequestMethod.POST)
+	public ModelAndView home(String username, HttpServletRequest request)
 	{
 		
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession();
 		AppUser appUser = null;
 		if(session.getAttribute("userId")!= null)
 		{

@@ -1,6 +1,7 @@
 package com.learnqa;
 
 import com.coachqa.mvc.MyWebApplicationInitializer;
+import com.coachqa.mvc.SecurityWebApplicationInitializer;
 import org.apache.log4j.BasicConfigurator;
 import org.eclipse.jetty.annotations.*;
 import org.eclipse.jetty.server.Server;
@@ -9,6 +10,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import org.springframework.web.WebApplicationInitializer;
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ public class JettyServer {
                     public void preConfigure(WebAppContext context) throws Exception {
                         MultiMap<String> map = new MultiMap<String>();
                         map.add(WebApplicationInitializer.class.getName(), MyWebApplicationInitializer.class.getName());
+						map.add(WebApplicationInitializer.class.getName(), SecurityWebApplicationInitializer.class.getName());
                         context.setAttribute(CLASS_INHERITANCE_MAP, map);
                         _classInheritanceHandler = new ClassInheritanceHandler(map);
                     }

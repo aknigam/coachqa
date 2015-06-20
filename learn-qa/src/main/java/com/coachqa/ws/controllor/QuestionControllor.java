@@ -1,12 +1,15 @@
 package com.coachqa.ws.controllor;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,6 +35,26 @@ public class QuestionControllor {
 	@Autowired
 	private QuestionService questionService;
 
+	@Autowired
+	private UserService userService;
+
+	/**
+	 * Refer: http://www.baeldung.com/get-user-in-spring-security
+	 */
+	@RequestMapping(value="/home",method = RequestMethod.GET)
+	public ModelAndView home(HttpServletRequest request)
+	{
+		Principal principal = request.getUserPrincipal();
+		String username = principal.getName();
+
+		AppUser appUser = userService.getUserByEmail(username);
+		request.getSession().setAttribute("userId", appUser);
+
+		ModelMap model = new ModelMap();
+
+		// myreviews.ftl will be resolved
+		return new ModelAndView("home", model);
+	}
     /**
      * Steps
      * 1. If the user is not logged in then this action is not allowed and the login intercepter takes care of this step.
