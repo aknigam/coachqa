@@ -54,22 +54,15 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	public Question getQuestionById(Integer questionId) {
-
 		return questionDao.getQuestionById(questionId);
-		
 	}
-
-
-
 
 
 	@Override
 	public void voteQuestion(Integer userId, Integer questionId, boolean upOrDown) {
 		Map<Integer, Boolean> votedQuestions =  questionDao.getVotedQuestions(userId);
-
 		if(votedQuestions.get(questionId)!= null)
 		{
-
 			if(votedQuestions.containsKey(questionId) && Boolean.compare(votedQuestions.get(questionId), upOrDown) == 0)
 			{
 				throw new RuntimeException("You have already voted this question");
@@ -92,11 +85,15 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
+	public List<Question> getQuestionsByTag() {
+		return null;
+	}
+
+	@Override
 	public void rateQuestion(Integer appUserId, Integer questionId, QuestionRatingEnum rating) {
 
 		if(!isAuthorizedToRateQuestion())
 			return;
-
 	}
 
 	@Override

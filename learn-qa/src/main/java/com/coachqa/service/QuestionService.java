@@ -92,4 +92,8 @@ public interface QuestionService {
 	void voteQuestion(Integer userId, Integer questionId, boolean upOrDown);
 
 	void voteAnswer(Integer appUserId, Integer questionId, boolean upOrDown);
+
+	List<Question> getQuestionsByTag();
+
+
 }

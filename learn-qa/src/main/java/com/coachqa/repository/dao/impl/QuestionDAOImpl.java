@@ -3,6 +3,7 @@ package com.coachqa.repository.dao.impl;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
-    // @CachePut(value="questions", key="#questionId")
+    @CachePut(value="questions", key="#result.questionId")
 	@Override
 	public Question addQuestion(QuestionModel question) {
 
@@ -47,13 +48,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	}
 
-    // @Cacheable(value="questions", key="#questionId")
+    @Cacheable(value="questions", key="#questionId")
 	@Override
 	public Question getQuestionById(Integer questionId) {
 		return questionGetSproc.getQuestionById(questionId);
 	}
 
 	@Override
+	@CacheEvict(value="questions", key="#answer.questionId")
 	public void addAnswertoQuestion(AnswerModel answer) {
 		answerAddSproc.addAnswer(answer);
 	}

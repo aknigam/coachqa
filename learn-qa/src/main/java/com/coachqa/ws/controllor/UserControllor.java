@@ -21,6 +21,7 @@ import com.coachqa.ws.model.UserModel;
 import com.coachqa.ws.model.builder.UserModelBuilder;
 import com.coachqa.ws.util.WSUtil;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,16 +61,15 @@ public class UserControllor {
 
 
 	@RequestMapping(value="/login",method = RequestMethod.GET)
-	public ModelAndView login()
+	public ModelAndView login(HttpServletRequest request)
 	{
 		return new ModelAndView("login");
-
 	}
 
 	@RequestMapping(value="/home",method = RequestMethod.POST)
 	public ModelAndView home(String username, HttpServletRequest request)
 	{
-		
+
 		HttpSession session = request.getSession();
 		AppUser appUser = null;
 		if(session.getAttribute("userId")!= null)
@@ -85,7 +85,7 @@ public class UserControllor {
 
 		}
 		ModelMap model = new ModelMap();
-		  
+
 		// myreviews.ftl will be resolved
 		return new ModelAndView("home", model);
 	}

@@ -2,6 +2,7 @@ package com.coachqa.entity;
 
 // Generated Dec 21, 2014 1:45:02 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Question implements java.io.Serializable {
 	private Integer votes;
 	private boolean isPublic;
 	private Classroom classroom;
-	private List<Answer> answers;
+	private List<Answer> answers = Collections.emptyList();
 
 	public Question() {
 	}
