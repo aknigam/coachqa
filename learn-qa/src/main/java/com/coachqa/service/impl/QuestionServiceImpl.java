@@ -26,16 +26,14 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	public Integer addQuestion(Integer userId, QuestionModel model) {
-
 		Question question = questionDao.addQuestion(model);
 		Integer questionId = question.getQuestionId();
 		questionPostPublisher.questionPosted(questionId);
 		return questionId;
-
 	}
 
 	@Override
-	public void requestionAnswerFrom() {
+	public void requestionAnswerFrom(Integer userId, Integer questionId, List<String> users) {
 
 	}
 
@@ -107,7 +105,7 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	private boolean isAuthorizedToRateQuestion() {
-		return false;
+		return true;
 	}
 
 	@Override

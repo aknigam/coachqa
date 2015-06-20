@@ -45,7 +45,7 @@ public interface QuestionService {
 	 * @param user - who posted the question/ should others also be able to ask - probably YES. 
 	 * @param professor - who is requested to answer the question
 	 */
-	void requestionAnswerFrom();
+	void requestionAnswerFrom(Integer userId, Integer questionId, List<String> users);
 	
 	/**
 	 * when can the question be updated and who can update
