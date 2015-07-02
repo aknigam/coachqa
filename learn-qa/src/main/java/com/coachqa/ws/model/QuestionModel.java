@@ -1,6 +1,7 @@
 package com.coachqa.ws.model;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class QuestionModel implements java.io.Serializable {
@@ -21,6 +22,27 @@ public class QuestionModel implements java.io.Serializable {
 	private Integer votes;
 	private boolean isPublic;
 	private Integer classroomId;
+
+
+	public List<Integer> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Integer> tags) {
+		this.tags = tags;
+	}
+
+	private List<Integer> tags;
+
+	public List<String> getNewTags() {
+		return newTags;
+	}
+
+	public void setNewTags(List<String> newTags) {
+		this.newTags = newTags;
+	}
+
+	private List<String> newTags;
 
 	public QuestionModel() {
 	}

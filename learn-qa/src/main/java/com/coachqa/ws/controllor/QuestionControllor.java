@@ -66,8 +66,14 @@ public class QuestionControllor {
 	public String submitQuestion(QuestionModel model, HttpServletRequest request , HttpServletResponse response)
 	{
         AppUser user = WSUtil.getUser(request.getSession());
-		
+
 		model.setPostedBy(user.getAppUserId());
+
+
+		List<String> newTags = model.getNewTags();
+		// add new tags by making service calls.
+		// put the generated tagids in the model and then submit the question.
+
 		Integer addedQuestionId = questionService.addQuestion(user.getAppUserId(), model);
 		WSUtil.setLocationHeader(request, response, addedQuestionId);
 
@@ -106,9 +112,8 @@ public class QuestionControllor {
      *
      * Final rating will be cumalative of rating.
      */
-    @RequestMapping(value="/{questionId}/rate/{answerId}", method = RequestMethod.POST)
+    @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
     public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
-                           @PathVariable(value ="answerId")Integer answerId,
                            String rating,
                            HttpServletRequest request , HttpServletResponse response) {
 

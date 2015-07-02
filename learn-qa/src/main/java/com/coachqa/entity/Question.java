@@ -183,4 +183,7 @@ public class Question implements java.io.Serializable {
 		this.classroom = classroom;
 	}
 
+	public boolean hasImage() {
+		return false;
+	}
 }

@@ -9,8 +9,32 @@ public class Tag implements java.io.Serializable {
 
 	private Integer tagId;
 	private String tagName;
+	private Integer noOfTaggedQuestions;
+	private String tagDescription;
 
-	public Tag() {
+	public Tag(){}
+
+	public Tag(int id, String name, String desc, int no) {
+		tagId = id;
+		tagName = name;
+		tagDescription = desc ;
+		noOfTaggedQuestions = no;
+	}
+
+	public String getTagDescription() {
+		return tagDescription;
+	}
+
+	public void setTagDescription(String tagDescription) {
+		this.tagDescription = tagDescription;
+	}
+
+	public Integer getNoOfTaggedQuestions() {
+		return noOfTaggedQuestions;
+	}
+
+	public void setNoOfTaggedQuestions(Integer noOfTaggedQuestions) {
+		this.noOfTaggedQuestions = noOfTaggedQuestions;
 	}
 
 	public Tag(String tagName) {

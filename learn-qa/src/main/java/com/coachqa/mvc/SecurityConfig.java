@@ -77,7 +77,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().formLogin().loginPage("/users/login").failureUrl("/login?error")
                 .usernameParameter("username").passwordParameter("password")
                 .defaultSuccessUrl("/questions/home")
-                .and().logout().logoutSuccessUrl("/login?logout").and().csrf().disable().httpBasic();
+                .and().logout().logoutSuccessUrl("/login?logout").and().csrf().disable().httpBasic()
+                .and()
+                    .headers()
+                        .frameOptions()
+                        .sameOrigin();
     /*
         http
                 .csrf()

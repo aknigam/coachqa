@@ -52,6 +52,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
 
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LearnQARequestInterceptor());
@@ -92,7 +93,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("questions")));
+        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("questions"), new ConcurrentMapCache("tags")));
         return cacheManager;
     }
 
