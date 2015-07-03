@@ -1,0 +1,19 @@
+
+
+
+User activity
+-------------
+
+It is required to do some analytics. May be this can be used to put users in some categories.
+Activity can earn points and points can take the user to higher levels.
+
+1. Voting a question or answer.
+2. Accepting the answer
+3. Rating a question
+4. Translating a question
+5. Asking a question
+6. Answering a question
+7. Edit question/answer
+8. adding/delete/edit tag
+
+Marking an answer as correct or incorrect may be more important that voting.

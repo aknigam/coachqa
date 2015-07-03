@@ -68,6 +68,15 @@ public class QuestionServiceImpl implements QuestionService {
 		return questionDao.getQuestionById(questionId);
 	}
 
+	@Override
+	@Transactional
+	public Question getQuestionByIdAndIncrementViewCount(Integer questionId) {
+
+		Question question = questionDao.getQuestionById(questionId);
+		questionDao.incrementQuestionViews(questionId);
+		question.setNoOfViews(question.getNoOfViews()+1);
+		return question;
+	}
 
 	@Override
 	@Transactional
@@ -77,10 +86,18 @@ public class QuestionServiceImpl implements QuestionService {
 		{
 			if(votedQuestions.containsKey(questionId) && Boolean.compare(votedQuestions.get(questionId), upOrDown) == 0)
 			{
-				throw new RuntimeException("You have already voted this question");
+				throw new RuntimeException("You have already voted this question "+ upOrDown);
 			}
 		}
 		questionDao.vote(questionId, userId, upOrDown);
+
+		Question question = questionDao.getQuestionById(questionId);
+		if(!upOrDown && question.getVotes() ==0){
+			return;
+		}
+		int vote = upOrDown? 1:-1;
+		questionDao.incrementQuestionVotes(questionId, vote);
+		question.setVotes(question.getVotes() + vote);
 	}
 
 	@Override

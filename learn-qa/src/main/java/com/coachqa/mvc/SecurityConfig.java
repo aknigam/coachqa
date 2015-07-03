@@ -68,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      *
      * Refer - http://spring.io/blog/2013/07/03/spring-security-java-config-preview-web-security/
      * http://docs.spring.io/spring-security/site/docs/current/guides/html5//form.html
+     * http://docs.spring.io/spring-security/site/docs/4.0.1.RELEASE/reference/htmlsingle/#headers-frame-options
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -79,22 +80,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/questions/home")
                 .and().logout().logoutSuccessUrl("/login?logout").and().csrf().disable().httpBasic()
                 .and()
-                    .headers()
+                .headers()
                         .frameOptions()
                         .sameOrigin();
-    /*
-        http
-                .csrf()
-                    .disable()
-                .authorizeRequests()
-                    .antMatchers("/resources/**").permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                    .formLogin().and().httpBasic()
-                .and()
-                    .logout()
-                .permitAll();
-                */
+
     }
 
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.UserService;
@@ -86,11 +85,13 @@ public class QuestionControllor {
     /**
      * No of votes for the question shows people's interest in that particular question.
      */
-	@RequestMapping(value="/ask/vote/{id}", method = RequestMethod.POST)
-	public void voteQuestion(@PathVariable(value ="id")Integer questionId, boolean upOrDown,
+	@RequestMapping(value="/ask/vote/{id}/{vote}", method = RequestMethod.POST)
+	public void voteQuestion(@PathVariable(value ="id")Integer questionId,
+							 @PathVariable(value ="vote")Integer vote,
 							   HttpServletRequest request , HttpServletResponse response) {
 
 		AppUser user = WSUtil.getUser(request.getSession());
+		boolean upOrDown = vote > 0 ? true: false;
 		questionService.voteQuestion(user.getAppUserId() , questionId, upOrDown);
 	}
     /**
@@ -125,7 +126,7 @@ public class QuestionControllor {
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
 	public ModelAndView getQuestion(@PathVariable(value ="id")Integer questionId)
 	{
-		Question question = questionService.getQuestionById(questionId);
+		Question question = questionService.getQuestionByIdAndIncrementViewCount(questionId);
 		// questionService.updateStats(question);
 		ModelMap model = new ModelMap("question", question);
 		ModelAndView modelAndView = new ModelAndView("question", model);

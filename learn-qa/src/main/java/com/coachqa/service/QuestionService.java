@@ -87,6 +87,9 @@ public interface QuestionService {
 
 	Question getQuestionById(Integer questionId);
 
+	Question getQuestionByIdAndIncrementViewCount(Integer questionId);
+
+
 	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
 
 	void voteQuestion(Integer userId, Integer questionId, boolean upOrDown);

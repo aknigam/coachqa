@@ -4,6 +4,7 @@
 	<div style="padding-left:10px; padding-top:10px; border-style: solid;border-width: 1px;">
 	<h2>${question.getTitle()}</h2>
 	<table>
+	<tr><td>No. of votes: ${question.getVotes() +" , no of views "+ question.getNoOfViews()}</td></tr>
 	<tr><td>Posted by: ${question.getPostedBy().getFirstName() +" "+ question.getPostedBy().getMiddleName() +" "+ question.getPostedBy().getLastName()}</td></tr>
 	<tr><td>Post date: ${question.getPostDate()}</td></tr>
 	<tr><td>No. of views: ${question.getNoOfViews()}</td></tr>

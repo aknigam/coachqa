@@ -21,4 +21,8 @@ public interface QuestionDAO {
 	void vote(Integer questionId, Integer userId, boolean upOrDown);
 
 	Map<Integer,Boolean> getVotedAnswers(Integer userId);
+
+	void incrementQuestionViews(Integer questionId);
+
+	void incrementQuestionVotes(Integer questionId, int votes);
 }

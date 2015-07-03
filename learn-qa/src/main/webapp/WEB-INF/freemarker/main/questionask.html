@@ -1,0 +1,103 @@
+<#import "/spring.ftl" as spring />
+
+<html lang="en">
+<head>
+
+	<meta charset="utf-8" />
+	<title>Learn - Q&A</title>
+
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="/resources/js/learnqa.js"></script>
+	<link rel="stylesheet" href="/resources/css/learnqa.css" />
+
+	<script>
+    $( document ).ready(function() {
+        console.log( "document loaded..." );
+        $( "#askquestionform" ).submit(function( event ) {
+        	// event.preventDefault();
+        	handleaddAnswerFormSubmit();
+		});
+    });
+ 
+</script>
+
+	<!-- script type="text/javascript" src="/resources/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"-->
+	<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+
+	<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+
+
+</head>
+
+<div class="grid_10">
+	<p>Welcome. You are about to add the question....</p>
+	<form id="askquestionform" action="/questions/ask/submit" method="POST">
+		<table>
+			<tr>
+				<td>
+					<label for="refSubjectId">Subject: </label>
+				</td>
+				<td>
+					<select id="refSubjectId" name="refSubjectId" form="askquestionform">
+						<#list subjects as s>
+							<option value=${s.getRefSubjectId()}>${s.getSubjectName()}</option>
+						</#list>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="isPublic">Is public?: </label>
+				</td>
+				<td>
+					<input type="radio" name="isPublic" value="true">True
+					<input type="radio" name="isPublic" value="false">False
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="title">Title: </label>
+				</td>
+				<td>
+					<input id="title" size="100" name="title" type="text" maxlength="300" tabindex="100" data-min-length="15" data-max-length="150" autocomplete="off" style="opacity: 1; z-index: 1; position: relative;" value="This is title">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<textarea id="wysiwygTextarea" name="content" aria-hidden="true" style="display: none;"></textarea>
+				</td>
+				<td>
+					<iframe id="wysiwygTextarea_ifr" src='/question_frm.html' frameborder="5" allowtransparency="true" style="width: 100%; height: 100%; display: block;" tabindex="100"></iframe>
+				</td>
+			</tr>
+		</table>
+		<input type="submit">
+	</form>
+
+	<p>
+		To insert math click here <a href="javascript:void(0)"
+									 onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">here</a>
+	</p>
+	<div id="light" class="white_content">
+		<p>This is the lightbox content.</p>
+
+		<textarea id="texteditor" rows="10" cols="70" oninput="textAreaOnInput()"> $\sqrt[2]{3}$ </textarea>
+		<div id="preview">
+			<p id="previewPara"></p>
+		</div>
+		<p>
+			<a href="javascript:void(0)" onclick="insertMath()">Close</a>
+		</p>
+	</div>
+	<div id="fade" class="black_overlay"></div>
+
+
+</div>
+
+
+</html>
