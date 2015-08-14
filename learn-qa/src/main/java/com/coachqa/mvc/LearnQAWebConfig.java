@@ -29,6 +29,11 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
+
+/*
+Look for annotation @AutoConfigureAfter(value = {MetricsConfiguration.class, DatabaseConfiguration.class})
+Using this we can define the order in which the configurations files are loaded and used to configure beans.
+ */
 @Configuration
 @EnableWebMvc
 @EnableCaching
