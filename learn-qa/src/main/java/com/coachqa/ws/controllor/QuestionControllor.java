@@ -82,22 +82,6 @@ public class QuestionControllor {
 	}
 
 
-
-    /**
-     * When will the question be rated?
-     * A link will be provided next to the question to rate the question.
-     *
-     * Final rating will be cumalative of rating.
-     */
-    @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
-    public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
-                           String rating,
-                           HttpServletRequest request , HttpServletResponse response) {
-
-        AppUser user = WSUtil.getUser(request.getSession());
-        questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
-    }
-
 	@ResponseBody
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
 	public ModelAndView getQuestion(@PathVariable(value ="id")Integer questionId)
@@ -109,12 +93,6 @@ public class QuestionControllor {
 		return modelAndView;
 	}
 
-	@ResponseBody
-	@RequestMapping(value="/{id}" , method = RequestMethod.PUT)
-	public Object updateQuestion(@PathVariable(value ="id")Integer questionId , @RequestBody Object model)
-	{
-		return null;
-	}
 
     @RequestMapping(value="/ask", method = RequestMethod.GET)
 	public ModelAndView getPostQuestionPage(HttpServletRequest request, HttpServletResponse response)
