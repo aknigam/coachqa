@@ -12,6 +12,7 @@ import java.util.List;
 public class Question implements java.io.Serializable {
 
 	public Integer questionId;
+	public Integer postId;
 	private int refSubjectId;
 	private int questionLevelId;
 	private AppUser postedBy;

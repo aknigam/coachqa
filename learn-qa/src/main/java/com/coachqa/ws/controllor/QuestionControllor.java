@@ -82,30 +82,6 @@ public class QuestionControllor {
 	}
 
 
-    /**
-     * No of votes for the question shows people's interest in that particular question.
-     */
-	@RequestMapping(value="/ask/vote/{id}/{vote}", method = RequestMethod.POST)
-	public void voteQuestion(@PathVariable(value ="id")Integer questionId,
-							 @PathVariable(value ="vote")Integer vote,
-							   HttpServletRequest request , HttpServletResponse response) {
-
-		AppUser user = WSUtil.getUser(request.getSession());
-		boolean upOrDown = vote > 0 ? true: false;
-		questionService.voteQuestion(user.getAppUserId() , questionId, upOrDown);
-	}
-    /**
-     * No of votes on an answer how correct/relavant the answer is.
-     */
-    @RequestMapping(value="/{questionId}/answer/{answerId}", method = RequestMethod.POST)
-    public void voteAnswer(@PathVariable(value ="questionId")Integer questionId,
-                           @PathVariable(value ="answerId")Integer answerId,
-                           boolean upOrDown,
-                           HttpServletRequest request , HttpServletResponse response) {
-
-        AppUser user = WSUtil.getUser(request.getSession());
-        questionService.voteAnswer(user.getAppUserId(), questionId, upOrDown);
-    }
 
     /**
      * When will the question be rated?
