@@ -525,6 +525,357 @@ LOCK TABLES `questionrating` WRITE;
 /*!40000 ALTER TABLE `questionrating` DISABLE KEYS */;
 /*!40000 ALTER TABLE `questionrating` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'learn-qa'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `AnswerAddSproc` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `AnswerAddSproc`(
+	pQuestionId int,
+	pAnsweredByUserId int,
+	pContent text
+)
+BEGIN
+
+DECLARE vPostId INT DEFAULT 0;
+insert into post (postedBy, postType, Votes, Content, postdate ) values (pAnsweredByUserId, 0, 1, pContent, now());
+SET vPostId = LAST_INSERT_ID();
+	insert into Answer (answerId,QuestionId ) 
+    values (vPostId, pQuestionId);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `classroomGetById` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `classroomGetById`(
+	pClassroomId  int
+)
+BEGIN
+
+	select 
+    ClassroomId,
+    MinReputationToJoinId,
+    ClassOwner,
+	u.Firstname,
+	u.middleName,
+	u.lastName,
+    ClassName,
+    IsPublic,
+    RefClassroomMemberStatusId,
+    CreateDate,
+    LastUpdateDate
+from
+    classroom c
+        join
+    AppUser u ON u.appuserId = classowner
+where
+    c.classroomId = pClassroomId;
+
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `classroomJoin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `classroomJoin`(
+	pUserId int,
+	pClassroomId int
+
+)
+BEGIN
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `JoinClassroomSproc` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `JoinClassroomSproc`(
+	pUserId int,
+	pClassroomId int
+)
+BEGIN
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `questionAddSproc` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `questionAddSproc`(
+pPostedBy int,
+pTitle varchar(50),
+pContent text,
+pRefSubjectId int
+)
+BEGIN
+	DECLARE vQuestionId INT DEFAULT 0;
+
+	insert into post ( postdate, PostedBy, Content, posttype) 
+	values ( now(), pPostedBy, pContent,  1);
+    
+    SET vQuestionId = LAST_INSERT_ID();
+
+	insert into question (questionId, RefSubjectId, QuestionlevelId, refQuestionStatusId , 
+     lastactivedate, Title, isPublic) 
+	values (vQuestionId,pRefSubjectId,1, 1,  now(), pTitle, 1);
+	
+	-- Select questionId into vQuestionId from question where title = pTitle;
+
+	call questionGet(vQuestionId);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `QuestionGet` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `QuestionGet`(
+	pQuestionId int
+)
+BEGIN
+
+	select 
+		questionId,
+		RefSubjectId,
+		QuestionLevelId,
+		p.PostedBy,
+		u.Firstname,
+		u.middleName,
+		u.lastName,
+		RefQuestionStatusId,
+		Title,
+		p.Content,
+		q.NoOfViews,
+		p.PostDate,
+		LastActiveDate,
+		p.Votes,
+		IsPublic
+	from
+		Question q
+    join post p on p.postid = q.questionid
+		join AppUser u on u.appuserId = p.postedby
+	where 
+		questionId = pQuestionId;
+
+	Select 
+		AnswerId, p.postedby as AnsweredByUserId, QuestionId, p.Votes, p.Content
+	From
+		Answer a
+    join post p on p.postid = a.answerid
+	where
+		questionId = pQuestionId;
+
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `questionUpdateStats` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `questionUpdateStats`(
+	pQuestionId int,
+	pVotes int
+)
+BEGIN
+
+	DECLARE vNoOfViews, vVotes INT DEFAULT 0;
+	
+	Select noOfViews into vNoOfViews from question where questionId = pQuestionId;
+	Select votes into vVotes from question where questionId = pQuestionId;
+
+
+	Update Question
+	set NoOfViews = vNoOfViews +1,
+		LastActiveDate = now();
+
+	if(pVotes != 0)
+		then
+			Update Question
+			set votes = vVotes +pVotes;
+   
+	end If;
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `userAddSproc` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `userAddSproc`(
+pEmail varchar(20), 
+pPasword varchar(20),
+pFirstName varchar(20), 
+pMiddleName varchar(20),
+pLastName varchar(20)
+)
+BEGIN
+
+	INSERT INTO AppUser(Email,Pasword,FirstName,MiddleName,LastName)VALUES(pEmail,pPasword,pFirstName,pMiddleName,pLastName);
+
+	Select AppUserId, UserReputationId, Email, Pasword, FirstName, MiddleName, LastName
+	from AppUser where Email = pEmail;
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `userGet` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `userGet`(
+pAppUserId int,
+pEmail varchar(20)
+)
+BEGIN
+
+	if(pAppUserId is not null)
+	then
+		Select AppUserId, UserReputationId, Email, Pasword, FirstName, MiddleName, LastName
+		from AppUser where AppUserId = pAppUserId;
+	else
+		Select AppUserId, UserReputationId, Email, Pasword, FirstName, MiddleName, LastName
+		from AppUser where Email = pEmail;
+	end if;
+
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `userUpdate` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `userUpdate`(
+pAppUserId int,
+pUserReputationId int,
+pEmail varchar(20)
+)
+BEGIN
+
+	if(pUserReputationId is not null)
+	then
+		UPDATE AppUser SET UserReputationId = pUserReputationId where AppUserId = pAppUserId;
+	end if;
+
+	if(pEmail is not null)
+	then
+		UPDATE AppUser SET Email = pEmail,Pasword = pPasword where AppUserId = pAppUserId;
+	end if;
+
+	if(pPasword is not null)
+	then
+		UPDATE AppUser SET Pasword = pPasword where AppUserId = pAppUserId;
+	end if;
+
+	Select * from AppUser where Email = pEmail;
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -535,4 +886,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-28 16:45:17
+-- Dump completed on 2015-08-28 22:35:56
