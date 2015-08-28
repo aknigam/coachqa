@@ -73,47 +73,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		
 	}
 
-	private String votesInsertQuery = "insert into QuestionVote (VotedByUserId, Questionid  ,UpOrDown, VoteDate) " +
-			"values (?,?,?,?)";
-
-
-
-	@Override
-	public Map<Integer, Boolean> getVotedQuestions(Integer userId) {
-		return getUserVotedQuestions(userId);
-	}
-	private Map<Integer, Map<Integer, Boolean>> allUserVotedQuestions = new HashMap<>();
-	private Map<Integer, Map<Integer, Boolean>> allUserVotedAnswers = new HashMap<>();
-
-	@Override
-	public void vote(final Integer questionId, final Integer userId, final boolean upOrDown) {
-
-		KeyHolder holder = new GeneratedKeyHolder();
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			@Override
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(votesInsertQuery, Statement.RETURN_GENERATED_KEYS);
-				ps.setInt(1, userId);
-				ps.setInt(2, questionId);
-				ps.setBoolean(3, upOrDown);
-
-				ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-				return ps;
-			}
-		}, holder);
-
-		Integer id = holder.getKey().intValue();
-
-
-
-
-	}
-
-	@Override
-	public Map<Integer, Boolean> getVotedAnswers(Integer userId) {
-		return getUserVotedAnswers(userId);
-	}
-
 
 	private String incrementQuestionViewsQuery =  "Update question set NoOfViews = NoOfViews + 1 where questionId =  ?";
 
@@ -126,38 +85,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	}
 
-	@Override
-	public void incrementQuestionVotes(Integer questionId, int votes) {
-		jdbcTemplate.update(incrementQuestionVotesQuery , new Integer[]{votes, questionId });
-	}
-
-	private Map<Integer,Boolean> getUserVotedAnswers(Integer userId) {
-		Map<Integer, Boolean> userVotedAnswers = allUserVotedAnswers.get(userId);
-		if(userVotedAnswers == null) {
-			userVotedAnswers = new HashMap<>();
-			allUserVotedAnswers.put(userId, userVotedAnswers);
-		}
-		return userVotedAnswers;
-	}
-
-	private String votesQuery = "select VotedByUserId, Questionid  ,UpOrDown, VoteDate from QuestionVote where VotedByUserId = ? order by VoteDate desc limit 1";
-
-	private Map<Integer,Boolean> getUserVotedQuestions(Integer userId) {
-
-		final Map<Integer, Boolean> userVotedQuestions = new HashMap<>();
-		jdbcTemplate.query(votesQuery, new Integer[]{userId}, new RowMapper<QuestionVote>() {
-			@Override
-			public QuestionVote mapRow(ResultSet rs, int i) throws SQLException {
-				int questionId = rs.getInt(2);
-				int votedByUserId = rs.getInt(1);
-				boolean upOrDown = rs.getBoolean(3);
-				Time voteDate = rs.getTime(4);
-				userVotedQuestions.put(questionId, upOrDown);
-				return new QuestionVote(votedByUserId, upOrDown, new DateTime(voteDate.getTime()), questionId);
-			}
-		});
-		return userVotedQuestions;
-	}
 
 
 }

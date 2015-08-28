@@ -1,5 +1,8 @@
 package com.coachqa.ws.controllor;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -82,46 +86,6 @@ public class QuestionControllor {
 	}
 
 
-    /**
-     * No of votes for the question shows people's interest in that particular question.
-     */
-	@RequestMapping(value="/ask/vote/{id}/{vote}", method = RequestMethod.POST)
-	public void voteQuestion(@PathVariable(value ="id")Integer questionId,
-							 @PathVariable(value ="vote")Integer vote,
-							   HttpServletRequest request , HttpServletResponse response) {
-
-		AppUser user = WSUtil.getUser(request.getSession());
-		boolean upOrDown = vote > 0 ? true: false;
-		questionService.voteQuestion(user.getAppUserId() , questionId, upOrDown);
-	}
-    /**
-     * No of votes on an answer how correct/relavant the answer is.
-     */
-    @RequestMapping(value="/{questionId}/answer/{answerId}", method = RequestMethod.POST)
-    public void voteAnswer(@PathVariable(value ="questionId")Integer questionId,
-                           @PathVariable(value ="answerId")Integer answerId,
-                           boolean upOrDown,
-                           HttpServletRequest request , HttpServletResponse response) {
-
-        AppUser user = WSUtil.getUser(request.getSession());
-        questionService.voteAnswer(user.getAppUserId(), questionId, upOrDown);
-    }
-
-    /**
-     * When will the question be rated?
-     * A link will be provided next to the question to rate the question.
-     *
-     * Final rating will be cumalative of rating.
-     */
-    @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
-    public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
-                           String rating,
-                           HttpServletRequest request , HttpServletResponse response) {
-
-        AppUser user = WSUtil.getUser(request.getSession());
-        questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
-    }
-
 	@ResponseBody
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
 	public ModelAndView getQuestion(@PathVariable(value ="id")Integer questionId)
@@ -133,12 +97,6 @@ public class QuestionControllor {
 		return modelAndView;
 	}
 
-	@ResponseBody
-	@RequestMapping(value="/{id}" , method = RequestMethod.PUT)
-	public Object updateQuestion(@PathVariable(value ="id")Integer questionId , @RequestBody Object model)
-	{
-		return null;
-	}
 
     @RequestMapping(value="/ask", method = RequestMethod.GET)
 	public ModelAndView getPostQuestionPage(HttpServletRequest request, HttpServletResponse response)
@@ -154,6 +112,17 @@ public class QuestionControllor {
 	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
 	public String submitAnswer(AnswerModel model, HttpServletRequest request , HttpServletResponse response)
 	{
+
+		ObjectMapper om = new ObjectMapper();
+		om.writerWithDefaultPrettyPrinter();
+		Writer w = new StringWriter();
+		try {
+			om.writeValue(w, model);
+			System.out.println(w.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		AppUser user = WSUtil.getUser(request.getSession());
 		model.setAnsweredByUserId(user.getAppUserId());
 		
