@@ -1,8 +1,9 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
-import com.coachqa.service.QuestionService;
+import com.coachqa.service.PostService;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,19 +23,21 @@ public class PostControllor {
 
 
     @Autowired
-    private QuestionService questionService;
+    private PostService postService;
     /**
      * No of votes for the question shows people's interest in that particular question.
      * type - can have two values - 1 for question 2 for answer
      */
     @RequestMapping(value="/{type}/{id}/vote/{vote}", method = RequestMethod.POST)
-    public void vote(@PathVariable(value ="id")Integer questionId,
-                             @PathVariable(value ="vote")Integer vote,
-                             HttpServletRequest request , HttpServletResponse response) {
+    public void vote(@PathVariable(value ="type")Integer postType,
+                     @PathVariable(value ="id")Integer postId,
+                     @PathVariable(value ="vote")Integer vote,
+                     HttpServletRequest request , HttpServletResponse response) {
+
 
         AppUser user = WSUtil.getUser(request.getSession());
-        boolean upOrDown = vote > 0 ? true: false;
-        questionService.voteQuestion(user.getAppUserId() , questionId, upOrDown);
+        boolean isUpVote = vote > 0 ? true: false;
+        postService.vote(user.getAppUserId(), postId, isUpVote, PostTypeEnum.getPostType(postType));
     }
 
 
@@ -50,7 +53,7 @@ public class PostControllor {
                              HttpServletRequest request , HttpServletResponse response) {
 
         AppUser user = WSUtil.getUser(request.getSession());
-         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
+         postService.ratePost(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
 

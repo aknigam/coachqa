@@ -73,45 +73,13 @@ public class QuestionServiceImpl implements QuestionService {
 	public Question getQuestionByIdAndIncrementViewCount(Integer questionId) {
 
 		Question question = questionDao.getQuestionById(questionId);
+
+		/*
+		Is it right to increment the view everytime the user sees it. Or should there be only one view per user?
+		 */
 		questionDao.incrementQuestionViews(questionId);
 		question.setNoOfViews(question.getNoOfViews()+1);
 		return question;
-	}
-
-	@Override
-	@Transactional
-	public void voteQuestion(Integer userId, Integer questionId, boolean upOrDown) {
-		Map<Integer, Boolean> votedQuestions =  questionDao.getVotedQuestions(userId);
-		if(votedQuestions.get(questionId)!= null)
-		{
-			if(votedQuestions.containsKey(questionId) && Boolean.compare(votedQuestions.get(questionId), upOrDown) == 0)
-			{
-				throw new RuntimeException("You have already voted this question "+ upOrDown);
-			}
-		}
-		questionDao.vote(questionId, userId, upOrDown);
-
-		Question question = questionDao.getQuestionById(questionId);
-		if(!upOrDown && question.getVotes() ==0){
-			return;
-		}
-		int vote = upOrDown? 1:-1;
-		questionDao.incrementQuestionVotes(questionId, vote);
-		question.setVotes(question.getVotes() + vote);
-	}
-
-	@Override
-	@Transactional
-	public void voteAnswer(Integer userId, Integer answerId, boolean upOrDown) {
-		Map<Integer, Boolean> votedAnswers =  questionDao.getVotedAnswers(userId);
-		if(votedAnswers.get(answerId)!= null)
-		{
-			if(votedAnswers.containsKey(answerId) && Boolean.compare(votedAnswers.get(answerId), upOrDown) == 0)
-			{
-				throw new RuntimeException("You have already voted this answer");
-			}
-		}
-		questionDao.vote(answerId, userId, upOrDown);
 	}
 
 

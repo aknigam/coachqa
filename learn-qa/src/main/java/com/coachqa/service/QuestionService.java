@@ -92,10 +92,6 @@ public interface QuestionService {
 
 	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
 
-	void voteQuestion(Integer userId, Integer questionId, boolean upOrDown);
-
-	void voteAnswer(Integer appUserId, Integer questionId, boolean upOrDown);
-
 	List<Question> getQuestionsByTag();
 
 

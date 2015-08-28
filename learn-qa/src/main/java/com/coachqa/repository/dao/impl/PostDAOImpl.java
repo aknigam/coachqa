@@ -1,53 +1,46 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.Question;
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Post;
 import com.coachqa.entity.QuestionVote;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.repository.dao.PostDAO;
-import com.coachqa.repository.dao.QuestionDAO;
-import com.coachqa.repository.dao.sp.AnswerAddSproc;
-import com.coachqa.repository.dao.sp.QuestionAddSproc;
-import com.coachqa.repository.dao.sp.QuestionGetSproc;
-import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class PostDAOImpl extends BaseDao implements PostDAO {
 
 
-	private String votesInsertQuery = "insert into QuestionVote (VotedByUserId, Questionid  ,UpOrDown, VoteDate) " +
-			"values (?,?,?,?)";
+	private String votesInsertQuery = "insert into PostVote (VotedByUserId, postId  ,UpOrDown, VoteDate, postType) " +
+			"values (?,?,?,?,?)";
 
+	private String incrementPostViewsQuery =  "Update question set NoOfViews = NoOfViews + 1 where questionId =  ?";
 
-	private String incrementQuestionViewsQuery =  "Update question set NoOfViews = NoOfViews + 1 where questionId =  ?";
-
-	private String incrementQuestionVotesQuery =  "Update Question set Votes = Votes + ? where questionId = ?";
+	private String incrementPostVotesQuery =  "Update Post set Votes = Votes + ? where postId = ?";
 
 
 
 	@Override
-	public Map<Integer, Boolean> getVotedQuestions(Integer userId) {
+	public Map<Integer, Boolean> getVotedPosts(Integer userId) {
 		return getUserVotedQuestions(userId);
 	}
-	private Map<Integer, Map<Integer, Boolean>> allUserVotedQuestions = new HashMap<>();
+	private Map<Integer, Map<Integer, Boolean>> allUserVotedPosts = new HashMap<>();
 	private Map<Integer, Map<Integer, Boolean>> allUserVotedAnswers = new HashMap<>();
 
 	@Override
-	public void vote(final Integer questionId, final Integer userId, final boolean upOrDown) {
+	@CacheEvict(value="questions", key="#postId")
+	public void vote(final Integer postId, final PostTypeEnum postType, final Integer userId, final boolean isUpVote) {
 
 		KeyHolder holder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -55,15 +48,18 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 				PreparedStatement ps = connection.prepareStatement(votesInsertQuery, Statement.RETURN_GENERATED_KEYS);
 				ps.setInt(1, userId);
-				ps.setInt(2, questionId);
-				ps.setBoolean(3, upOrDown);
+				ps.setInt(2, postId);
+				ps.setBoolean(3, isUpVote);
 
 				ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+				ps.setInt(5, postType.getType());
 				return ps;
 			}
 		}, holder);
 
 		Integer id = holder.getKey().intValue();
+		int voteChangeAmount = isUpVote? 1:-1;
+		adjustVotes(postId, voteChangeAmount);
 
 	}
 
@@ -72,16 +68,46 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 	@Override
 	public void incrementQuestionViews(Integer questionId) {
 
-		jdbcTemplate.update(incrementQuestionViewsQuery , new Integer[]{questionId});
+		jdbcTemplate.update(incrementPostViewsQuery, new Integer[]{questionId});
 
 	}
 
 	@Override
-	public void incrementQuestionVotes(Integer questionId, int votes) {
-		jdbcTemplate.update(incrementQuestionVotesQuery , new Integer[]{votes, questionId });
+	public void adjustVotes(Integer questionId, int votes) {
+		jdbcTemplate.update(incrementPostVotesQuery, new Integer[]{votes, questionId });
 	}
 
-	private String votesQuery = "select VotedByUserId, Questionid  ,UpOrDown, VoteDate from QuestionVote where VotedByUserId = ? order by VoteDate desc limit 1";
+	private String postGetQuery = "select postId, postType, postedBy, postDate, Votes from post where postid = ?";
+	@Override
+	public Post getPostById(final Integer postId) {
+
+
+		List<Post> posts = jdbcTemplate.query(postGetQuery, new Integer[]{postId}, new RowMapper<Post>() {
+			@Override
+			public Post mapRow(ResultSet rs, int i) throws SQLException {
+				Post p = new Post();
+				AppUser au = new AppUser();
+				au.setAppUserId(rs.getInt("postedBy"));
+				p.setPostedBy(au);
+				p.setPostId(postId);
+				p.setVotes(rs.getInt("Votes"));
+
+				return p;
+			}
+		});
+
+		if(posts!= null && posts.size()==0){
+			throw new RuntimeException("Post not found: "+ postId);
+		}
+
+		return posts.get(0);
+
+
+
+	}
+
+	private String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
+			"from PostVote where VotedByUserId = ? order by VoteDate desc limit 1";
 
 	private Map<Integer,Boolean> getUserVotedQuestions(Integer userId) {
 
@@ -89,12 +115,12 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 		jdbcTemplate.query(votesQuery, new Integer[]{userId}, new RowMapper<QuestionVote>() {
 			@Override
 			public QuestionVote mapRow(ResultSet rs, int i) throws SQLException {
-				int questionId = rs.getInt(2);
+				int postId = rs.getInt(2);
 				int votedByUserId = rs.getInt(1);
 				boolean upOrDown = rs.getBoolean(3);
 				Time voteDate = rs.getTime(4);
-				userVotedQuestions.put(questionId, upOrDown);
-				return new QuestionVote(votedByUserId, upOrDown, new DateTime(voteDate.getTime()), questionId);
+				userVotedQuestions.put(postId, upOrDown);
+				return new QuestionVote(votedByUserId, upOrDown, new DateTime(voteDate.getTime()), postId);
 			}
 		});
 		return userVotedQuestions;

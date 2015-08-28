@@ -97,7 +97,7 @@ public class QuestionControllorAPI {
 		model.setAnsweredByUserId(user.getAppUserId());
 
 		Question answeredQuestion = questionService.submitAnswer(user.getAppUserId(), model);
-		return "redirect:/questions/api/"+model.getQuestionId();
+		return "redirect:/api/questions/"+model.getQuestionId();
 	}
 
 

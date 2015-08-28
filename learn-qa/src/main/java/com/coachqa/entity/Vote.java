@@ -9,6 +9,7 @@ import java.sql.Time;
  */
 public class Vote {
 
+    private int postId;
     private int votedByUserId;
     private DateTime voteDate;
     private boolean upOrDown;

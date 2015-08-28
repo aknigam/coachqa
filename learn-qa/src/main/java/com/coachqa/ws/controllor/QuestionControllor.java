@@ -1,5 +1,8 @@
 package com.coachqa.ws.controllor;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -108,6 +112,17 @@ public class QuestionControllor {
 	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
 	public String submitAnswer(AnswerModel model, HttpServletRequest request , HttpServletResponse response)
 	{
+
+		ObjectMapper om = new ObjectMapper();
+		om.writerWithDefaultPrettyPrinter();
+		Writer w = new StringWriter();
+		try {
+			om.writeValue(w, model);
+			System.out.println(w.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		AppUser user = WSUtil.getUser(request.getSession());
 		model.setAnsweredByUserId(user.getAppUserId());
 		

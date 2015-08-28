@@ -1,6 +1,7 @@
 package com.coachqa.service;
 
 import com.coachqa.entity.Question;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
@@ -11,7 +12,7 @@ public interface PostService {
 
 	void ratePost(Integer userId, Integer postId, QuestionRatingEnum meduim);
 
-	void vote(Integer userId, Integer postId, boolean isUpVoted);
+	void vote(Integer userId, Integer postId, boolean isUpVoted, PostTypeEnum postType);
 
 
 }

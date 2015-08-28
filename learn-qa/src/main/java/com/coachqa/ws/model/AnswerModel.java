@@ -8,7 +8,7 @@ package com.coachqa.ws.model;
 public class AnswerModel implements java.io.Serializable {
 
 	private Integer answerId;
-	private Integer answeredByUserId;
+	private Integer answeredByUserId = new Integer(1);
 	private Integer questionId;
 	private Integer votes;
 	private String content;
