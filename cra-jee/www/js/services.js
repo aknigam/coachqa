@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
+.factory('Chats', function($http) {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
@@ -45,6 +45,12 @@ angular.module('starter.services', [])
         }
       }
       return null;
+    },
+    getConfig : function() {
+      $http.get('../connection.properties').then(function (response) {
+        console.log('Host is ', response.data.host);
+        console.log('Port is ', response.data.port);
+      });
     }
   };
 });
