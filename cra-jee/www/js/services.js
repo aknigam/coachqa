@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function($http) {
+.factory('Chats', function($http, $q, ApiEndpoint) {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
@@ -30,6 +30,7 @@ angular.module('starter.services', [])
     lastText: 'This is wicked good ice cream.',
     face: 'https://pbs.twimg.com/profile_images/578237281384841216/R3ae1n61.png'
   }];
+  var hostName, portNumber, apiUrl;
 
   return {
     all: function() {
@@ -46,11 +47,23 @@ angular.module('starter.services', [])
       }
       return null;
     },
+    postQuestion : function(data) {
+      var deferred = $q.defer();
+          // http://localhost:9090/api/questions/ask/submit
+          $http.post(ApiEndpoint.url + '/questions/ask/submit', data,{
+            contentType: "application/json",
+            accept: "application/json",
+            timeout: 15000
+          })
+            .then(function(result) {
+                    deferred.resolve(result);
+                  }, function(error) {
+
+                  });
+          return deferred.promise;
+    },
     getConfig : function() {
-      $http.get('../connection.properties').then(function (response) {
-        console.log('Host is ', response.data.host);
-        console.log('Port is ', response.data.port);
-      });
+      return $http.get('../connection.properties');
     }
   };
 });

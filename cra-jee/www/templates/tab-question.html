@@ -16,32 +16,32 @@
             <div class="input-label">
               Subject
             </div>
-            <select>
+            <select ng-model="subject">
               <option selected>Mathematics</option>
               <option>Other</option>
             </select>
           </label>
           <div class="item item-toggle">
-            Is public?
+            Is public? {{isPublic}}
             <label class="toggle toggle-dark">
-              <input type="checkbox">
+              <input ng-model="isPublic" type="checkbox">
               <div class="track">
                 <div class="handle"></div>
               </div>
             </label>
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Question Title">
+            {{questionTitle}}<input type="text" ng-model="questionTitle" placeholder="Question Title">
           </label>
           <label class="item item-input">
-            <textarea rows="10" placeholder="Put your question here..." ></textarea>
+            {{questionContent}}<textarea ng-model="questionContent" rows="10" placeholder="Put your question here..." ></textarea>
           </label>
         </div>
     </div>
-    <button type="submit" class="button button-balanced">
+    <button type="submit" class="button button-balanced" ng-click="submit()">
       Submit
     </button>
-    <button type="submit" class="button button-dark">
+    <button type="button" class="button button-dark">
       Reset
     </button>
 
