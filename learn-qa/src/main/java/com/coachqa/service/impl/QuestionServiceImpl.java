@@ -118,7 +118,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 
 	private void publishEvent(ApplicationEventTypeEnum eventType, Integer questionId) {
-		questionPostPublisher.onEvent(new QuestionEvent(questionId,eventType ));
+		// questionPostPublisher.onEvent(new QuestionEvent(questionId,eventType ));
 	}
 
 }
