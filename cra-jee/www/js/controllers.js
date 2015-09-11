@@ -1,10 +1,12 @@
 angular.module('starter.controllers', [])
 
 .controller('AskQuestionCtrl', function($scope, Chats) {
-    $scope.isPublic = false;
-    $scope.subject = 'Mathematics';
-    $scope.questionTitle="mytest";
-    $scope.questionContent="123";
+    $scope.formInputs = {
+               isPublic : false,
+               subject: 'Mathematics',
+               questionTitle: "Sample question title",
+               questionContent: "This is my first question"
+              };
 
     $scope.submit = function(){
       var data = {};
@@ -13,17 +15,19 @@ angular.module('starter.controllers', [])
       data.questionLevelId = 0;
       data.postedBy =1;
       data.refQuestionStatusId =1;
-      data.title = $scope.questionTitle;
-      data.content = $scope.questionContent;
+      data.title = $scope.formInputs.questionTitle;
+      data.content = $scope.formInputs.questionContent;
       data.noOfViews = 7;
-      data.postDate = new Date();
-      data.lastActiveDate = new Date();
+      data.postDate = "2015-08-25",
+      data.lastActiveDate = "2015-08-25";
       data.votes = 0;
-      data.isPublic = $scope.isPublic;
-      data.public = $scope.isPublic;
+      data.isPublic = $scope.formInputs.isPublic;
+      data.public = $scope.formInputs.isPublic;
       data.classroom = null;
       Chats.postQuestion(data).then(function(response){
-        alert('Question ' + $scope.questionTitle + ' posted successfully.....')
+        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully.....')
+      }).error(function(error){
+        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully..... with error' + error);
       });
     }
 

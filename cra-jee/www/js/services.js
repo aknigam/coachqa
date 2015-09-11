@@ -58,7 +58,7 @@ angular.module('starter.services', [])
             .then(function(result) {
                     deferred.resolve(result);
                   }, function(error) {
-
+                              alert('Question posted successfully..... with error' + error);
                   });
           return deferred.promise;
     },

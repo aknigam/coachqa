@@ -16,25 +16,26 @@
             <div class="input-label">
               Subject
             </div>
-            <select ng-model="subject">
+            <select ng-model="formInputs.subject">
               <option selected>Mathematics</option>
               <option>Other</option>
             </select>
           </label>
           <div class="item item-toggle">
-            Is public? {{isPublic}}
+            Is public?
             <label class="toggle toggle-dark">
-              <input ng-model="isPublic" type="checkbox">
+              <input ng-model="formInputs.isPublic" type="checkbox">
               <div class="track">
                 <div class="handle"></div>
               </div>
             </label>
           </div>
           <label class="item item-input">
-            {{questionTitle}}<input type="text" ng-model="questionTitle" placeholder="Question Title">
+            <input type="text" ng-model="formInputs.questionTitle" placeholder="Question Title">
           </label>
           <label class="item item-input">
-            {{questionContent}}<textarea ng-model="questionContent" rows="10" placeholder="Put your question here..." ></textarea>
+            <textarea ng-model="formInputs.questionContent" rows="10" placeholder="Put your question here..."
+            ></textarea>
           </label>
         </div>
     </div>
@@ -44,30 +45,5 @@
     <button type="button" class="button button-dark">
       Reset
     </button>
-
-<!--    <div class="list card">
-      <div class="item item-divider">Recent Updates</div>
-      <div class="item item-body">
-        <div>
-          There is a fire in <b>sector 3</b>
-        </div>
-      </div>
-    </div>
-    <div class="list card">
-      <div class="item item-divider">Health</div>
-      <div class="item item-body">
-        <div>
-          You ate an apple today!
-        </div>
-      </div>
-    </div>
-    <div class="list card">
-      <div class="item item-divider">Upcoming</div>
-      <div class="item item-body">
-        <div>
-          You have <b>29</b> meetings on your calendar tomorrow.
-        </div>
-      </div>
-    </div> -->
   </ion-content>
 </ion-view>
