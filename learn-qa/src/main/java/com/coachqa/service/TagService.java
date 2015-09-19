@@ -1,6 +1,9 @@
 package com.coachqa.service;
 
 import com.coachqa.entity.Tag;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.TagAlreadyExistsException;
+import com.coachqa.exception.TagNotFoundException;
 import com.coachqa.repository.dao.TagDao;
 import com.coachqa.repository.dao.impl.DBTagDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +38,15 @@ public class TagService {
         return tagDao.findSimilarTags(tag, noOfResultsRequested);
     }
 
-    public Integer addTag(Integer userId, Tag tag){
-        Tag existingTag = tagDao.getTagByName(tag.getTagName());
-        if(existingTag != null){
-            throw new RuntimeException("Tag ["+ tag.getTagName()+"] already exists.");
+    public Tag addTag(Integer userId, Tag tag){
+
+        try{
+            tagDao.getTagByName(tag.getTagName());
+        }catch(TagNotFoundException e){
+            return tagDao.addtag(userId, tag);
         }
-        Integer tagId = tagDao.addtag(userId, tag).getTagId();
-        return tagId;
+        throw new TagAlreadyExistsException(ApplicationErrorCode.TAG_ALREADY_EXISTS, tag.getTagName());
+
     }
 
     public Tag getTagById(Integer tagId){

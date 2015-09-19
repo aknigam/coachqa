@@ -1,6 +1,8 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.Tag;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.TagNotFoundException;
 import com.coachqa.repository.dao.TagDao;
 import com.coachqa.repository.dao.impl.BaseDao;
 import org.springframework.cache.annotation.CachePut;
@@ -79,7 +81,9 @@ public class DBTagDao extends BaseDao implements TagDao{
                 return new Tag(rs.getInt(1), rs.getString(2), rs.getString(3), 0);
             }
         });
-
+        if(tags == null || tags.size() == 0){
+            throw new TagNotFoundException(ApplicationErrorCode.TAG_NOT_FOUND, tagName);
+        }
         return tags.get(0);
     }
 
