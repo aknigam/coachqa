@@ -2,6 +2,7 @@ package com.coachqa.ws.controllor;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.coachqa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,12 +17,15 @@ import com.coachqa.service.ClassroomService;
 import com.coachqa.ws.util.WSUtil;
 
 @Controller
-@RequestMapping("/classrooms")
+@RequestMapping("/api/classrooms")
 public class ClassroomControllor {
 
 	@Autowired
 	private ClassroomService classroomService;
-	
+
+	@Autowired
+	private UserService userService;
+
 	public void createClassroom(){}
 	
 	/**
@@ -50,7 +54,7 @@ public class ClassroomControllor {
 	 */
 	public String joinClassroom(Integer classroomId, HttpServletRequest request)
 	{
-		AppUser user = WSUtil.getUser(request.getSession());
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
 		classroomService.joinClassroom(user.getAppUserId(), classroomId);
 		return "redirect:/classrooms/"+classroomId;
 		

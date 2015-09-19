@@ -65,10 +65,11 @@ public class QuestionControllor {
      * 3. Call the service layer method to add the question
      * 4. Return the added person object and the location header with the link to the added question
      */
+	@ResponseBody
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public String submitQuestion(QuestionModel model, HttpServletRequest request , HttpServletResponse response)
+	public Question submitQuestion(QuestionModel model, HttpServletRequest request, HttpServletResponse response)
 	{
-        AppUser user = WSUtil.getUser(request.getSession());
+        AppUser user = WSUtil.getUser(request.getSession(), userService);
 
 		model.setPostedBy(user.getAppUserId());
 
@@ -77,12 +78,12 @@ public class QuestionControllor {
 		// add new tags by making service calls.
 		// put the generated tagids in the model and then submit the question.
 
-		Integer addedQuestionId = questionService.addQuestion(user.getAppUserId(), model);
-		WSUtil.setLocationHeader(request, response, addedQuestionId);
+		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), model);
+		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
-		List<Integer> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestionId, 5);
+		// List<Integer> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestionId, 5);
 		
-		return "redirect:/questions/"+addedQuestionId;
+		return addedQuestion;
 	}
 
 
@@ -123,7 +124,7 @@ public class QuestionControllor {
 			e.printStackTrace();
 		}
 
-		AppUser user = WSUtil.getUser(request.getSession());
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
 		model.setAnsweredByUserId(user.getAppUserId());
 		
 		Question answeredQuestion = questionService.submitAnswer(user.getAppUserId(), model);

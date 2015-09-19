@@ -7,7 +7,7 @@ import org.springframework.web.WebApplicationInitializer;
 /**
  * Created by anigam on 6/19/15.
  */
-@Order(1)
+@Order(2)
 public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
 
 }

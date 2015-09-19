@@ -1,18 +1,29 @@
 package com.coachqa.mvc;
 
 
+import com.coachqa.mvc.security.AuthFailureHandler;
+import com.coachqa.mvc.security.AuthSuccessHandler;
+import com.coachqa.mvc.security.HttpAuthenticationEntryPoint;
+import com.coachqa.mvc.security.HttpLogoutSuccessHandler;
+import com.coachqa.service.UserService;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -23,11 +34,35 @@ import javax.sql.DataSource;
  * http://docs.spring.io/spring-security/site/docs/3.2.x/guides/helloworld.html
  * http://www.mkyong.com/spring-security/spring-security-hello-world-annotation-example/
  * http://codehustler.org/blog/spring-security-tutorial-form-login-java-config/
+ *
+ * Take a look at to understand how to secure rest web services-
+ *
+ *  https://dzone.com/articles/secure-rest-services-using
+ *
  */
 @Configuration
 @EnableWebSecurity
+@ComponentScan(basePackages = "com.coachqa.mvc.security")
 @Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String LOGIN_PATH = "/authenticate";
+
+
+    @Autowired
+    private HttpAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private AuthSuccessHandler authSuccessHandler;
+
+    @Autowired
+    private AuthFailureHandler authFailureHandler;
+
+    @Autowired
+    private HttpLogoutSuccessHandler logoutSuccessHandler;
+
 
     @Autowired
     @Qualifier("userDataSource")
@@ -52,6 +87,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/**");
     }
 
+    // @Bean
+    public AuthSuccessHandler authSuccessHandler(){
+        return new AuthSuccessHandler();
+    }
+
     @Bean
     public DataSource userDataSource(){
         BasicDataSource dataSource = new BasicDataSource();
@@ -60,6 +100,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         return dataSource;
+    }
+
+
+    // @Bean
+    public UserDetailsService userDetailsService(){
+        return null;
+    }
+
+    // @Bean
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        //authenticationProvider.setPasswordEncoder(new ShaPasswordEncoder());
+
+        return authenticationProvider;
     }
 
     /**
@@ -73,16 +128,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests()
-                .antMatchers("/questions/**").access("hasRole('ROLE_USER')")
-                .and().formLogin().loginPage("/users/login").failureUrl("/login?error")
-                .usernameParameter("username").passwordParameter("password")
-                .defaultSuccessUrl("/questions/home")
-                .and().logout().logoutSuccessUrl("/login?logout").and().csrf().disable().httpBasic()
+        http.csrf().disable()
+                // .authenticationProvider(authenticationProvider())
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
-                .headers()
-                        .frameOptions()
-                        .sameOrigin();
+                .formLogin()
+                .permitAll()
+                .loginProcessingUrl(LOGIN_PATH)
+                .usernameParameter(USERNAME)
+                .passwordParameter(PASSWORD)
+                .successHandler(authSuccessHandler)
+                .failureHandler(authFailureHandler)
+                .and()
+                .logout()
+                .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher(LOGIN_PATH, "DELETE"))
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .and()
+                .sessionManagement()
+                .maximumSessions(1);
+
+        http.authorizeRequests().anyRequest().authenticated();
+
 
     }
 

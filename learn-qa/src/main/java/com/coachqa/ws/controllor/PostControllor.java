@@ -4,6 +4,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.PostService;
+import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 public class PostControllor {
 
 
+
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private PostService postService;
     /**
@@ -35,7 +40,7 @@ public class PostControllor {
                      HttpServletRequest request , HttpServletResponse response) {
 
 
-        AppUser user = WSUtil.getUser(request.getSession());
+        AppUser user = WSUtil.getUser(request.getSession(), userService);
         boolean isUpVote = vote > 0 ? true: false;
         postService.vote(user.getAppUserId(), postId, isUpVote, PostTypeEnum.getPostType(postType));
     }
@@ -52,7 +57,7 @@ public class PostControllor {
                              String rating,
                              HttpServletRequest request , HttpServletResponse response) {
 
-        AppUser user = WSUtil.getUser(request.getSession());
+        AppUser user = WSUtil.getUser(request.getSession(), userService);
          postService.ratePost(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 

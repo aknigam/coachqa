@@ -3,7 +3,6 @@ package com.coachqa.service.impl;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.listeners.*;
 import com.coachqa.service.listeners.question.PublishQuestionToQueue;
-import com.coachqa.service.listeners.question.QuestionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class QuestionServiceImpl implements QuestionService {
@@ -28,7 +26,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	@Transactional
-	public Integer addQuestion(Integer userId, QuestionModel model) {
+	public Question addQuestion(Integer userId, QuestionModel model) {
 
 		/*
 		Transaction is managed in this method. If the listener is invoked from here then it will make the listener work in the same DB transaction
@@ -42,7 +40,7 @@ public class QuestionServiceImpl implements QuestionService {
 		// using AOP advice. or use programmatic transaction management.
 		publishEvent(ApplicationEventTypeEnum.QUESTION_POSTED, questionId);
 
-		return questionId;
+		return question;
 	}
 
 
@@ -52,7 +50,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 		questionDao.addAnswertoQuestion(answer);
 		publishEvent(ApplicationEventTypeEnum.QUESTION_ANSWERED, answer.getQuestionId());
-		return null;
+		return questionDao.getQuestionById(answer.getQuestionId());
 	}
 
 

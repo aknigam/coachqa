@@ -5,14 +5,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.service.UserService;
 
 public class WSUtil {
 
 	private static final String LOCATION_HEADER = "location";
 	private static final String FORWARD_SLASH = "/";
 
-	public static AppUser getUser(HttpSession session) {
-		
+	public static AppUser getUser(HttpSession session, UserService userService) {
+		String username = (String) session.getAttribute("username");
+		if(username!=null && session.getAttribute("userId") == null){
+			AppUser appUser = userService.getUserByEmail(username);
+			session.setAttribute("userId", appUser);
+		}
 		return (AppUser) session.getAttribute("userId") ;
 	}
 

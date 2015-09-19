@@ -26,8 +26,7 @@ public interface QuestionService {
 	 * 2. Add to index for searching. Even the pictures.
 	 * 3. Email notifications to the one who posted and to the community that a new question is posted.
 	 * 
-	 * 
-	 * @param user - who posted the question
+	 *  @param user - who posted the question
 	 * @param visibility - public or restricted to group
 	 * @param classroom - in case this is a restricted question
 	 * @param subject - math, physics, chemistry etc
@@ -37,7 +36,7 @@ public interface QuestionService {
 	 */
 
 	//void postQuestion();
-	Integer addQuestion(Integer userId,  QuestionModel model);
+	Question addQuestion(Integer userId, QuestionModel model);
 	
 	
 	/**

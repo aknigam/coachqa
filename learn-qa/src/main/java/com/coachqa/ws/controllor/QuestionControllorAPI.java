@@ -35,10 +35,11 @@ public class QuestionControllorAPI {
 	@Autowired
 	private UserService userService;
 
+	@ResponseBody
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public String submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request , HttpServletResponse response)
+	public Question submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request, HttpServletResponse response)
 	{
-		AppUser user = WSUtil.getUser(request.getSession());
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
 
 		model.setPostedBy(user.getAppUserId());
 
@@ -47,12 +48,14 @@ public class QuestionControllorAPI {
 		// add new tags by making service calls.
 		// put the generated tagids in the model and then submit the question.
 
-		Integer addedQuestionId = questionService.addQuestion(user.getAppUserId(), model);
-		WSUtil.setLocationHeader(request, response, addedQuestionId);
+		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), model);
+		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
+
+		Integer addedQuestionId = addedQuestion.getQuestionId();
 		List<Integer> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestionId, 5);
 
-		return "redirect:/api/questions/"+addedQuestionId;
+		return addedQuestion;
 	}
 
     @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
@@ -60,7 +63,7 @@ public class QuestionControllorAPI {
                            String rating,
                            HttpServletRequest request , HttpServletResponse response) {
 
-        AppUser user = WSUtil.getUser(request.getSession());
+        AppUser user = WSUtil.getUser(request.getSession(), userService);
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
@@ -79,9 +82,9 @@ public class QuestionControllorAPI {
 		return null;
 	}
 
-
+	@ResponseBody
 	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
-	public String submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request , HttpServletResponse response)
+	public Question submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
 	{
 /*		ObjectMapper om = new ObjectMapper();
 		om.writerWithDefaultPrettyPrinter();
@@ -93,11 +96,11 @@ public class QuestionControllorAPI {
 			e.printStackTrace();
 		}
 */
-		AppUser user = WSUtil.getUser(request.getSession());
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
 		model.setAnsweredByUserId(user.getAppUserId());
 
-		Question answeredQuestion = questionService.submitAnswer(user.getAppUserId(), model);
-		return "redirect:/api/questions/"+model.getQuestionId();
+		return questionService.submitAnswer(user.getAppUserId(), model);
+
 	}
 
 

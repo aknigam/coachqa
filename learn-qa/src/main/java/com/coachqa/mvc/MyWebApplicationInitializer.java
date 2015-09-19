@@ -11,7 +11,7 @@ import javax.servlet.ServletException;
  * http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/SpringServletContainerInitializer.html
  * http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/WebApplicationInitializer.html
  */
-@Order(2)
+@Order(1)
 public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
