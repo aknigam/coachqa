@@ -42,12 +42,12 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    //@Autowired
-    //DataSource learnqadataSource;
+    @Autowired
+    UserService userService;
 
     @PostConstruct
     public void init(){
-        System.out.println("Init done !!!");
+        System.out.println("Init done !!!"+ userService);
     }
 
     @Override
@@ -60,6 +60,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
         request.getSession().setAttribute("username", username);
 
+        request.getSession().setAttribute("userId",userService.getUserByEmail(username));
         LOGGER.info(userDetails.getUsername() + " got is connected ");
 
         PrintWriter writer = response.getWriter();

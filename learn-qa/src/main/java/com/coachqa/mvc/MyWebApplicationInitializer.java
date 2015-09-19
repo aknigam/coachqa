@@ -22,12 +22,14 @@ public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatc
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { SecurityConfig.class };
+
+        return new Class[] { LearnQAWebConfig.class };
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { LearnQAWebConfig.class };
+
+        return null;
     }
 
     @Override
