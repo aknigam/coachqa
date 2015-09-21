@@ -51,9 +51,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'AskQuestionCtrl'
       }
     }
-  })
+  }).state('login', {
+          url: '/login',
+          templateUrl: 'templates/login.html',
+          controller: 'LoginCtrl'
+      })
 
-  .state('tab.chats', {
+        .state('tab.chats', {
       url: '/chats',
       views: {
         'tab-chats': {
@@ -83,6 +87,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/question');
+  $urlRouterProvider.otherwise('/login');
 
 });
