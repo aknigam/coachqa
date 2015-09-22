@@ -19,8 +19,8 @@ gulp.task('default', ['sass']);
 
 gulp.task('add-proxy', function() {
   return replace({
-                   regex: "http://localhost:8080/api",
-                   replacement: "http://localhost:8100/api",
+                   regex: "http://localhost:9090",
+                   replacement: "http://localhost:8100",
                    paths: replaceFiles,
                    recursive: false,
                    silent: false
@@ -29,8 +29,8 @@ gulp.task('add-proxy', function() {
 
 gulp.task('remove-proxy', function() {
   return replace({
-                   regex: "http://localhost:8100/api",
-                   replacement: "http://localhost:8080/api",
+                   regex: "http://localhost:8100",
+                   replacement: "http://localhost:9090",
                    paths: replaceFiles,
                    recursive: false,
                    silent: false

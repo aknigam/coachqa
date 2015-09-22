@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .constant('ApiEndpoint', {
-              url: '/api'
+              url: '/rest-api'
             })
 
 .run(function($ionicPlatform) {
@@ -44,7 +44,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // Each tab has its own nav history stack:
 
   .state('tab.question', {
-    url: '/question',
+    url: '/question/:username',
     views: {
       'tab-question': {
         templateUrl: 'templates/tab-question.html',

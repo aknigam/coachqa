@@ -1,25 +1,26 @@
 angular.module('starter.services', [])
 
-    .service('LoginService', function($q) {
+    .service('LoginService', function($q, $http,ApiEndpoint) {
         return {
             loginUser: function(name, pw) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
 
-                if (name == 'anigam@expedia.com' && pw == 'pass') {
-                    deferred.resolve('Welcome ' + name + '!');
-                } else {
-                    deferred.reject('Wrong credentials.');
-                }
-                promise.success = function(fn) {
-                    promise.then(fn);
-                    return promise;
-                }
-                promise.error = function(fn) {
-                    promise.then(null, fn);
-                    return promise;
-                }
+              $http.post(ApiEndpoint.url + '/authenticate?username=' + name + '&password=' + pw).then(function(result) {
+                deferred.resolve(result);
+              }, function(error) {
+                deferred.reject('Wrong credentials.');
+                alert('Authentication error : ' + error.data);
+              });
+              promise.success = function(fn) {
+                promise.then(fn);
                 return promise;
+              }
+              promise.error = function(fn) {
+                promise.then(null, fn);
+                return promise;
+              }
+             return promise;
             }
         }
     })
@@ -73,7 +74,7 @@ angular.module('starter.services', [])
     postQuestion : function(data) {
       var deferred = $q.defer();
           // http://localhost:9090/api/questions/ask/submit
-          $http.post(ApiEndpoint.url + '/questions/ask/submit', data,{
+          $http.post(ApiEndpoint.url + '/api/questions/ask/submit', data,{
             contentType: "application/json",
             accept: "application/json",
             timeout: 15000

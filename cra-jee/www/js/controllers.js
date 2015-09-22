@@ -1,11 +1,12 @@
 angular.module('starter.controllers', [])
 
-.controller('AskQuestionCtrl', function($scope, Chats) {
+.controller('AskQuestionCtrl', function($scope,$stateParams,Chats) {
     $scope.formInputs = {
                isPublic : false,
                subject: 'Mathematics',
                questionTitle: "Sample question title",
-               questionContent: "This is my first question"
+               questionContent: "This is my first question",
+               username: $stateParams.username
               };
 
     $scope.submit = function(){
@@ -64,9 +65,9 @@ angular.module('starter.controllers', [])
 
         $scope.login = function() {
             LoginService.loginUser($scope.data.username, $scope.data.password).success(function(data) {
-                $state.go('tab.question');
+                $state.go('tab.question',{ username: data.data });
             }).error(function(data) {
-                var alertPopup = $ionicPopup.alert({
+                $ionicPopup.alert({
                     title: 'Login failed!',
                     template: 'Please check your credentials!'
                 });
