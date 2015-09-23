@@ -1,6 +1,8 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.service.listeners.*;
 import com.coachqa.service.listeners.question.PublishQuestionToQueue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +30,29 @@ public class QuestionServiceImpl implements QuestionService {
 	@Transactional
 	public Question addQuestion(Integer userId, QuestionModel model) {
 
+		validateTags(model.getTags());
 		/*
 		Transaction is managed in this method. If the listener is invoked from here then it will make the listener work in the same DB transaction
 		which is not expected. So, the publisher can simply add the new questionId in a queue and return. Listeners attached to the queue will do
 		the processing in a separate thread.
 		 */
 		Question question = questionDao.addQuestion(model);
+
 		Integer questionId = question.getQuestionId();
+
+
 
 		// This is incorrect. Event should be published outside of the transaction boundaries. May be event publication can be done
 		// using AOP advice. or use programmatic transaction management.
 		publishEvent(ApplicationEventTypeEnum.QUESTION_POSTED, questionId);
 
 		return question;
+	}
+
+	private void validateTags(List<Integer> tags) {
+		if(tags ==  null || tags.isEmpty()){
+			throw new TagsRequiredForQuestionException(ApplicationErrorCode.TAGS_REQUIRED_FOR_QUESTION);
+		}
 	}
 
 

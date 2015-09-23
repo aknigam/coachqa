@@ -39,6 +39,17 @@ public class QuestionControllorAPI {
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
 	public Question submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request, HttpServletResponse response)
 	{
+/*
+		ObjectMapper om = new ObjectMapper();
+		om.writerWithDefaultPrettyPrinter();
+		Writer w = new StringWriter();
+		try {
+			om.writeValue(w, model);
+			System.out.println(w.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+*/
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 
 		model.setPostedBy(user.getAppUserId());

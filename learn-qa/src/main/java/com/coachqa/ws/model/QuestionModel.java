@@ -1,5 +1,6 @@
 package com.coachqa.ws.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class QuestionModel implements java.io.Serializable {
 	private Integer votes;
 	private boolean isPublic;
 	private Integer classroomId;
+	private List<Integer> tags;
+	private List<String> newTags;
 
 
 	public List<Integer> getTags() {
@@ -32,7 +35,6 @@ public class QuestionModel implements java.io.Serializable {
 		this.tags = tags;
 	}
 
-	private List<Integer> tags;
 
 	public List<String> getNewTags() {
 		return newTags;
@@ -42,9 +44,11 @@ public class QuestionModel implements java.io.Serializable {
 		this.newTags = newTags;
 	}
 
-	private List<String> newTags;
 
 	public QuestionModel() {
+		tags= new ArrayList<>();
+		tags.add(1);
+		tags.add(23);
 	}
 
 	public QuestionModel(int refSubjectId, int questionLevelId, int postedBy,
@@ -59,6 +63,9 @@ public class QuestionModel implements java.io.Serializable {
 		this.postDate = postDate;
 		this.lastActiveDate = lastActiveDate;
 		this.isPublic = isPublic;
+		tags= new ArrayList<>();
+		tags.add(1);
+		tags.add(23);
 	}
 
 	public QuestionModel(int refSubjectId, int questionLevelId, int postedBy,

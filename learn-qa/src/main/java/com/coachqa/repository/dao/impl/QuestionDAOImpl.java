@@ -50,12 +50,21 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Override
 	public Question addQuestion(QuestionModel question) {
 
-		return questionAddSproc.addQuestion(question);
+		Question addedQuestion = questionAddSproc.addQuestion(question);
+		int questionId =  addedQuestion.getQuestionId();
 
+		for (Integer tagId : question.getTags())
+			tagQuestion(questionId, tagId);
 
+		return addedQuestion;
+	}
+	private static String tagQuestionInsertQuery = "Insert into questiontag  (questionId, tagId) values (?,?)";
+
+	private void tagQuestion(int questionId, Integer tagId) {
+		jdbcTemplate.update(tagQuestionInsertQuery , new Integer[]{questionId, tagId});
 	}
 
-    @Cacheable(value="questions", key="#questionId")
+	@Cacheable(value="questions", key="#questionId")
 	@Override
 	public Question getQuestionById(Integer questionId) {
 		return questionGetSproc.getQuestionById(questionId);

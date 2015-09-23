@@ -24,6 +24,9 @@ public class Question extends Post implements java.io.Serializable {
 	private boolean isPublic;
 	private Classroom classroom;
 
+	private List<Integer> tags;
+
+
 	private List<Answer> answers = Collections.emptyList();
 
 	public Question() {

@@ -8,7 +8,9 @@ public enum ApplicationErrorCode {
     // resource not founnd
 
     TAG_NOT_FOUND(1001, "Tag not found"),
-    TAG_ALREADY_EXISTS(1002,"Tag already exists" );
+    TAG_ALREADY_EXISTS(1002,"Tag already exists" ),
+
+    TAGS_REQUIRED_FOR_QUESTION(1003, "Question cannot be added without tags.");
 
 
 
