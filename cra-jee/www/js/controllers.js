@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AskQuestionCtrl', function($scope,$stateParams,Chats) {
+.controller('AskQuestionCtrl', function($scope,$stateParams,Chats,$state) {
     $scope.formInputs = {
                isPublic : false,
                subject: 'Mathematics',
@@ -26,14 +26,31 @@ angular.module('starter.controllers', [])
       data.public = $scope.formInputs.isPublic;
       data.classroom = null;
       Chats.postQuestion(data).then(function(response){
-        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully.....')
-      }).error(function(error){
+        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully.....');
+        $state.go('answer',{ question: response.data });
+      },function(error){
         alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully..... with error' + error);
       });
     }
 
 
-    })
+    }).controller('AnswerCtrl', function($scope, $stateParams) {
+                                                   $scope.question = $stateParams.question;
+                    //data.questionId = null;
+                    //data.refSubjectId = 1;
+                    //data.questionLevelId = 0;
+                    //data.postedBy =1;
+                    //data.refQuestionStatusId =1;
+                    //data.title = $scope.formInputs.questionTitle;
+                    //data.content = $scope.formInputs.questionContent;
+                    //data.noOfViews = 7;
+                    //data.postDate = "2015-08-25",
+                    //  data.lastActiveDate = "2015-08-25";
+                    //data.votes = 0;
+                    //data.isPublic = $scope.formInputs.isPublic;
+                    //data.public = $scope.formInputs.isPublic;
+                    //data.classroom = null;
+                                                 })
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called

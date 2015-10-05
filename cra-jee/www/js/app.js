@@ -51,7 +51,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'AskQuestionCtrl'
       }
     }
-  }).state('login', {
+  }).state('answer', {
+                                        url: '/answer',
+                                        params: {question: null},
+                                        templateUrl: 'templates/answer.html',
+                                        controller: 'AnswerCtrl'
+                                      })
+    .state('login', {
           url: '/login',
           templateUrl: 'templates/login.html',
           controller: 'LoginCtrl'

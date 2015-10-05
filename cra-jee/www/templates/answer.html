@@ -1,0 +1,21 @@
+<ion-view view-title="Post an answer">
+  <ion-content class="padding">
+    <div class="item item-body">
+      <h3>{{question.title}} (posted on {{question.postDate}})</h3>
+      <span class="badge badge-assertive">Views: {{question.noOfViews}}</span>
+      <p>
+        {{question.content}}
+      </p>
+    </div>
+    <label class="item item-input">
+            <textarea ng-model="formInputs.answer" rows="10" placeholder="Put your answer here..."
+              ></textarea>
+    </label>
+    <button type="submit" class="button button-balanced" ng-click="submit()">
+      Submit
+    </button>
+    <button type="button" class="button button-dark">
+      Reset
+    </button>
+  </ion-content>
+</ion-view>
