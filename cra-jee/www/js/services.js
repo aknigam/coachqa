@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-    .service('LoginService', function($q, $http,ApiEndpoint) {
+    .service('LoginService', function($q, $http, $state, ApiEndpoint) {
         return {
             loginUser: function(name, pw) {
                 var deferred = $q.defer();
@@ -21,6 +21,17 @@ angular.module('starter.services', [])
                 return promise;
               }
              return promise;
+            },
+            logout : function() {
+              $http({
+                      method: 'DELETE',
+                      url: ApiEndpoint.url + '/authenticate'
+                    }).then(function successCallback(response) {
+                $state.go('login');
+              }, function errorCallback(response) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
             }
         }
     })
@@ -82,9 +93,23 @@ angular.module('starter.services', [])
             .then(function(result) {
                     deferred.resolve(result);
                   }, function(error) {
-                              alert('Question posted successfully..... with error' + error);
+                              alert('Error while posting question, due to ' + error);
                   });
           return deferred.promise;
+    },
+    answerQuestion : function(data) {
+      var deferred = $q.defer();
+      // http://localhost:9090/api/questions/answer/submit
+      $http.post(ApiEndpoint.url + '/api/questions/answer/submit', data,{
+        contentType: "application/json",
+        accept: "application/json",
+        timeout: 15000
+      }).then(function(result){
+        deferred.resolve(result);
+      }, function(error) {
+        alert('Error while posting answer, due to ' + error);
+      });
+      return deferred.promise;
     },
     getConfig : function() {
       return $http.get('../connection.properties');

@@ -34,23 +34,33 @@ angular.module('starter.controllers', [])
     }
 
 
-    }).controller('AnswerCtrl', function($scope, $stateParams) {
-                                                   $scope.question = $stateParams.question;
-                    //data.questionId = null;
-                    //data.refSubjectId = 1;
-                    //data.questionLevelId = 0;
-                    //data.postedBy =1;
-                    //data.refQuestionStatusId =1;
-                    //data.title = $scope.formInputs.questionTitle;
-                    //data.content = $scope.formInputs.questionContent;
-                    //data.noOfViews = 7;
-                    //data.postDate = "2015-08-25",
-                    //  data.lastActiveDate = "2015-08-25";
-                    //data.votes = 0;
-                    //data.isPublic = $scope.formInputs.isPublic;
-                    //data.public = $scope.formInputs.isPublic;
-                    //data.classroom = null;
-                                                 })
+    }).controller('AnswerCtrl', function($scope, $stateParams, Chats) {
+                    $scope.question = $stateParams.question;
+                    $scope.formInputs = {
+                      content: '',
+                      votes: null
+                    };
+
+                   $scope.submit = function(){
+                    var data = {
+                      answerId: null,
+                      answeredByUserId: 1,
+                      questionId: $scope.question.questionId,
+                      votes: $scope.formInputs.votes,
+                      content: $scope.formInputs.content
+                    };
+                     Chats.answerQuestion(data).then(function(data) {
+                       $scope.answerPosts = data.data.answers;
+                       $scope.postedBy = data.data.postedBy;
+                       $scope.formInputs.content = '';
+                     },function(data) {
+                       $ionicPopup.alert({
+                                           title: 'Posting an answer failed!',
+                                           template: 'Please check your data or session!'
+                                         });
+                     })
+                   };
+                  })
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
@@ -71,16 +81,17 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('AccountCtrl', function($scope, LoginService) {
   $scope.settings = {
     enableFriends: true
   };
+  $scope.logout = function(){
+    LoginService.logout();
+  };
 })
-
-    .controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state) {
-        $scope.data = {};
-
-        $scope.login = function() {
+.controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state) {
+    $scope.data = {};
+      $scope.login = function() {
             LoginService.loginUser($scope.data.username, $scope.data.password).success(function(data) {
                 $state.go('tab.question',{ username: data.data });
             }).error(function(data) {
@@ -90,4 +101,4 @@ angular.module('starter.controllers', [])
                 });
             });
         }
-    });;
+    });
