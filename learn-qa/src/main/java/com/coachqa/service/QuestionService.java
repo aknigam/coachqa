@@ -91,7 +91,7 @@ public interface QuestionService {
 
 	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
 
-	List<Question> getQuestionsByTag();
+	List<Question> getQuestionsByTag(int tagId);
 
 
 }

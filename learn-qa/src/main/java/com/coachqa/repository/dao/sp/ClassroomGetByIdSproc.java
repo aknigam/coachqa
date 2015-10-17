@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.ClassroomNotExistsException;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -40,6 +42,9 @@ public class ClassroomGetByIdSproc
 		Map<String, Object> out = m_classroomGetByIdSproc.execute(in);
 		
 		List<Classroom> classrooms = (List<Classroom>) out.get("classroom");
+		if(classrooms ==  null || classrooms.isEmpty()){
+			throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, String.format("Classroom with id %d does not exists.", classroomId));
+		}
 		return classrooms.get(0);
 	}
 }

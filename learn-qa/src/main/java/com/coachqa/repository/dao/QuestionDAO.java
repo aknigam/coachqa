@@ -4,6 +4,7 @@ import com.coachqa.entity.Question;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
 
+import java.util.List;
 import java.util.Map;
 
 public interface QuestionDAO {
@@ -18,4 +19,5 @@ public interface QuestionDAO {
 
 	void incrementQuestionViews(Integer questionId);
 
+	List<Question> getQuestionsByTag(int tagId);
 }

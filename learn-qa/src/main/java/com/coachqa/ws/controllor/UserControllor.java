@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.coachqa.entity.AppUser;
@@ -26,20 +23,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserControllor {
 	
 	@Autowired
 	private UserService userService;
 	/**
 	 * Basic validation will be done using spring validation framework
-	 * @param model
 	 * @param request
 	 * @param response
-	 * @return 
+	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value="/register", method = RequestMethod.POST)
-	public UserModel register( UserModel user, HttpServletRequest request , HttpServletResponse response)
+	public AppUser register(@RequestBody UserModel user, HttpServletRequest request, HttpServletResponse response)
 	{
 		/*
 		 * Steps:
@@ -48,61 +45,19 @@ public class UserControllor {
 		AppUser newUser = userService.addUser(user);
 		WSUtil.setLocationHeader(request, response, newUser.getAppUserId());
 		
-		return user;
+		return newUser;
 	}
-	
+
+	@ResponseBody
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
-	public UserModel getUserDetails(@PathVariable(value ="id")Integer userId)
+	public AppUser getUserDetails(@PathVariable(value = "id") Integer userId)
 	{
-		AppUser appUser = userService.getUserDetails(userId);
-		UserModel userModel = UserModelBuilder.build(appUser);
-		return userModel;
+		return userService.getUserDetails(userId);
+//		UserModel userModel = UserModelBuilder.build(appUser);
+//		return userModel;
 	}
 
 
-	@RequestMapping(value="/login",method = RequestMethod.GET)
-	public ModelAndView login(HttpServletRequest request)
-	{
-		return new ModelAndView("login");
-	}
-
-	@RequestMapping(value="/home",method = RequestMethod.POST)
-	public ModelAndView home(String username, HttpServletRequest request)
-	{
-
-		HttpSession session = request.getSession();
-		AppUser appUser = null;
-		if(session.getAttribute("userId")!= null)
-		{
-			appUser =  (AppUser) session.getAttribute("userId");
-		}
-		else
-		{
-
-			appUser = userService.getUserByEmail(username);
-			session.setAttribute("userId", appUser);
-
-
-		}
-		ModelMap model = new ModelMap();
-
-		// myreviews.ftl will be resolved
-		return new ModelAndView("home", model);
-	}
-	
-	@RequestMapping(value="/logout",method = RequestMethod.GET)
-	public ModelAndView logout( HttpServletRequest request)
-	{
-		
-		HttpSession session = request.getSession(true);
-		
-		if(session.getAttribute("userId")!= null)
-		{
-			session.invalidate();
-		}
-		
-		return new ModelAndView("login");
-	}
 	@RequestMapping(value="/ping",method = RequestMethod.GET)
 	public @ResponseBody String ping(String ping, HttpServletRequest request)
 	{

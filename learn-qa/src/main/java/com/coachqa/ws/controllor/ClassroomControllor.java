@@ -1,15 +1,13 @@
 package com.coachqa.ws.controllor;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.coachqa.service.UserService;
+import com.coachqa.ws.model.ClassroomMembershipRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
@@ -26,52 +24,88 @@ public class ClassroomControllor {
 	@Autowired
 	private UserService userService;
 
-	public void createClassroom(){}
-	
-	/**
-	 * This will take the user to home page of the classroom.
-	 * Home page must have the option to join/leave.
-	 * It will show the list of following type questions:
-	 * 	1. Most active
-	 * 	2. Unanswered
-	 * It will also show the list of class members and class owner.
-	 * @return 
-	 */
-	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
-	public ModelAndView showClassroom(@PathVariable(value ="id")Integer classroomId)
+	@ResponseBody
+	@RequestMapping(value="/create" , method = RequestMethod.POST)
+	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
+
+		classroom.setClassOwner(WSUtil.getUser(request.getSession(), userService));
+		Classroom newClassroom = classroomService.createClassroom(classroom );
+
+		WSUtil.setLocationHeader(request, response, newClassroom.getClassroomId());
+		return newClassroom;
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/{id}/id" , method = RequestMethod.GET)
+	public Classroom showClassroomById(@PathVariable(value = "id") Integer classroomId)
 	{
-		Classroom classroom = classroomService.getClassroom(classroomId);
-		ModelMap model =  new ModelMap("classroom", classroom);
-		return new ModelAndView("classroom", model);
+		return classroomService.getClassroom(classroomId);
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/{name}/name" , method = RequestMethod.GET)
+	public Classroom showClassroomByName(@PathVariable(value = "name") String classname)
+	{
+		return classroomService.getClassroomByName(classname);
+
 	}
 	
 	/**
 	 * This method takes the join classroom request. user will be able to join only of the request gets approved.
 	 * Notifications module will be able to show requests.
 	 * 
-	 * Classroom coordinator will aproove/reject the request.
+	 * Classroom coordinator will aprove/reject the request.
 	 * @return 
 	 */
-	public String joinClassroom(Integer classroomId, HttpServletRequest request)
+	@RequestMapping(value="/membership" , method = RequestMethod.POST)
+	@ResponseBody
+	public String requestClassroomMembership(@RequestParam Integer classroomId, @RequestParam String comments, HttpServletRequest request)
 	{
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
-		classroomService.joinClassroom(user.getAppUserId(), classroomId);
-		return "redirect:/classrooms/"+classroomId;
-		
+		classroomService.requestClassroomMembership(user.getAppUserId(), classroomId, comments);
+		return "success";
 	}
-	
+
+	/**
+	 *
+	 * The user who made this API call should either be the member who is the leaving the class
+	 * or the owner of the class;
+	 *
+	 */
+	@RequestMapping(value="/leave" , method = RequestMethod.POST)
+	@ResponseBody
+	public String requestMembershipTermination(@RequestParam Integer classroomId,
+											   @RequestParam Integer requestedByUserId,
+											   @RequestParam Integer memberId,
+											   @RequestParam String comments,
+											   HttpServletRequest request)
+	{
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		classroomService.leaveClassroom(classroomId, requestedByUserId, memberId, comments);
+		return "success";
+	}
 	/**
 	 * Input should be the list of userIds and action. Action can be approve or reject.
 	 * The class owner must be the logged-in user. 
 	 */
-	public void processJoinRequest(){}
-	
-	public void showJoinRequests(){}
-	
-	/**
-	 * User may be asked to choose from a list of reason codes. List will have the 'OTHER' option where user can enter text.
-	 */
-	public void leaveClassroom(){}
+	@RequestMapping(value="/processMembershipRequest" , method = RequestMethod.POST)
+	@ResponseBody
+	public String processJoinRequest(@RequestBody ClassroomMembershipRequest membershipRequests, HttpServletRequest  request ,HttpServletResponse response ){
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		classroomService.processJoinRequest(user, membershipRequests);
+		return "success";
+	}
+
+	@RequestMapping(value="/showmembershiprequests/{id}", method = RequestMethod.GET)
+	public @ResponseBody ClassroomMembershipRequest showJoinRequests(@PathVariable(value = "id") Integer classroomId, HttpServletRequest request){
+
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		ClassroomMembershipRequest membershipRequest = classroomService.getMemberShipRequests(user, classroomId);
+
+		return membershipRequest;
+	}
+
 	
 
 	

@@ -4,10 +4,13 @@ import javax.sql.DataSource;
 
 import com.coachqa.entity.QuestionVote;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -24,11 +27,13 @@ import com.coachqa.ws.model.QuestionModel;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(QuestionDAOImpl.class);
 	
 	private QuestionAddSproc questionAddSproc;
 	
@@ -52,6 +57,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 		Question addedQuestion = questionAddSproc.addQuestion(question);
 		int questionId =  addedQuestion.getQuestionId();
+		// should be able to add question even if duplicate tags are provided
 
 		for (Integer tagId : question.getTags())
 			tagQuestion(questionId, tagId);
@@ -61,7 +67,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	private static String tagQuestionInsertQuery = "Insert into questiontag  (questionId, tagId) values (?,?)";
 
 	private void tagQuestion(int questionId, Integer tagId) {
-		jdbcTemplate.update(tagQuestionInsertQuery , new Integer[]{questionId, tagId});
+		try {
+			jdbcTemplate.update(tagQuestionInsertQuery, new Integer[]{questionId, tagId});
+		} catch(DuplicateKeyException dke){
+			LOGGER.warn("Question could not be tagged as the tag is already associated with the question. ");
+		}
 	}
 
 	@Cacheable(value="questions", key="#questionId")
@@ -94,6 +104,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	}
 
+	private String questionGetByTagQuery = "select questionId from questiontag qt" +
+			" join question q on q.questionId = qt.questionId " +
+			" join post p on p.postId = q.questionId " +
+			" order by p.postDate desc";
+	@Override
+	public List<Question> getQuestionsByTag(int tagId) {
+		return null;
+	}
 
 
 }

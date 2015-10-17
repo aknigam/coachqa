@@ -1,7 +1,17 @@
 package com.coachqa.mvc;
 
 
+import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.web.interceptor.LearnQARequestInterceptor;
+import notification.DefaultRegistrationProvider;
+import notification.EventNotificationProcessor;
+import notification.NotificationPublisher;
+import notification.impl.AsyncEventQueuePublisher;
+import notification.impl.DefaultRegsitrationProviderFactory;
+import notification.impl.EventNotificationProcessorImpl;
+import notification.impl.EventProcessorImpl;
+import notification.repository.EventDAO;
+import notification.repository.impl.DBEventDao;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.cache.CacheManager;
@@ -20,14 +30,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /*
@@ -98,7 +109,9 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("questions"), new ConcurrentMapCache("tags")));
+        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("questions")
+                , new ConcurrentMapCache("tags")
+                , new ConcurrentMapCache("usersByIdCache")));
         return cacheManager;
     }
 
@@ -120,6 +133,11 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public TransactionTemplate transactionTemplate(PlatformTransactionManager txManager){
+        return new TransactionTemplate(txManager);
+    }
+
+    @Bean
     public JdbcTemplate learnqajdbcTemplate(){
         return new JdbcTemplate(learnqadataSource());
     }
@@ -135,21 +153,51 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         return freeMarkerConfigurer;
     }
 
-
-    /*
-
-  <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="learnqadataSource"/>
-  </bean>
+    // notification system configuration
 
 
-  <bean id="learnqajdbcTemplate"
-     class="org.springframework.jdbc.core.JdbcTemplate">
-     <constructor-arg ref="learnqadataSource" />
-  </bean>
+    @Bean
+    public DataSource notificationDataSource(){
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/notificationsystem");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        return dataSource;
+    }
 
-  <tx:annotation-driven transaction-manager="txManager"/>
-     */
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource notificationDataSource){
+        return new JdbcTemplate(notificationDataSource);
+    }
+
+    @Bean
+    public EventDAO eventDAO(JdbcTemplate jdbcTemplate, DataSource notificationDataSource){
+        return new DBEventDao(jdbcTemplate, notificationDataSource);
+    }
+
+    @Bean
+    public EventNotificationProcessor eventNotificationProcessor(){
+        return new EventNotificationProcessorImpl();
+    }
+
+    @Bean
+    public notification.NotificationPublisher notificationPublisher(EventNotificationProcessor eventNotificationProcessor){
+        return new AsyncEventQueuePublisher(eventNotificationProcessor);
+    }
+
+    @Bean
+    public DefaultRegsitrationProviderFactory eventRegistrationFactory(){
+        Map<String, DefaultRegistrationProvider> defaultRegistrationProviderMap = new HashMap<>();
+        defaultRegistrationProviderMap.put("CLASSROOM_JOIN_REQUEST", new ClassroomEventRegistrationProvider());
+        return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
+    }
+
+    @Bean
+    public notification.NotificationService notificationService(NotificationPublisher notificationPublisher, EventDAO eventDao
+            , EventNotificationProcessor eventNotificationProcessor, DefaultRegsitrationProviderFactory eventRegistrationFactory){
+        return new EventProcessorImpl(notificationPublisher, eventDao, eventNotificationProcessor, eventRegistrationFactory);
+    }
 
 
 }

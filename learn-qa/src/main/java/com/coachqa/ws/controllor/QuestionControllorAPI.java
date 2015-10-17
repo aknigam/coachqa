@@ -39,17 +39,6 @@ public class QuestionControllorAPI {
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
 	public Question submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request, HttpServletResponse response)
 	{
-/*
-		ObjectMapper om = new ObjectMapper();
-		om.writerWithDefaultPrettyPrinter();
-		Writer w = new StringWriter();
-		try {
-			om.writeValue(w, model);
-			System.out.println(w.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-*/
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 
 		model.setPostedBy(user.getAppUserId());
@@ -97,16 +86,7 @@ public class QuestionControllorAPI {
 	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
 	public Question submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
 	{
-/*		ObjectMapper om = new ObjectMapper();
-		om.writerWithDefaultPrettyPrinter();
-		Writer w = new StringWriter();
-		try {
-			om.writeValue(w, model);
-			System.out.println(w.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-*/
+
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 		model.setAnsweredByUserId(user.getAppUserId());
 
@@ -117,12 +97,16 @@ public class QuestionControllorAPI {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET)
-	public Object getAllQuestions()
+	public Object getAllQuestions(@RequestParam("tag") int tagId)
 	{
-		return null;
+		return questionService.getQuestionsByTag(tagId);
 	}
 	
 	
-	
+	@RequestMapping(value = "/request",  method = RequestMethod.POST)
+	public void requestToAnswer(Integer questionId, List<Integer> userIds){
+
+	}
+
 
 }

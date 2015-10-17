@@ -42,7 +42,6 @@ public class TagControllor {
 
         Tag tg = mapper.readValue(w.toString(), Tag.class);
 
-
         System.out.println(tg);
     }
 

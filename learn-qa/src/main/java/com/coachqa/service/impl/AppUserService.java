@@ -23,7 +23,7 @@ public class AppUserService implements UserService {
 
 	@Override
 	public AppUser getUserDetails(Integer userId) {
-		return null;
+		return userDAO.getUserByIdentifier(userId);
 	}
 	
 	@Override

@@ -18,10 +18,10 @@ public class AppUser implements java.io.Serializable {
 	public AppUser() {
 	}
 
-	public AppUser(String email, String pasword, String firstName,
+	public AppUser(String email, String password, String firstName,
 			String lastName) {
 		this.email = email;
-		this.password = pasword;
+		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -31,6 +31,14 @@ public class AppUser implements java.io.Serializable {
 		this.userReputationId = userReputationId;
 		this.email = email;
 		this.password = pasword;
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+	}
+
+	public AppUser(int appUserId, String email, String firstName, String middleName, String lastName) {
+		this.appUserId = appUserId;
+		this.email = email;
 		this.firstName = firstName;
 		this.middleName = middleName;
 		this.lastName = lastName;
