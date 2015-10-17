@@ -1,0 +1,67 @@
+<ion-view view-title="Post an answer">
+  <ion-content class="padding">
+    <div class="item item-body">
+      <h3>{{question.title}} (posted on {{question.postDate}})</h3>
+      <span class="badge badge-assertive">Views: {{question.noOfViews}}</span>
+      <p>
+        {{question.content}}
+      </p>
+    </div>
+
+
+    <div class="list card" ng-repeat="post in answerPosts">
+
+      <div class="item item-avatar">
+        <img src="img/1441712212_andrew.png">
+        <h2>{{postedBy.name}}</h2>
+        <p>{{postedBy.postDate}}</p>
+      </div>
+
+      <div class="item item-body">
+        <p ng-bind-html="post.content">
+        </p>
+      </div>
+
+      <div class="item tabs tabs-secondary tabs-icon-left">
+        <a class="tab-item" href="#">
+          <i class="icon ion-thumbsup"></i>
+          Like
+        </a>
+        <a class="tab-item" href="#">
+          <i class="icon ion-chatbox"></i>
+          Comment
+        </a>
+        <a class="tab-item" href="#">
+          <i class="icon ion-share"></i>
+          Share
+        </a>
+      </div>
+    </div>
+
+
+
+ <!--   <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right"  type="item-text-wrap">
+        <img src="img/1441712212_andrew.png">
+        <h2>{{postedBy.name}}</h2>
+        <p>{{post.content}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(chat)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list> -->
+
+    <label class="item item-input">
+            <textarea ng-model="formInputs.content" rows="10" placeholder="Put your answer here..."
+              ></textarea>
+    </label>
+    <button type="submit" class="button button-balanced" ng-click="submit()">
+      Submit
+    </button>
+    <button type="button" class="button button-dark">
+      Reset
+    </button>
+  </ion-content>
+</ion-view>

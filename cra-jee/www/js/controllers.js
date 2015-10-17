@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AskQuestionCtrl', function($scope,$stateParams,Chats) {
+.controller('AskQuestionCtrl', function($scope,$stateParams,Chats,$state) {
     $scope.formInputs = {
                isPublic : false,
                subject: 'Mathematics',
@@ -26,14 +26,41 @@ angular.module('starter.controllers', [])
       data.public = $scope.formInputs.isPublic;
       data.classroom = null;
       Chats.postQuestion(data).then(function(response){
-        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully.....')
-      }).error(function(error){
+        alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully.....');
+        $state.go('answer',{ question: response.data });
+      },function(error){
         alert('Question ' + $scope.formInputs.questionTitle + ' posted successfully..... with error' + error);
       });
     }
 
 
-    })
+    }).controller('AnswerCtrl', function($scope, $stateParams, Chats) {
+                    $scope.question = $stateParams.question;
+                    $scope.formInputs = {
+                      content: '',
+                      votes: null
+                    };
+
+                   $scope.submit = function(){
+                    var data = {
+                      answerId: null,
+                      answeredByUserId: 1,
+                      questionId: $scope.question.questionId,
+                      votes: $scope.formInputs.votes,
+                      content: $scope.formInputs.content
+                    };
+                     Chats.answerQuestion(data).then(function(data) {
+                       $scope.answerPosts = data.data.answers;
+                       $scope.postedBy = data.data.postedBy;
+                       $scope.formInputs.content = '';
+                     },function(data) {
+                       $ionicPopup.alert({
+                                           title: 'Posting an answer failed!',
+                                           template: 'Please check your data or session!'
+                                         });
+                     })
+                   };
+                  })
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
@@ -54,16 +81,17 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('AccountCtrl', function($scope, LoginService) {
   $scope.settings = {
     enableFriends: true
   };
+  $scope.logout = function(){
+    LoginService.logout();
+  };
 })
-
-    .controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state) {
-        $scope.data = {};
-
-        $scope.login = function() {
+.controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state) {
+    $scope.data = {};
+      $scope.login = function() {
             LoginService.loginUser($scope.data.username, $scope.data.password).success(function(data) {
                 $state.go('tab.question',{ username: data.data });
             }).error(function(data) {
@@ -73,4 +101,4 @@ angular.module('starter.controllers', [])
                 });
             });
         }
-    });;
+    });
