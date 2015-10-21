@@ -15,8 +15,8 @@ public class ClassroomEventRegistrationProvider implements DefaultRegistrationPr
     private ClassroomDAO classroomDAO;
 
     @Override
-    public Collection<? extends Integer> getUsersRegisteredByDefault(ApplicationEvent event) {
-        int classroomId = event.getEventSource().getId();
+    public Collection<? extends Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event) {
+        int classroomId = event.getEventSource();
         Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
         return Collections.singleton(classroom.getClassOwner().getAppUserId());
     }

@@ -8,12 +8,15 @@ import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
 
 
 import com.coachqa.service.UserService;
+import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.service.listeners.RetryingEventListener;
+import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.Notificationlistener;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
-import notification.entity.SimpleKeyedResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,10 @@ import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ClassroomsServiceImpl implements ClassroomService{
@@ -36,7 +42,21 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Autowired
 	private UserService userService;
 
+	@Autowired
 	private NotificationService notificationService;
+
+	private ApplicationEventListener<Integer> publisher;
+
+	@PostConstruct
+	public void init(){
+
+		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
+
+		listeners.add(new RetryingEventListener( new Notificationlistener(notificationService)));
+
+		this.publisher = new EventPublisher(listeners);
+
+	}
 
 	@Override
 	public Classroom getClassroom(Integer classroomId) {
@@ -57,8 +77,8 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	}
 
 	private void notifyAdministrator(Integer classroomId) {
-		ApplicationEvent event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, new SimpleKeyedResource(classroomId, null), new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
-		notificationService.notifyUsers(event);
+		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
+		publisher.onEvent(event);
 	}
 
 	@Override

@@ -1,11 +1,13 @@
 package com.coachqa.service.listeners;
 
+import notification.entity.ApplicationEvent;
+
 /**
  * Created by anigam on 6/29/15.
  */
-public interface ApplicationEventListener<T extends  BaseEvent> {
+public interface ApplicationEventListener<E> {
 
-    void onEvent(T event);
+    void onEvent(ApplicationEvent<E> event);
 
 
 }

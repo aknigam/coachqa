@@ -1,5 +1,6 @@
 package com.coachqa.service.listeners.question;
 
+import com.coachqa.service.listeners.ApplicationEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class IndexQuestionListener extends QuestionPostListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexQuestionListener.class);
+
 
     @Override
     public void questionPosted(Integer questionId) {

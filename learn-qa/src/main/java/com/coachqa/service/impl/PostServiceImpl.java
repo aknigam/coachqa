@@ -6,7 +6,7 @@ import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.ApplicationEventListener;
-import com.coachqa.service.listeners.question.PublishQuestionToQueue;
+import com.coachqa.service.listeners.question.EventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +18,6 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private PostDAO postDao;
-
-	private ApplicationEventListener questionPostPublisher = new PublishQuestionToQueue();
 
 
 	@Override

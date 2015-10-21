@@ -2,16 +2,20 @@ package com.coachqa.service.listeners.question;
 
 import com.coachqa.entity.Question;
 import com.coachqa.service.QuestionService;
+import com.coachqa.service.listeners.ApplicationEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ImageToTextQuestionConverterQuestionListener extends QuestionPostListener {
+public class ImageToTextQuestionConverterQuestionListener extends QuestionPostListener{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageToTextQuestionConverterQuestionListener.class);
 
-    @Autowired
     private QuestionService questionService;
+
+    public ImageToTextQuestionConverterQuestionListener(QuestionService questionService){
+        this.questionService = questionService;
+    }
 
     @Override
     public void questionPosted(Integer questionId) {

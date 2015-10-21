@@ -4,33 +4,35 @@ import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.service.listeners.*;
-import com.coachqa.service.listeners.question.PublishQuestionToQueue;
-import com.coachqa.service.listeners.question.QuestionEvent;
+import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
+import com.coachqa.service.listeners.question.IndexQuestionListener;
+import com.coachqa.service.listeners.question.Notificationlistener;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
-import notification.entity.SimpleKeyedResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.QuestionService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.sql.Date;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Service
 public class QuestionServiceImpl implements QuestionService {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
@@ -39,12 +41,24 @@ public class QuestionServiceImpl implements QuestionService {
 	private QuestionDAO questionDao;
 
 	@Autowired
-	TransactionTemplate transactionTemplate;
+	private TransactionTemplate transactionTemplate;
+
+	private ApplicationEventListener questionPostPublisher;
 
 	@Autowired
 	private NotificationService notificationService;
 
-	private ApplicationEventListener questionPostPublisher = new PublishQuestionToQueue();
+	@PostConstruct
+	public void init(){
+
+		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
+
+		listeners.add(new RetryingEventListener( new ImageToTextQuestionConverterQuestionListener(this)));
+		listeners.add(new RetryingEventListener( new IndexQuestionListener()));
+		listeners.add(new RetryingEventListener( new Notificationlistener(notificationService)));
+
+		questionPostPublisher = new EventPublisher(listeners);
+	}
 
 	@Override
 	public Question addQuestion(Integer userId, final QuestionModel model) {
@@ -160,8 +174,8 @@ public class QuestionServiceImpl implements QuestionService {
 	private void publishEvent(EventType eventType, Integer questionId) {
 		LOGGER.info("Publishing event of type " + eventType.name() + " , event source id is " + questionId);
 
-		ApplicationEvent event = new ApplicationEvent(eventType, new SimpleKeyedResource(questionId));
-		notificationService.notifyUsers(event);
+		ApplicationEvent<Integer> event = new ApplicationEvent(eventType, questionId);
+		questionPostPublisher.onEvent(event);
 	}
 
 }
