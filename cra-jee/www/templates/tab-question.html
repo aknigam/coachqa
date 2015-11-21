@@ -34,6 +34,15 @@
             <textarea ng-model="formInputs.questionContent" rows="10" placeholder="Put your question here..."
             ></textarea>
           </label>
+          <label class="item item-input">
+
+                  <input type="text" ng-model="html"/><br/>
+                  <!--<span mathjax-bind="expression"></span>-->
+                  <div dynamic="html"></div>
+
+
+
+          </label>
         </div>
     </div>
     <button type="submit" class="button button-balanced" ng-click="submit()">

@@ -28,7 +28,20 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-  // Ionic uses AngularUI Router which uses the concept of states
+
+        MathJax.Hub.Config({
+            skipStartupTypeset: true,
+            messageStyle: "none",
+            "HTML-CSS": {
+                showMathMenu: false
+            }
+        });
+        MathJax.Hub.Configured();
+
+
+
+
+        // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
@@ -95,4 +108,41 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 
+}).directive("mathjaxBind", function() {
+    return {
+        restrict: "A",
+        scope:{
+            text: "@mathjaxBind"
+        },
+        controller: ["$scope", "$element", "$attrs", function($scope, $element, $attrs) {
+
+            $scope.$watch('text', function(value) {
+//                console.log(value);
+                var $script = angular.element("<script type='math/tex'>")
+                    .html(value == undefined ? "" : value);
+                $element.html("");
+                $element.append($script);
+                MathJax.Hub.Queue(["Reprocess", MathJax.Hub, $element[0]]);
+            });
+        }]
+    };
+}).directive('dynamic', function ($compile) {
+    return {
+        restrict: 'A',
+        replace: true,
+        link: function (scope, ele, attrs) {
+            scope.$watch(attrs.dynamic, function(html) {
+                //var match = /\$([^$]+)\$/.exec(value);
+                //console.log(value.replace( new RegExp("\\$([^$]+)\\$","gm"),"foo"));
+
+                html = html.replace(/\$\$([^$]+)\$\$/g, "<span class=\"blue\" mathjax-bind=\"$1\"></span>");
+                html = html.replace(/\$([^$]+)\$/g, "<span class=\"red\" mathjax-bind=\"$1\"></span>");
+                //var $script1 = angular.element("<span>")                    .html(value1 == undefined ? "" : value1);
+                ele.html(html);
+                $compile(ele.contents())(scope);
+            });
+        }
+    };
 });
+
+

@@ -9,6 +9,8 @@ angular.module('starter.controllers', [])
                username: $stateParams.username
               };
 
+        $scope.html = "A coin of is $ \\frac{5}{4} $ thrown $$\\frac{1}{6}$$ dfv";
+
     $scope.submit = function(){
       var data = {};
       data.questionId = null;
