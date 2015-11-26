@@ -18,7 +18,7 @@ public class SerializationTest {
         Writer w = new StringWriter();
         try {
             om.writeValue(w, model);
-            System.out.println(w.toString());
+            System.out.println("Test change"+w.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
