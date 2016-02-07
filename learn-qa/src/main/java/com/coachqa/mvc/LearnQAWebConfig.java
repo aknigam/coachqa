@@ -5,8 +5,8 @@ import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.web.interceptor.LearnQARequestInterceptor;
 import notification.DefaultRegistrationProvider;
 import notification.EventNotificationProcessor;
-import notification.NotificationPublisher;
-import notification.impl.AsyncEventQueuePublisher;
+import notification.publisher.NotificationPublisher;
+import notification.publisher.AsyncEventQueuePublisher;
 import notification.impl.DefaultRegsitrationProviderFactory;
 import notification.impl.EventNotificationProcessorImpl;
 import notification.impl.EventProcessorImpl;
@@ -182,7 +182,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public notification.NotificationPublisher notificationPublisher(EventNotificationProcessor eventNotificationProcessor){
+    public NotificationPublisher notificationPublisher(EventNotificationProcessor eventNotificationProcessor){
         return new AsyncEventQueuePublisher(eventNotificationProcessor);
     }
 

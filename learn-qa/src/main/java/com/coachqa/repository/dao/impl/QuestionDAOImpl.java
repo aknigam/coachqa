@@ -1,22 +1,5 @@
 package com.coachqa.repository.dao.impl;
 
-import javax.sql.DataSource;
-
-import com.coachqa.entity.QuestionVote;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
-
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
@@ -24,11 +7,17 @@ import com.coachqa.repository.dao.sp.QuestionAddSproc;
 import com.coachqa.repository.dao.sp.QuestionGetSproc;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Component;
 
-import java.sql.*;
-import java.util.HashMap;
+import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
