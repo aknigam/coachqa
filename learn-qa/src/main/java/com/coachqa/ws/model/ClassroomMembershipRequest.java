@@ -1,10 +1,6 @@
 package com.coachqa.ws.model;
 
-import com.coachqa.entity.AppUser;
-import org.joda.time.DateTime;
-
 import java.util.List;
-import java.util.Set;
 
 public class ClassroomMembershipRequest {
 

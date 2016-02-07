@@ -1,27 +1,27 @@
-package com.coachqa.mvc;
+package com.coachqa;
 
 
+import com.coachqa.mvc.SecurityConfig;
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.web.interceptor.LearnQARequestInterceptor;
 import notification.DefaultRegistrationProvider;
 import notification.EventNotificationProcessor;
-import notification.publisher.NotificationPublisher;
-import notification.publisher.AsyncEventQueuePublisher;
 import notification.impl.DefaultRegsitrationProviderFactory;
 import notification.impl.EventNotificationProcessorImpl;
 import notification.impl.EventProcessorImpl;
+import notification.publisher.AsyncEventQueuePublisher;
+import notification.publisher.NotificationPublisher;
 import notification.repository.EventDAO;
 import notification.repository.impl.DBEventDao;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -52,6 +52,7 @@ Using this we can define the order in which the configurations files are loaded 
 @ComponentScan(basePackages = "com.coachqa")
 @Import(SecurityConfig.class)
 @Order(1)
+@EnableAutoConfiguration
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
     /**
@@ -115,7 +116,11 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         return cacheManager;
     }
 
+    /*
+    http://stackoverflow.com/questions/27843788/resource-annotation-no-qualifying-bean-of-type-javax-sql-datasource-is-define
+     */
     @Bean
+    @Primary
     public DataSource learnqadataSource(){
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
@@ -200,4 +205,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
 
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(LearnQAWebConfig.class, args);
+    }
 }

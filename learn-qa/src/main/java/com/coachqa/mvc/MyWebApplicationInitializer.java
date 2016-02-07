@@ -1,5 +1,6 @@
 package com.coachqa.mvc;
 
+import com.coachqa.LearnQAWebConfig;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
