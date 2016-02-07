@@ -16,7 +16,7 @@ import notification.repository.impl.DBEventDao;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -44,15 +44,16 @@ import java.util.Map;
 /*
 Look for annotation @AutoConfigureAfter(value = {MetricsConfiguration.class, DatabaseConfiguration.class})
 Using this we can define the order in which the configurations files are loaded and used to configure beans.
+
+The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration and @ComponentScan with their default attributes:
+
  */
-@Configuration
 @EnableWebMvc
 @EnableCaching
 @EnableTransactionManagement()
-@ComponentScan(basePackages = "com.coachqa")
 @Import(SecurityConfig.class)
 @Order(1)
-@EnableAutoConfiguration
+@SpringBootApplication
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
     /**
