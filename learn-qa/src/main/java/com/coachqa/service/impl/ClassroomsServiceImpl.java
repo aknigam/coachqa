@@ -138,10 +138,23 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	}
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
-		if(classOwnerId.equals(requestedByUserId) || requestedByUserId.equals(memberId)){
+
+		if(isRequesterClassroomOwner(classOwnerId, requestedByUserId)){
 			return true;
 		}
+		if(isRequestedBySelf(requestedByUserId, memberId)){
+			return true;
+		}
+		
 		return false;
+	}
+
+	private boolean isRequestedBySelf(Integer requestedByUserId, Integer memberId) {
+		return requestedByUserId.equals(memberId);
+	}
+
+	private boolean isRequesterClassroomOwner(Integer classOwnerId, Integer requestedByUserId) {
+		return classOwnerId.equals(requestedByUserId);
 	}
 
 

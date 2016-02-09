@@ -72,6 +72,8 @@ public class ClassroomControllor {
 	 * The user who made this API call should either be the member who is the leaving the class
 	 * or the owner of the class;
 	 *
+	 * This request can be made by the user himself or by the owener of the classroom.
+	 *
 	 */
 	@RequestMapping(value="/leave" , method = RequestMethod.POST)
 	@ResponseBody

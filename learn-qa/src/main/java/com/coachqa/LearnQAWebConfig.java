@@ -195,7 +195,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public DefaultRegsitrationProviderFactory eventRegistrationFactory(){
         Map<String, DefaultRegistrationProvider> defaultRegistrationProviderMap = new HashMap<>();
-        defaultRegistrationProviderMap.put("CLASSROOM_JOIN_REQUEST", new ClassroomEventRegistrationProvider());
+        defaultRegistrationProviderMap.put("MEMBERSHIP_REQUEST", new ClassroomEventRegistrationProvider());
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
     }
 
