@@ -1,4 +1,4 @@
-package com.coachqa.mvc;
+package com.coachqa;
 
 import com.coachqa.LearnQAWebConfig;
 import org.springframework.core.annotation.Order;

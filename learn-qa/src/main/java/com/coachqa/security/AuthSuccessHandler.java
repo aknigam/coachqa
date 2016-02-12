@@ -1,4 +1,4 @@
-package com.coachqa.mvc.security;
+package com.coachqa.security;
 
 import com.coachqa.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,20 +1,17 @@
-package com.coachqa.mvc;
+package com.coachqa;
 
 
-import com.coachqa.mvc.security.AuthFailureHandler;
-import com.coachqa.mvc.security.AuthSuccessHandler;
-import com.coachqa.mvc.security.HttpAuthenticationEntryPoint;
-import com.coachqa.mvc.security.HttpLogoutSuccessHandler;
-import com.coachqa.service.UserService;
+import com.coachqa.security.AuthFailureHandler;
+import com.coachqa.security.AuthSuccessHandler;
+import com.coachqa.security.HttpAuthenticationEntryPoint;
+import com.coachqa.security.HttpLogoutSuccessHandler;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -42,7 +39,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = "com.coachqa.mvc.security")
+@ComponentScan(basePackages = "com.coachqa.security")
 @Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
