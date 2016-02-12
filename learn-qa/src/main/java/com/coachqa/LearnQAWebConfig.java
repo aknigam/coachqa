@@ -6,9 +6,10 @@ import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.web.interceptor.LearnQARequestInterceptor;
 import notification.DefaultRegistrationProvider;
 import notification.EventNotificationProcessor;
+import notification.entity.ApplicationEvent;
 import notification.impl.DefaultRegsitrationProviderFactory;
-import notification.impl.EventNotificationProcessorImpl;
-import notification.impl.EventProcessorImpl;
+import notification.impl.EventNotificationConsumer;
+import notification.impl.NotificationServiceImpl;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
 import notification.repository.EventDAO;
@@ -21,7 +22,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -184,7 +187,12 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public EventNotificationProcessor eventNotificationProcessor(){
-        return new EventNotificationProcessorImpl();
+        return new EventNotificationConsumer() {
+            @Override
+            protected String getNotificationMessage(ApplicationEvent eventInstance) {
+                return "Dummy message";
+            }
+        };
     }
 
     @Bean
@@ -202,7 +210,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public notification.NotificationService notificationService(NotificationPublisher notificationPublisher, EventDAO eventDao
             , EventNotificationProcessor eventNotificationProcessor, DefaultRegsitrationProviderFactory eventRegistrationFactory){
-        return new EventProcessorImpl(notificationPublisher, eventDao, eventNotificationProcessor, eventRegistrationFactory);
+        return new NotificationServiceImpl(notificationPublisher, eventDao, eventNotificationProcessor, eventRegistrationFactory);
     }
 
 

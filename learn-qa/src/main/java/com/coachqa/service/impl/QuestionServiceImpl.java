@@ -7,7 +7,6 @@ import com.coachqa.service.listeners.*;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
 import com.coachqa.service.listeners.question.IndexQuestionListener;
-import com.coachqa.service.listeners.question.Notificationlistener;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
@@ -55,8 +54,6 @@ public class QuestionServiceImpl implements QuestionService {
 
 		listeners.add(new RetryingEventListener( new ImageToTextQuestionConverterQuestionListener(this)));
 		listeners.add(new RetryingEventListener( new IndexQuestionListener()));
-		listeners.add(new RetryingEventListener( new Notificationlistener(notificationService)));
-
 		questionPostPublisher = new EventPublisher(listeners);
 	}
 
@@ -175,7 +172,8 @@ public class QuestionServiceImpl implements QuestionService {
 		LOGGER.info("Publishing event of type " + eventType.name() + " , event source id is " + questionId);
 
 		ApplicationEvent<Integer> event = new ApplicationEvent(eventType, questionId);
-		questionPostPublisher.onEvent(event);
+
+		notificationService.notifyUsers(event);
 	}
 
 }

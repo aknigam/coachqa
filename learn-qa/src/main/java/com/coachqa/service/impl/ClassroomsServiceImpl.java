@@ -9,9 +9,7 @@ import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
 
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.ApplicationEventListener;
-import com.coachqa.service.listeners.RetryingEventListener;
 import com.coachqa.service.listeners.question.EventPublisher;
-import com.coachqa.service.listeners.question.Notificationlistener;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import notification.NotificationService;
@@ -52,7 +50,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
 
-		listeners.add(new RetryingEventListener( new Notificationlistener(notificationService)));
+
 
 		this.publisher = new EventPublisher(listeners);
 
@@ -78,7 +76,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	private void notifyAdministrator(Integer classroomId) {
 		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
-		publisher.onEvent(event);
+		notificationService.notifyUsers(event);
 	}
 
 	@Override

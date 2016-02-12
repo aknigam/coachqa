@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Anand on 10/20/2015.
+ * This class is not getting used anywhere.
  */
 public class RetryingEventListener implements  ApplicationEventListener<Integer> {
 
