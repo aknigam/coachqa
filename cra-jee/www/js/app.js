@@ -26,7 +26,7 @@ angular.module('starter', ['ionic','textAngular', 'starter.controllers', 'starte
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($provide, $stateProvider, $urlRouterProvider) {
 
 
         MathJax.Hub.Config({
@@ -107,6 +107,20 @@ angular.module('starter', ['ionic','textAngular', 'starter.controllers', 'starte
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
+
+          $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions){
+            // $delegate is the taOptions we are decorating
+            // register the tool with textAngular
+            taRegisterTool('colourRed', {
+              iconclass: "fa fa-square red",
+              action: function(){
+                this.$editor().wrapSelection('forecolor', 'red');
+              }
+            });
+            // add the button to the default toolbar definition
+            taOptions.toolbar[1].push('colourRed');
+            return taOptions;
+          }]);
 
 }).directive("mathjaxBind", function() {
     return {

@@ -4,7 +4,7 @@
    "proxies": [
       {
         "path": "/rest-api",
-        "proxyUrl": "http://localhost:9090"
+        "proxyUrl": "http://localhost:8080"
       }
     ]
 }
