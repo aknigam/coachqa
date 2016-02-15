@@ -32,19 +32,6 @@ public class TagControllor {
     @Autowired
     UserService userService;
 
-    public static void main(String[] args) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter();
-        Writer w = new StringWriter();
-        Tag tag = new Tag(1, "java", "This is an OO programming language", 0);
-        mapper.writeValue(w, tag);
-        System.out.println(w.toString());
-
-        Tag tg = mapper.readValue(w.toString(), Tag.class);
-
-        System.out.println(tg);
-    }
-
     /**
      * {"tagName":"java","tagDescription":"This is an OO programming language","noOfTaggedQuestions":0}
      *

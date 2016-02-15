@@ -38,17 +38,20 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		classroomGetByIdSproc = new ClassroomGetByIdSproc(getDataSource());
 	}
 
-	private static String addMembershipQuery = "Insert into classroomMember (AppUserId, ClassroomId, Status, Comments, MembershipRequestDate) values (?, ?, ?, ?, ?)";
+	private static String addMembershipQuery = "Insert into classroomMember (AppUserId, ClassroomId, Status, Comments, " +
+			"MembershipRequestDate, MembershipStartDate, MembershipExpirartionDate) values (?, ?, ?, ?, ?, ?, ?)";
 
 	@Override
 	public void joinClassroom(Integer appUserId, Integer classroomId, ClassroomMembershipStatusEnum pendingApproval, String comments) {
-		// MembershipStartDate should be the date when the membership request gets approved
 
+		DateTime expirationDate =  new DateTime(System.currentTimeMillis()).plusYears(1);
 		jdbcTemplate.update(addMembershipQuery, new Object[]{appUserId
 				, classroomId
 				, pendingApproval.getId()
 				, comments
-				, new Date(System.currentTimeMillis())});
+				, new Date(System.currentTimeMillis())
+				, new Date(System.currentTimeMillis())
+				, new Date(expirationDate.toDate().getTime())});
 
 	}
 
@@ -57,7 +60,8 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		return classroomGetByIdSproc.getClassroomByIdentifier(classroomId);
 	}
 
-	private static String addClassroomQuery = "INSERT INTO classroom(ClassOwner,ClassName,IsPublic,description, LastUpdateDate)VALUES(?, ?, ?, ?, ?)";
+	private static String addClassroomQuery = "INSERT INTO classroom(ClassOwner,ClassName,IsPublic,description, LastUpdateDate)" +
+			" VALUES(?, ?, ?, ?, ?)";
 	@Override
 	public Classroom createClassroom(final Classroom classroom) {
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -71,7 +75,7 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 					ps.setBoolean(3, classroom.isIsPublic());
 					ps.setString(4, classroom.getDescription());
 					Date now = new Date(System.currentTimeMillis());
-					ps.setDate(4, now);
+					ps.setDate(5, now);
 
 					return ps;
 				}

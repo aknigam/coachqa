@@ -49,8 +49,9 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public EventDAO eventDAO(JdbcTemplate jdbcTemplate, DataSource notificationDataSource){
-        return new DBEventDao(jdbcTemplate, notificationDataSource);
+    public EventDAO eventDAO(){
+        DataSource ds = notificationDataSource();
+        return new DBEventDao(jdbcTemplate(ds), ds);
     }
 
     @Bean

@@ -43,8 +43,7 @@ public class UserControllor {
 	public AppUser getUserDetails(@PathVariable(value = "id") Integer userId)
 	{
 		return userService.getUserDetails(userId);
-//		UserModel userModel = UserModelBuilder.build(appUser);
-//		return userModel;
+
 	}
 
 
