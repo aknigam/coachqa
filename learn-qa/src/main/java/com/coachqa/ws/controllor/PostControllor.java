@@ -7,10 +7,10 @@ import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Both question and answer can be treated as posts. Some common operations like voting, rating etc can be done in a common manner.
  */
-@Controller
+@RestController
 @RequestMapping("/api/posts")
 public class PostControllor {
 

@@ -16,17 +16,17 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @RequestMapping(value="/register", method = RequestMethod.POST)
+    @RequestMapping(path="/register", method = RequestMethod.POST)
     public void registerForEvent(int userId, ApplicationEvent event) {
         notificationService.registerForEvent(userId, event);
     }
 
-    @RequestMapping(value="/deregister", method = RequestMethod.POST)
+    @RequestMapping(path="/deregister", method = RequestMethod.POST)
     public void DeRegisterForEvent(int userId, ApplicationEvent event) {
         notificationService.deRegisterForEvent(userId, event);
     }
 
-    @RequestMapping(value="/acknowledge", method = RequestMethod.POST)
+    @RequestMapping(path="/acknowledge", method = RequestMethod.POST)
     public void notificationAcknowledged(int userId, ApplicationEvent event) {
         // notificationService.updateNotificationStatus(userId, event);
     }

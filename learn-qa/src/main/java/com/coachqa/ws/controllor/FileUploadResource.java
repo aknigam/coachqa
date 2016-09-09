@@ -1,23 +1,22 @@
-package com.coachqa.service;
+package com.coachqa.ws.controllor;
 
 import com.coachqa.repository.dao.impl.FileUploadDao;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-public class FileUploadService {
+@RestController
+@RequestMapping("/upload")
+public class FileUploadResource {
 
     private FileUploadDao fileUploadDao;
 
-    @RequestMapping(value="/upload", method=RequestMethod.GET)
+    @GetMapping
     public @ResponseBody
     String provideUploadInfo() {
         return "You can upload a file by posting to this same URL.";
     }
 
-    @RequestMapping(value="/upload", method= RequestMethod.POST)
+    @PostMapping
     public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file){
         String name = "tempFileName";
         if (!file.isEmpty()) {

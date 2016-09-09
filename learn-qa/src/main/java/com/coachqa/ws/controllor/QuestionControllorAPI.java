@@ -2,30 +2,20 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
-import com.coachqa.entity.RefSubject;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.model.QuestionModel;
 import com.coachqa.ws.util.WSUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/questions")
 public class QuestionControllorAPI {
 	
@@ -35,7 +25,7 @@ public class QuestionControllorAPI {
 	@Autowired
 	private UserService userService;
 
-	@ResponseBody
+
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
 	public Question submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request, HttpServletResponse response)
 	{
@@ -67,7 +57,7 @@ public class QuestionControllorAPI {
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
-	@ResponseBody
+
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
 	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
 	{
@@ -75,14 +65,14 @@ public class QuestionControllorAPI {
 	}
 
 
-	@ResponseBody
+
 	@RequestMapping(value="/{id}" , method = RequestMethod.PUT)
 	public Object updateQuestion(@PathVariable(value ="id")Integer questionId , @RequestBody Object model)
 	{
 		return null;
 	}
 
-	@ResponseBody
+
 	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
 	public Question submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
 	{
@@ -95,7 +85,7 @@ public class QuestionControllorAPI {
 	}
 
 
-	@ResponseBody
+
 	@RequestMapping(method = RequestMethod.GET)
 	public Object getAllQuestions(@RequestParam("tag") int tagId)
 	{

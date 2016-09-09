@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -25,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -40,9 +40,10 @@ The @SpringBootApplication annotation is equivalent to using @Configuration, @En
 @EnableWebMvc
 @EnableCaching
 @EnableTransactionManagement()
-@Import(SecurityConfig.class)
+// @Import(SecurityConfig.class)
 @Order(1)
 @SpringBootApplication
+@EnableSwagger2
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
     /**
@@ -56,8 +57,13 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-    }
 
+      registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
 
 
     @Override

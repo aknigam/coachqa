@@ -1,20 +1,18 @@
 package com.coachqa.ws.controllor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.coachqa.service.UserService;
-import com.coachqa.ws.model.ClassroomMembershipRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.service.ClassroomService;
+import com.coachqa.service.UserService;
+import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.util.WSUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@RestController
 @RequestMapping("/api/classrooms")
 public class ClassroomControllor {
 
@@ -25,7 +23,7 @@ public class ClassroomControllor {
 	private UserService userService;
 
 	@ResponseBody
-	@RequestMapping(value="/create" , method = RequestMethod.POST)
+	@GetMapping(value="/create")
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
 		classroom.setClassOwner(WSUtil.getUser(request.getSession(), userService));
@@ -36,7 +34,7 @@ public class ClassroomControllor {
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/{id}/id" , method = RequestMethod.GET)
+	@GetMapping(path = "/{id}/id")
 	public Classroom showClassroomById(@PathVariable(value = "id") Integer classroomId)
 	{
 		return classroomService.getClassroom(classroomId);
