@@ -14,5 +14,8 @@ public interface PostService {
 
 	void vote(Integer userId, Integer postId, boolean isUpVoted, PostTypeEnum postType);
 
+	void updateApprovalStatus(Integer userId, Integer postId, boolean isApproved, String comments, PostTypeEnum postType);
+
+
 
 }

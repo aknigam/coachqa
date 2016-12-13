@@ -11,11 +11,8 @@ public class ImageToTextQuestionConverterQuestionListener extends QuestionPostLi
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageToTextQuestionConverterQuestionListener.class);
 
+    @Autowired
     private QuestionService questionService;
-
-    public ImageToTextQuestionConverterQuestionListener(QuestionService questionService){
-        this.questionService = questionService;
-    }
 
     @Override
     public void questionPosted(Integer questionId) {

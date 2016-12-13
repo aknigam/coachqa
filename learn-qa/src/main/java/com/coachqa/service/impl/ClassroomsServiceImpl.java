@@ -1,7 +1,6 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Question;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
 import com.coachqa.exception.NotAuthorizedToApprovemembershipRequest;
@@ -10,7 +9,7 @@ import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
 
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.ApplicationEventListener;
-import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import notification.NotificationService;
@@ -56,7 +55,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@PostConstruct
 	public void init(){
 		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
-		this.publisher = new EventPublisher(listeners);
+		this.publisher = new SimpleEventPublisher(listeners, stageOneListene);
 	}
 
 	@Override

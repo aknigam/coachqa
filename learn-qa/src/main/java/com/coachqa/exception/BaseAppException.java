@@ -13,4 +13,8 @@ public class BaseAppException  extends  RuntimeException{
         this.errorCode = errorCode;
     }
 
+    public BaseAppException(ApplicationErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
 }

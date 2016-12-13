@@ -27,18 +27,18 @@ public class QuestionControllorAPI {
 
 
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public Question submitQuestion(@RequestBody QuestionModel model, HttpServletRequest request, HttpServletResponse response)
+	public Question submitQuestion(@RequestBody QuestionModel question, HttpServletRequest request, HttpServletResponse response)
 	{
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 
-		model.setPostedBy(user.getAppUserId());
+		question.setPostedBy(user.getAppUserId());
 
 
-		List<String> newTags = model.getNewTags();
+		List<String> newTags = question.getNewTags();
 		// add new tags by making service calls.
-		// put the generated tagids in the model and then submit the question.
+		// put the generated tagids in the question and then submit the question.
 
-		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), model);
+		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), question);
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
 

@@ -1,22 +1,21 @@
 package com.coachqa.service.listeners;
 
-import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
 import notification.entity.ApplicationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is not getting used anywhere.
+ * Retries 5 times and then exists
  */
-public class RetryingEventListener implements  ApplicationEventListener<Integer> {
+public class SimpleRetryingEventListener implements  ApplicationEventListener<Integer> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RetryingEventListener.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(SimpleRetryingEventListener.class);
 
     private static final int MAX_RETY_COUNT = 5;
 
     private  ApplicationEventListener<Integer> listener;
 
-    public RetryingEventListener(ApplicationEventListener<Integer> listener) {
+    public SimpleRetryingEventListener(ApplicationEventListener<Integer> listener) {
         this.listener = listener;
     }
 

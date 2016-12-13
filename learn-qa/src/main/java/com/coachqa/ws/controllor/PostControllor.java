@@ -29,6 +29,14 @@ public class PostControllor {
 
     @Autowired
     private PostService postService;
+
+    @RequestMapping(value="/{type}/{id}/approve/{val}", method = RequestMethod.POST)
+    public void approvePostContent(@PathVariable(value ="type")Integer postType,
+                                   @PathVariable(value ="id")Integer postId,
+                                   @PathVariable(value ="val")Integer val){
+
+    }
+
     /**
      * No of votes for the question shows people's interest in that particular question.
      * type - can have two values - 1 for question 2 for answer

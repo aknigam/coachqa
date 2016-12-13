@@ -20,6 +20,8 @@ public interface ClassroomService {
 
 	ClassroomMembershipRequest getMemberShipRequests(AppUser user, Integer classroomId);
 
+	boolean isMemberOf(Integer classroomId, int user);
+
 	static class ClassroomJoinRequest
 	{
 		private Integer appUserId;

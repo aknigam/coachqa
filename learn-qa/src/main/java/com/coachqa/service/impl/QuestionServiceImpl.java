@@ -2,12 +2,13 @@ package com.coachqa.service.impl;
 
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.QuestionPostException;
 import com.coachqa.exception.TagsRequiredForQuestionException;
+import com.coachqa.service.ClassroomService;
 import com.coachqa.service.listeners.*;
-import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
 import com.coachqa.service.listeners.question.IndexQuestionListener;
-import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.slf4j.Logger;
@@ -42,31 +43,47 @@ public class QuestionServiceImpl implements QuestionService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	private ApplicationEventListener questionPostPublisher;
-
 	@Autowired
-	private NotificationService notificationService;
+	private ClassroomService classroomService;
+
+	private SimpleEventPublisher questionPostPublisher;
 
 	@PostConstruct
 	public void init(){
 
+		// only stageOneListener may be required here
 		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
+		listeners.add(new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
+		listeners.add(new SimpleRetryingEventListener( new IndexQuestionListener()));
+		listeners.add(new SimpleRetryingEventListener( new UsersNotificationListener()));
 
-		listeners.add(new RetryingEventListener( new ImageToTextQuestionConverterQuestionListener(this)));
-		listeners.add(new RetryingEventListener( new IndexQuestionListener()));
-		questionPostPublisher = new EventPublisher(listeners);
+		questionPostPublisher = new SimpleEventPublisher(listeners);
+
+		ApplicationEventListener stageOneListener = new SimpleRetryingEventListener(new ContentApprovalListener(questionPostPublisher));
+		questionPostPublisher.setStageOneListener(stageOneListener);
+
 	}
 
 	@Override
-	public Question addQuestion(Integer userId, final QuestionModel model) {
+	public Question addQuestion(Integer userId, final QuestionModel questionModel) {
 
-		validateTags(model.getTags());
+		validateTags(questionModel.getTags());
+
+
+		if(!questionModel.isIsPublic() && questionModel.getClassroomId() == null){
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
+		}
+
+		if(questionModel.getClassroomId() != null && !classroomService.isMemberOf(questionModel.getClassroomId(), questionModel.getPostedBy())){
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
+		}
+
 		Question question = null;
 		try{
 			question = transactionTemplate.execute(new TransactionCallback<Question>() {
 				@Override
 				public Question doInTransaction(TransactionStatus transactionStatus) {
-					return  questionDao.addQuestion(model);
+					return  questionDao.addQuestion(questionModel);
 				}
 			});
 		}catch(Exception e){
@@ -74,8 +91,7 @@ public class QuestionServiceImpl implements QuestionService {
 			throw e;
 		}
 		Integer questionId = question.getQuestionId();
-		publishEvent(EventType.QUESTION_POSTED, questionId);
-
+		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId));
 		return question;
 	}
 
@@ -94,8 +110,8 @@ public class QuestionServiceImpl implements QuestionService {
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
+		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId()));
 
-		publishEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId());
 		return questionDao.getQuestionById(answer.getQuestionId());
 	}
 
@@ -103,7 +119,8 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	@Transactional
 	public void updateQuestion(Integer userId, Integer questionId, String questionContent) {
-		publishEvent(EventType.QUESTION_UPDATED, questionId);
+
+		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_UPDATED, questionId));
 	}
 
 
@@ -167,13 +184,5 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public void shareQuestionByEmail(Integer questionId) {}
 
-
-	private void publishEvent(EventType eventType, Integer questionId) {
-		LOGGER.info("Publishing event of type " + eventType.name() + " , event source id is " + questionId);
-
-		ApplicationEvent<Integer> event = new ApplicationEvent(eventType, questionId);
-
-		notificationService.notifyUsers(event);
-	}
 
 }
