@@ -1,6 +1,8 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Classroom;
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.exception.AnswerPostException;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.QuestionPostException;
 import com.coachqa.exception.TagsRequiredForQuestionException;
@@ -104,6 +106,13 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	public Question submitAnswer(Integer userId, AnswerModel answer) {
+
+		Question question = questionDao.getQuestionById(answer.getQuestionId());
+
+		if(!question.isPublic() && classroomService.isMemberOf(question.getClassroom().getClassroomId(),userId)){
+			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
+		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -112,7 +121,8 @@ public class QuestionServiceImpl implements QuestionService {
 		});
 		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId()));
 
-		return questionDao.getQuestionById(answer.getQuestionId());
+
+		return question;
 	}
 
 
@@ -136,7 +146,7 @@ public class QuestionServiceImpl implements QuestionService {
 		Question question = questionDao.getQuestionById(questionId);
 
 		/*
-		Is it right to increment the view everytime the user sees it. Or should there be only one view per user?
+		Is it right to increment the view every time the user sees it. Or should there be only one view per user?
 		 */
 		questionDao.incrementQuestionViews(questionId);
 		question.setNoOfViews(question.getNoOfViews()+1);

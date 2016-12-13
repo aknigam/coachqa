@@ -9,6 +9,7 @@ import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
 
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
@@ -50,12 +51,12 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Autowired
 	private NotificationService notificationService;
 
-	private ApplicationEventListener<Integer> publisher;
+	private EventPublisher<Integer> publisher;
 
 	@PostConstruct
 	public void init(){
 		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
-		this.publisher = new SimpleEventPublisher(listeners, stageOneListene);
+		this.publisher = new SimpleEventPublisher(listeners);
 	}
 
 	@Override
@@ -150,6 +151,11 @@ public class ClassroomsServiceImpl implements ClassroomService{
 			throw new NotAuthorisedToViewMembershipRequestsException(user, classroom);
 		}
 		return classroomDAO.getMembershipRequests(classroomId);
+	}
+
+	@Override
+	public boolean isMemberOf(Integer classroomId, int user) {
+		return false;
 	}
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
