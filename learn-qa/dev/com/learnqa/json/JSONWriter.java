@@ -1,12 +1,11 @@
 package com.learnqa.json;
 
-import java.io.IOException;
-
+import com.coachqa.ws.model.UserModel;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.coachqa.ws.model.UserModel;
+import java.io.IOException;
 
 public class JSONWriter {
 
@@ -19,3 +18,5 @@ public class JSONWriter {
 		System.out.println(s);
 	}
 }
+
+
