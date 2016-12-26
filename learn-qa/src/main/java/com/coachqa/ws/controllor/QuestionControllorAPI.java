@@ -1,6 +1,7 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.QuestionService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -57,13 +59,50 @@ public class QuestionControllorAPI {
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
-	@RequestMapping( method = RequestMethod.GET)
-	public List<Question> getQuestions()
+	/**
+	 * http://localhost:8080/api/questions/list?tagId=12&classroomId=1&ownerId=1&subjectId=1&isPublic=true
+	 *
+	 * @param tagId
+	 * @param classroomId
+	 * @param ownerId
+	 * @param subjectId
+	 * @param isPublic
+     * @return
+     */
+	@RequestMapping( value="/list", method = RequestMethod.GET)
+	public List<Question> getQuestions(
+			@RequestParam(required = false) Integer tagId,
+			@RequestParam(required = false)  Integer classroomId,
+			@RequestParam(required = false)  Integer ownerId,
+			@RequestParam(required = false)  Integer subjectId,
+			@RequestParam(required = false)  Boolean isPublic
+	)
 	{
-		return questionService.getQuestionsByTag(1);
+		/*
+		subject, class, tag , postedby , isPublic
+		 */
+		Question criteria = new Question();
+		if(subjectId != null)
+			criteria.setRefSubjectId(subjectId);
+		if(classroomId != null)
+			criteria.setClassroom(new Classroom(classroomId, ""));
+		if(tagId != null)
+			criteria.setTags(Arrays.asList(new Integer[]{tagId}));
+		if(isPublic != null)
+			criteria.setIsPublic(isPublic);
+		if(ownerId != null){
+			criteria.setPostedBy(new AppUser(ownerId, "", "", "", ""));
+		}
+
+		/*
+		WARNING : if none of the query params are provided then it can lead to loading of all questions in memory.
+		If pagination is implemented then this won't happen though.
+		 */
+
+		return questionService.findSimilarQuestions(criteria, 10);
 	}
 
-	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
+	@RequestMapping(value="/question/{id}" , method = RequestMethod.GET)
 	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
 	{
 		return questionService.getQuestionByIdAndIncrementViewCount(questionId);
@@ -92,7 +131,7 @@ public class QuestionControllorAPI {
 
 
 	@RequestMapping(value="/tag/{tagId}", method = RequestMethod.GET)
-	public Object getAllQuestions(@RequestParam("tagId") int tagId)
+	public Object getAllQuestionsWithTag(@RequestParam("tagId") int tagId)
 	{
 		return questionService.getQuestionsByTag(tagId);
 	}

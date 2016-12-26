@@ -14,16 +14,16 @@ import java.util.List;
 public class Question extends Post implements java.io.Serializable {
 
 	public Integer questionId;
-	private int refSubjectId;
-	private int questionLevelId;
-	private int refQuestionStatusId;
+	private Integer refSubjectId;
+	private Integer questionLevelId;
+	private Integer refQuestionStatusId;
 	
 	private String title;
 	private byte[] image;
 	
 	private Integer noOfViews;
 	private Date lastActiveDate;
-	private boolean isPublic;
+	private Boolean isPublic;
 	private Classroom classroom;
 
 	public QuestionLevelEnum getQuestionLevelEnum() {
@@ -54,7 +54,7 @@ public class Question extends Post implements java.io.Serializable {
 
 	public Question(int refSubjectId, int questionLevelId, AppUser postedBy,
 			int refQuestionStatusId, String title, String content,
-			Date postDate, Date lastActiveDate, boolean isPublic) {
+			Date postDate, Date lastActiveDate, Boolean isPublic) {
 		this.refSubjectId = refSubjectId;
 		this.questionLevelId = questionLevelId;
 		this.refQuestionStatusId = refQuestionStatusId;
@@ -66,7 +66,7 @@ public class Question extends Post implements java.io.Serializable {
 	public Question(int refSubjectId, int questionLevelId, AppUser postedBy,
 			int refQuestionStatusId, String title, String content,
 			Integer noOfViews, Date postDate, Date lastActiveDate,
-			Integer votes, boolean isPublic) {
+			Integer votes, Boolean isPublic) {
 		this.refSubjectId = refSubjectId;
 		this.questionLevelId = questionLevelId;
 		this.refQuestionStatusId = refQuestionStatusId;
@@ -84,28 +84,28 @@ public class Question extends Post implements java.io.Serializable {
 		this.questionId = questionId;
 	}
 
-	public int getRefSubjectId() {
+	public Integer getRefSubjectId() {
 		return this.refSubjectId;
 	}
 
-	public void setRefSubjectId(int refSubjectId) {
+	public void setRefSubjectId(Integer refSubjectId) {
 		this.refSubjectId = refSubjectId;
 	}
 
-	public int getQuestionLevelId() {
+	public Integer getQuestionLevelId() {
 		return this.questionLevelId;
 	}
 
-	public void setQuestionLevelId(int questionLevelId) {
+	public void setQuestionLevelId(Integer questionLevelId) {
 		this.questionLevelId = questionLevelId;
 	}
 
 
-	public int getRefQuestionStatusId() {
+	public Integer getRefQuestionStatusId() {
 		return this.refQuestionStatusId;
 	}
 
-	public void setRefQuestionStatusId(int refQuestionStatusId) {
+	public void setRefQuestionStatusId(Integer refQuestionStatusId) {
 		this.refQuestionStatusId = refQuestionStatusId;
 	}
 
@@ -136,19 +136,19 @@ public class Question extends Post implements java.io.Serializable {
 	}
 
 
-	public boolean isIsPublic() {
+	public Boolean isIsPublic() {
 		return this.isPublic;
 	}
 
-	public void setIsPublic(boolean isPublic) {
+	public void setIsPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
 	}
 
-	public boolean isPublic() {
+	public Boolean isPublic() {
 		return isPublic;
 	}
 
-	public void setPublic(boolean isPublic) {
+	public void setPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
 	}
 
@@ -168,7 +168,5 @@ public class Question extends Post implements java.io.Serializable {
 		this.classroom = classroom;
 	}
 
-	public boolean hasImage() {
-		return false;
-	}
+
 }

@@ -124,6 +124,16 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	 * 12. All public questions
 	 *
 	 *
+	 * joins.add(new JoinTable("post", "p", 1)
+	 .onJoinCondition(new QueryCondition<String>(alias+".QuestionId", "p.PostId")
+	 .withJoinType(JoinTypeEnum.EQUALS)));
+
+	 joins.add(new JoinTable("questionTag", "qt", 3)
+	 .onJoinCondition(new QueryCondition<String>(alias+".questionId", "qt.questionId")
+	 .withJoinType(JoinTypeEnum.EQUALS)));
+
+
+	 *
 	 * ][[][
 	 * @return
 	 */
@@ -134,22 +144,24 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
 		String query = queryBuilder
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
 				//joins.add(new JoinTable("questionTag", "qt")
 //				.onJoinCondition(new QueryCondition<String>(alias+".TagId", "qt.tagId")
 //						.withJoinType(JoinTypeEnum.EQUALS)));u.appuserId = p.postedby
-				.withJoin("AppUser", "u", "appuserId", "p", "postedby")
-				.withSubject(1)
-				.withClassroom(new Classroom(1, ""))
-				.withTag(Arrays.asList(new Integer[]{1, 2}))
+				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
+				.withJoin("post", "p", "postId", "q", "questionId", 1)
+				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
+				.withSubject(q.getRefSubjectId())
+				.withClassroom(q.getClassroom())
+				.withTag(q.getTags())
 //				.withDateRange()
 //				.withMostViewed()
 //				.withDifficultyLevel(q.getQuestionLevelEnum())
 //				.withAnsweredQuestionsOnly()
 //				.withMostActiveQuestions()
-				.withPostedByUser(new AppUser(1, "", "", "", ""))
-				.withPublicOnly(true)
+				.withPostedByUser(q.getPostedBy())
+				.withPublicOnly(q.isPublic())
 				.buildQuery();
 
 		RowMapper<Question> qm= new QuestionMapper();
@@ -169,7 +181,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				//joins.add(new JoinTable("questionTag", "qt")
 //				.onJoinCondition(new QueryCondition<String>(alias+".TagId", "qt.tagId")
 //						.withJoinType(JoinTypeEnum.EQUALS)));u.appuserId = p.postedby
-				.withJoin("AppUser", "u", "appuserId", "p", "postedby")
+				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
+				.withJoin("post", "p", "postId", "q", "questionId", 1)
+				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(1)
 				.withClassroom(new Classroom(1, ""))
 				.withTag(Arrays.asList(new Integer[]{1, 2}))
@@ -305,8 +319,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			StringBuilder query = new StringBuilder();
 
 			query.append("SELECT").append("\n");
+			int j = 0;
 			for (String col : selectCols){
-				query.append(col).append("\n");
+				if(j++ == selectCols.size() -1)
+					query.append(col).append("\n");
+				else
+					query.append(col).append(",").append("\n");
 			}
 
 
@@ -317,6 +335,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				query.append("JOIN").append(SPACE).append(jt.tableName).append(SPACE).append(jt.alias)
 						.append(SPACE).append("ON").append(SPACE).append(jt.joinCondition.getAndCondition())
 						.append("\n");
+			}
+			if(CollectionUtils.isEmpty(conditions)){
+				return query.toString();
 			}
 			query.append("WHERE ");
 			int i = 0;
@@ -331,7 +352,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 		public QuestionQueryBuilder withSubject(Integer refSubjectId) {
-			if(refSubjectId != null)
+			if(refSubjectId != null && refSubjectId != 0)
 				conditions.add(new QueryCondition<Integer>("RefSubjectId", refSubjectId));
 			return this;
 		}
@@ -350,9 +371,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				return this;
 			}
 			conditions.add(new QueryCondition<Integer>("TagId", tagId.get(0)).withJoinType(JoinTypeEnum.EQUALS));
-			joins.add(new JoinTable("questionTag", "qt", 3)
-					.onJoinCondition(new QueryCondition<String>(alias+".TagId", "qt.tagId")
-							.withJoinType(JoinTypeEnum.EQUALS)));
+//			joins.add(new JoinTable("questionTag", "qt", 3)
+//					.onJoinCondition(new QueryCondition<String>(alias+".questionId", "qt.questionId")
+//							.withJoinType(JoinTypeEnum.EQUALS)));
 
 			return this;
 		}
@@ -380,14 +401,20 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		}
 
 		public QuestionQueryBuilder withPostedByUser(AppUser postedBy) {
+			if(postedBy == null)
+				return this;
+
+
 			conditions.add(new QueryCondition<Integer>("PostedBy", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
-			joins.add(new JoinTable("post", "p", 1)
-					.onJoinCondition(new QueryCondition<String>(alias+".QuestionId", "p.PostId")
-							.withJoinType(JoinTypeEnum.EQUALS)));
+//			joins.add(new JoinTable("post", "p", 1)
+//					.onJoinCondition(new QueryCondition<String>(alias+".QuestionId", "p.PostId")
+//							.withJoinType(JoinTypeEnum.EQUALS)));
 			return this;
 		}
 
-		public QuestionQueryBuilder withPublicOnly(boolean aPublic) {
+		public QuestionQueryBuilder withPublicOnly(Boolean aPublic) {
+			if(aPublic == null)
+				return this;
 			conditions.add(new QueryCondition<Integer>("IsPublic", aPublic? 1: 0).withJoinType(JoinTypeEnum.EQUALS));
 			return this;
 		}
@@ -403,8 +430,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			return this;
 		}
 
-		public QuestionQueryBuilder withJoin(String joinTableName, String joinTableALias, String col, String targetTableAlias, String targetCol) {
-			joins.add(new JoinTable(joinTableName, joinTableALias, 2)
+		public QuestionQueryBuilder withJoin(String joinTableName, String joinTableALias, String col, String targetTableAlias, String targetCol, int joinOrder) {
+			joins.add(new JoinTable(joinTableName, joinTableALias, joinOrder)
 					.onJoinCondition(new QueryCondition<String>(targetTableAlias+"."+targetCol, joinTableALias+"."+col)
 							.withJoinType(JoinTypeEnum.EQUALS)));
 			return this;
