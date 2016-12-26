@@ -43,7 +43,7 @@ public class QuestionControllorAPI {
 
 
 		Integer addedQuestionId = addedQuestion.getQuestionId();
-		List<Integer> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestionId, 5);
+		List<Question> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestion, 5);
 
 		return addedQuestion;
 	}
@@ -57,6 +57,11 @@ public class QuestionControllorAPI {
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
+	@RequestMapping( method = RequestMethod.GET)
+	public List<Question> getQuestions()
+	{
+		return questionService.getQuestionsByTag(1);
+	}
 
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
 	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
@@ -86,8 +91,8 @@ public class QuestionControllorAPI {
 
 
 
-	@RequestMapping(method = RequestMethod.GET)
-	public Object getAllQuestions(@RequestParam("tag") int tagId)
+	@RequestMapping(value="/tag/{tagId}", method = RequestMethod.GET)
+	public Object getAllQuestions(@RequestParam("tagId") int tagId)
 	{
 		return questionService.getQuestionsByTag(tagId);
 	}

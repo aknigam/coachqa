@@ -155,7 +155,12 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	@Override
 	public boolean isMemberOf(Integer classroomId, int user) {
-		return false;
+		return true;
+	}
+
+	@Override
+	public List<Classroom> getUserMemberships(AppUser user) {
+		return classroomDAO.getUserMemberships(user);
 	}
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {

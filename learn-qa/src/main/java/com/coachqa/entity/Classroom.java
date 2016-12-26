@@ -23,6 +23,11 @@ public class Classroom implements java.io.Serializable {
 	public Classroom() {
 	}
 
+	public Classroom(int id, String name) {
+		className = name;
+		classroomId = id;
+	}
+
 	public Integer getClassroomId() {
 		return this.classroomId;
 	}

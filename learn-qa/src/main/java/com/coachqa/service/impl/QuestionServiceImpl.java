@@ -1,6 +1,5 @@
 package com.coachqa.service.impl;
 
-import com.coachqa.entity.Classroom;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.AnswerPostException;
 import com.coachqa.exception.ApplicationErrorCode;
@@ -31,7 +30,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -178,9 +176,30 @@ public class QuestionServiceImpl implements QuestionService {
 			return;
 	}
 
+	/**
+	 * Following items can be specified in the criteria:
+	 *
+	 * 1. Subject
+	 * 2. Classroom
+	 * 3. Tags
+	 * 4. Date range (last 1 month, Last 1 week etc)
+	 * 5. Most viewed
+	 * 6. Difficulty level
+	 * 7. Rating
+	 * 8. Unanswered questions
+	 * 9. Most active questions
+	 * 10. Questions posted by a user
+	 * 11. Questions answered by a user
+	 * 12. All public questions
+	 *
+	 * @param criteria
+	 * @param noOfResults
+     * @return
+     */
 	@Override
-	public List<Integer> findSimilarQuestions(Integer questionId, int noOfResults) {
-		return Collections.emptyList();
+	public List<Question> findSimilarQuestions(Question criteria, int noOfResults) {
+
+		return questionDao.findSimilarQuestions(criteria);
 	}
 
 	private boolean isAuthorizedToRateQuestion() {

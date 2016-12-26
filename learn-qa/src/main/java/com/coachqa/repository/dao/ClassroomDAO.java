@@ -1,5 +1,6 @@
 package com.coachqa.repository.dao;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
@@ -20,4 +21,6 @@ public interface ClassroomDAO {
 	void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments);
 
 	ClassroomMembershipRequest getMembershipRequests(Integer classroomId);
+
+	List<Classroom> getUserMemberships(AppUser user);
 }

@@ -89,7 +89,7 @@ public interface QuestionService {
 	Question getQuestionByIdAndIncrementViewCount(Integer questionId);
 
 
-	List<Integer> findSimilarQuestions(Integer questionId, int noOfResults);
+	List<Question> findSimilarQuestions(Question questionId, int noOfResults);
 
 	List<Question> getQuestionsByTag(int tagId);
 

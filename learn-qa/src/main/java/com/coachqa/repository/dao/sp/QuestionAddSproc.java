@@ -20,14 +20,16 @@ import com.coachqa.ws.model.QuestionModel;
 
 public class QuestionAddSproc
 {
-	
 
+
+	private static final String P_ISPUBLIC = "pIsPublic";
 	private SimpleJdbcCall addOrUpdateUserSproc;
 
 	private static String P_POSTEDBY		 = "pPostedBy";
 	private static String P_TITLE		 = "pTitle";
 	private static String P_CONTENT		 = "pContent";
 	private static final String P_SUBJECT = "pRefSubjectId";
+	private static final String P_CLASSROOMID = "pClassroomId";
 
 	public QuestionAddSproc(DataSource dataSource)
 	{
@@ -37,13 +39,18 @@ public class QuestionAddSproc
 		.useInParameterNames(
 				P_POSTEDBY,
 				P_TITLE,
-				P_CONTENT
+				P_CONTENT,
+				P_SUBJECT,
+				P_CLASSROOMID,
+				P_ISPUBLIC
 		)
 		.declareParameters(
 			new SqlParameter(P_POSTEDBY	,Types.INTEGER),
 			new SqlParameter(P_TITLE	,Types.VARCHAR),
 			new SqlParameter(P_CONTENT	,Types.VARCHAR),
-			new SqlParameter(P_SUBJECT, Types.INTEGER)
+			new SqlParameter(P_SUBJECT, Types.INTEGER),
+				new SqlParameter(P_CLASSROOMID, Types.INTEGER),
+				new SqlParameter(P_ISPUBLIC, Types.TINYINT)
 		)
 		.returningResultSet("question", new QuestionMapper());
 
@@ -54,8 +61,11 @@ public class QuestionAddSproc
 		MapSqlParameterSource in = new MapSqlParameterSource();
 		in.addValue(P_POSTEDBY, model.getPostedBy());
 		in.addValue(P_TITLE, model.getTitle());
-		in.addValue(P_SUBJECT, model.getRefSubjectId());
 		in.addValue(P_CONTENT, model.getContent());
+		in.addValue(P_SUBJECT, model.getRefSubjectId());
+		in.addValue(P_CLASSROOMID,  model.getClassroomId());
+		in.addValue(P_ISPUBLIC,  model.isPublic());
+
 		
 		Map<String, Object> out = addOrUpdateUserSproc.execute(in);
 		

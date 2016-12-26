@@ -4,6 +4,8 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 
+import java.util.List;
+
 public interface ClassroomService {
 
 	Classroom getClassroom(Integer classroomId);
@@ -21,6 +23,8 @@ public interface ClassroomService {
 	ClassroomMembershipRequest getMemberShipRequests(AppUser user, Integer classroomId);
 
 	boolean isMemberOf(Integer classroomId, int user);
+
+	List<Classroom> getUserMemberships(AppUser user);
 
 	static class ClassroomJoinRequest
 	{

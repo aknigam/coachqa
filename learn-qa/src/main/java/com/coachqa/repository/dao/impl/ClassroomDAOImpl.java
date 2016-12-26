@@ -23,6 +23,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -170,6 +171,11 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		
 		classroomMembershipRequest.setRequests( requests );
 		return classroomMembershipRequest;
+	}
+
+	@Override
+	public List<Classroom> getUserMemberships(AppUser user) {
+		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
 	}
 
 }

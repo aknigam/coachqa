@@ -15,8 +15,7 @@ trait SterlingBaseDataHelper {
 
   def generateTuid_long(): Long = {
     try {
-      val tuid = Ue2eTuidCreator.getNewTuid(Ue2eTuidCreator.genrateEmailAddress)
-      return tuid.toLong
+      return 1l
     } catch {
       case ex: Exception =>
         println("There was an Exception in UE2E service")
@@ -67,7 +66,7 @@ trait SterlingBaseDataHelper {
 
   def generateOrderId(): String = {
     //create a random 19 digits number starting with 88888
-    generateOrderId_Long.toString
+    ""
   }
 
 

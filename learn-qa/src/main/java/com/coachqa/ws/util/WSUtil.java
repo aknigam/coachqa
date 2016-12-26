@@ -14,7 +14,9 @@ public class WSUtil {
 
 	public static AppUser getUser(HttpSession session, UserService userService) {
 		String username = (String) session.getAttribute("username");
+		username= "anigam@expedia.com";
 		if(username!=null && session.getAttribute("userId") == null){
+			// remove this hardcoding once the user identification is done.
 			AppUser appUser = userService.getUserByEmail(username);
 			session.setAttribute("userId", appUser);
 		}

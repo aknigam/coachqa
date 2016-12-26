@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/classrooms")
@@ -105,6 +106,17 @@ public class ClassroomControllor {
 
 		return membershipRequest;
 	}
+
+
+	@RequestMapping(value="/usermemberships", method = RequestMethod.GET)
+	public @ResponseBody List<Classroom> getUsermemberships(HttpServletRequest request){
+
+		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		return classroomService.getUserMemberships(user);
+
+	}
+
+
 
 	
 

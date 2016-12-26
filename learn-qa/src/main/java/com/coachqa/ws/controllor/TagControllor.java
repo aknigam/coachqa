@@ -26,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api/tags")
 public class TagControllor {
 
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     TagService tagService;
 
@@ -65,7 +66,8 @@ public class TagControllor {
     @ResponseBody
     public List<Tag> getMatchingTagsByName(HttpServletRequest request, @RequestParam("q") String name){
 
-        return tagService.findSimilarTags(name, 6);
+        List<Tag> tags = tagService.findSimilarTags(name, PAGE_SIZE);
+        return tags;
     }
 
     @RequestMapping(value="/get",method = RequestMethod.GET)

@@ -2,6 +2,8 @@ package com.coachqa.entity;
 
 // Generated Dec 21, 2014 1:45:02 PM by Hibernate Tools 3.4.0.CR1
 
+import com.coachqa.enums.QuestionLevelEnum;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +25,24 @@ public class Question extends Post implements java.io.Serializable {
 	private Date lastActiveDate;
 	private boolean isPublic;
 	private Classroom classroom;
+
+	public QuestionLevelEnum getQuestionLevelEnum() {
+		return questionLevelEnum;
+	}
+
+	public void setQuestionLevelEnum(QuestionLevelEnum questionLevelEnum) {
+		this.questionLevelEnum = questionLevelEnum;
+	}
+
+	private QuestionLevelEnum questionLevelEnum;
+
+	public List<Integer> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Integer> tags) {
+		this.tags = tags;
+	}
 
 	private List<Integer> tags;
 
