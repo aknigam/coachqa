@@ -20,7 +20,6 @@ import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.QuestionService;
 import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,34 +64,34 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
-	public Question addQuestion(Integer userId, final QuestionModel questionModel) {
+	public Question addQuestion(Integer userId, final Question question) {
 
-		validateTags(questionModel.getTags());
+		validateTags(question.getTags());
 
 
-		if(!questionModel.isIsPublic() && questionModel.getClassroomId() == null){
+		if(!question.isPublicQuestion() && ( question.getClassroom() == null ) ){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(questionModel.getClassroomId() != null && !classroomService.isMemberOf(questionModel.getClassroomId(), questionModel.getPostedBy())){
+		if(question.getClassroom() != null && !classroomService.isMemberOf(question.getClassroom().getClassroomId(), question.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 
-		Question question = null;
+		Question qstn = null;
 		try{
-			question = transactionTemplate.execute(new TransactionCallback<Question>() {
+			qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 				@Override
 				public Question doInTransaction(TransactionStatus transactionStatus) {
-					return  questionDao.addQuestion(questionModel);
+					return  questionDao.addQuestion(question);
 				}
 			});
 		}catch(Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add a question");
 			throw e;
 		}
-		Integer questionId = question.getQuestionId();
+		Integer questionId = qstn.getQuestionId();
 		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId));
-		return question;
+		return qstn;
 	}
 
 	private void validateTags(List<Integer> tags) {
@@ -107,7 +106,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(!question.isPublic() && classroomService.isMemberOf(question.getClassroom().getClassroomId(),userId)){
+		if(!question.isPublicQuestion() && classroomService.isMemberOf(question.getClassroom().getClassroomId(),userId)){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
 

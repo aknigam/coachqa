@@ -1,5 +1,8 @@
 package com.coachqa.entity;
 
+import com.coachqa.enums.PostTypeEnum;
+
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +12,30 @@ import java.util.List;
  */
 public class Post {
 
+    
+    private Integer postId;
+
+    private PostTypeEnum postTypeEnum;
+    
+    private Integer noOfViews;
+    
+    private AppUser postedBy;
+    
+    private Date postDate;
+    
+    private Integer votes;
+    
+    private String content;
+    
+    private boolean approvalStatus;
+    
+    private String approvalComment;
+    
+
+
+    public Post(){
+
+    }
 
     public Integer getPostId() {
         return postId;
@@ -18,84 +45,67 @@ public class Post {
         this.postId = postId;
     }
 
-    public Integer postId;
-    private AppUser postedBy;
-
-    private String content;
-    private byte[] image;
-
-
-    private Date postDate;
-    private Date lastActiveDate;
-    private Integer votes;
-
-    public Post() {
+    public Integer getNoOfViews() {
+        return noOfViews;
     }
 
-    public Post(int refSubjectId, int questionLevelId, AppUser postedBy,
-                    int refQuestionStatusId, String title, String content,
-                    Date postDate, Date lastActiveDate, boolean isPublic) {
-        this.postedBy = postedBy;
-        this.content = content;
-        this.postDate = postDate;
-        this.lastActiveDate = lastActiveDate;
-       }
-
-    public Post(int refSubjectId, int questionLevelId, AppUser postedBy,
-                    int refQuestionStatusId, String title, String content,
-                    Integer noOfViews, Date postDate, Date lastActiveDate,
-                    Integer votes, boolean isPublic) {
-        this.postedBy = postedBy;
-        this.content = content;
-        this.postDate = postDate;
-        this.lastActiveDate = lastActiveDate;
-        this.votes = votes;
-
+    public void setNoOfViews(Integer noOfViews) {
+        this.noOfViews = noOfViews;
     }
-
 
     public AppUser getPostedBy() {
-        return this.postedBy;
+        return postedBy;
     }
 
     public void setPostedBy(AppUser postedBy) {
         this.postedBy = postedBy;
     }
 
-    public String getContent() {
-        return this.content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Date getPostDate() {
-        return this.postDate;
+        return postDate;
     }
 
     public void setPostDate(Date postDate) {
         this.postDate = postDate;
     }
 
-    public Date getLastActiveDate() {
-        return this.lastActiveDate;
-    }
-
-    public void setLastActiveDate(Date lastActiveDate) {
-        this.lastActiveDate = lastActiveDate;
-    }
-
     public Integer getVotes() {
-        return this.votes;
+        return votes;
     }
 
     public void setVotes(Integer votes) {
         this.votes = votes;
     }
 
-    public boolean hasImage() {
-        return false;
+    public String getContent() {
+        return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
+    public boolean getApprovalStatus() {
+        return approvalStatus;
+    }
+
+    public void setApprovalStatus(boolean approvalStatus) {
+        this.approvalStatus = approvalStatus;
+    }
+
+    public String getApprovalComment() {
+        return approvalComment;
+    }
+
+    public void setApprovalComment(String approvalComment) {
+        this.approvalComment = approvalComment;
+    }
+
+    public PostTypeEnum getPostTypeEnum() {
+        return postTypeEnum;
+    }
+
+    public void setPostTypeEnum(PostTypeEnum postTypeEnum) {
+        this.postTypeEnum = postTypeEnum;
+    }
 }

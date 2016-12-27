@@ -1,22 +1,19 @@
 package com.coachqa.repository.dao.sp;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Question;
+import com.coachqa.repository.dao.mapper.QuestionMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
-import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Question;
-import com.coachqa.repository.dao.mapper.QuestionMapper;
-import com.coachqa.ws.model.QuestionModel;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.List;
+import java.util.Map;
 
 public class QuestionAddSproc
 {
@@ -57,14 +54,17 @@ public class QuestionAddSproc
 	}
 
 
-	public Question addQuestion(QuestionModel model) {
+	public Question addQuestion(Question model) {
 		MapSqlParameterSource in = new MapSqlParameterSource();
-		in.addValue(P_POSTEDBY, model.getPostedBy());
+		in.addValue(P_POSTEDBY, model.getPostedBy().getAppUserId());
 		in.addValue(P_TITLE, model.getTitle());
 		in.addValue(P_CONTENT, model.getContent());
 		in.addValue(P_SUBJECT, model.getRefSubjectId());
-		in.addValue(P_CLASSROOMID,  model.getClassroomId());
-		in.addValue(P_ISPUBLIC,  model.isPublic());
+		if(model.getClassroom() != null)
+			in.addValue(P_CLASSROOMID,  model.getClassroom().getClassroomId());
+		else
+			in.addValue(P_CLASSROOMID,  null);
+		in.addValue(P_ISPUBLIC,  model.isPublicQuestion());
 
 		
 		Map<String, Object> out = addOrUpdateUserSproc.execute(in);

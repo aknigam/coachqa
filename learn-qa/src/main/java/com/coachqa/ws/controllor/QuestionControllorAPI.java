@@ -7,7 +7,6 @@ import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +28,11 @@ public class QuestionControllorAPI {
 
 
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public Question submitQuestion(@RequestBody QuestionModel question, HttpServletRequest request, HttpServletResponse response)
+	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
 	{
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 
-		question.setPostedBy(user.getAppUserId());
-
-
-		List<String> newTags = question.getNewTags();
-		// add new tags by making service calls.
-		// put the generated tagids in the question and then submit the question.
+		question.setPostedBy(user);
 
 		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), question);
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
@@ -89,7 +83,7 @@ public class QuestionControllorAPI {
 		if(tagId != null)
 			criteria.setTags(Arrays.asList(new Integer[]{tagId}));
 		if(isPublic != null)
-			criteria.setIsPublic(isPublic);
+			criteria.setPublicQuestion(isPublic);
 		if(ownerId != null){
 			criteria.setPostedBy(new AppUser(ownerId, "", "", "", ""));
 		}

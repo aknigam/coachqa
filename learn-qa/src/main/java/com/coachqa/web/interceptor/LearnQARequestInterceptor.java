@@ -52,7 +52,7 @@ public class LearnQARequestInterceptor extends HandlerInterceptorAdapter {
 		
 		HomePageModel hpm = new HomePageModel();
 		
-		hpm.setUsername(user.getName());
+//		hpm.setUsername(user.getName());
 		hpm.setUserId(user.getAppUserId());
 		modelAndView.addObject("userinfo", hpm);
 		super.postHandle(request, response, handler, modelAndView);

@@ -1,6 +1,8 @@
 package com.coachqa.enums;
 
 
+
+
 public enum PostTypeEnum {
 
     QUESTION(1),
@@ -26,5 +28,6 @@ public enum PostTypeEnum {
         throw new RuntimeException("Invalid type: "+ type);
 
     }
+
 
 }

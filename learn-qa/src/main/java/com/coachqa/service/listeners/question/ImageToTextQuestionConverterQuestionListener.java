@@ -28,9 +28,9 @@ public class ImageToTextQuestionConverterQuestionListener extends QuestionPostLi
 
     private void sendNotificationIfQuestionHasImage(Integer questionId) {
         Question question = questionService.getQuestionById(questionId);
-        if(question.hasImage()){
-            // send notification to convert image to text.
-        }
+//        if(question.hasImage()){
+//            // send notification to convert image to text.
+//        }
     }
 
     @Override

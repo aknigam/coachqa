@@ -2,13 +2,12 @@ package com.coachqa.repository.dao;
 
 import com.coachqa.entity.Question;
 import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
 
 import java.util.List;
 
 public interface QuestionDAO {
 
-	Question addQuestion(QuestionModel model);
+	Question addQuestion(Question question);
 
 	Question getQuestionById(Integer questionId);
 

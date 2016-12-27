@@ -1,6 +1,8 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.*;
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
+import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
@@ -9,7 +11,6 @@ import com.coachqa.repository.dao.sp.QuestionAddSproc;
 import com.coachqa.repository.dao.sp.QuestionGetSproc;
 import com.coachqa.util.CollectionUtils;
 import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,8 +20,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-
-
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -48,7 +47,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
     @CachePut(value="questions", key="#result.questionId")
 	@Override
-	public Question addQuestion(QuestionModel question) {
+	public Question addQuestion(Question question) {
 
 		Question addedQuestion = questionAddSproc.addQuestion(question);
 		int questionId =  addedQuestion.getQuestionId();
@@ -144,7 +143,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
 		String query = queryBuilder
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
 				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
@@ -153,7 +152,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withClassroom(q.getClassroom())
 				.withTag(q.getTags())
 				.withPostedByUser(q.getPostedBy())
-				.withPublicOnly(q.isPublic())
+				.withPublicOnly(q.isPublicQuestion())
 				.buildQuery();
 
 		RowMapper<Question> qm= new QuestionMapper();

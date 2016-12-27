@@ -3,7 +3,7 @@ package com.coachqa.service;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
+
 
 import java.util.List;
 
@@ -25,24 +25,24 @@ public interface QuestionService {
 	 * 1. If the question is asked to specific users then a notification should go to them.
 	 * 2. Add to index for searching. Even the pictures.
 	 * 3. Email notifications to the one who posted and to the community that a new question is posted.
-	 * 
-	 *  @param user - who posted the question
-	 * @param visibility - public or restricted to group
-	 * @param classroom - in case this is a restricted question
-	 * @param subject - math, physics, chemistry etc
-	 * @param tags - like algebra, mechanics etc. Like a sub-category of subject.
-	 * @param question content g
+	 *   user - who posted the question
+	 * visibility - public or restricted to group
+	 * classroom - in case this is a restricted question
+	 * subject - math, physics, chemistry etc
+	 * tags - like algebra, mechanics etc. Like a sub-category of subject.
+	 * question content g
+	 * model
 	 * 
 	 */
 
 	//void postQuestion();
-	Question addQuestion(Integer userId, QuestionModel model);
+	Question addQuestion(Integer userId, Question model);
 	
 	
 	/**
 	 * using this feature one can request somebody to answer this question.
-	 * @param user - who posted the question/ should others also be able to ask - probably YES. 
-	 * @param professor - who is requested to answer the question
+	 * user - who posted the question/ should others also be able to ask - probably YES. 
+	 * professor - who is requested to answer the question
 	 */
 	void requestionAnswerFrom(Integer userId, Integer questionId, List<String> users);
 	
@@ -55,9 +55,6 @@ public interface QuestionService {
 	/**
 	 * Ability to do the rating of difficulty level - EASY, MEDIUM , TOUGH
 	 * Only some privileged users will be able to do so
-	 * @param appUserId
-	 * @param questionId
-	 * @param meduim
 	 */
 	void rateQuestion(Integer userId, Integer questionId, QuestionRatingEnum meduim);
 	
@@ -69,10 +66,10 @@ public interface QuestionService {
 	
 	/**
 	 * Search fields:
-	 * @param text - that needs to be searched
-	 * @param by question post date, time
-	 * @param posted by someone
-	 * @param tag - other info must also be provided along with this. This alone would not yield good results. 
+	 * text - that needs to be searched
+	 * by question post date, time
+	 * posted by someone
+	 * tag - other info must also be provided along with this. This alone would not yield good results. 
 	 * 
 	 */
 	void searchQuestion();

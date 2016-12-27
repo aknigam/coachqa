@@ -3,6 +3,8 @@ package com.coachqa.repository.dao.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.coachqa.enums.PostTypeEnum;
+import com.coachqa.enums.QuestionStatusEnum;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.coachqa.entity.AppUser;
@@ -15,13 +17,14 @@ public class QuestionMapper implements RowMapper<Question> {
 	{
 		Question q= new Question();
 		q.setQuestionId(rs.getInt("QuestionId"));
+		q.setPostTypeEnum(PostTypeEnum.getPostType(rs.getInt("postType")));
 		q.setTitle(rs.getString("Title"));
 		q.setContent(rs.getString("Content"));
-		q.setIsPublic(rs.getBoolean("IsPublic"));
+		q.setPublicQuestion(rs.getBoolean("IsPublic"));
 		q.setLastActiveDate(rs.getDate("LastActiveDate"));
 		q.setPostDate(rs.getDate("PostDate"));
 		q.setNoOfViews(rs.getInt("NoOfViews"));
-		q.setRefQuestionStatusId(rs.getInt("RefQuestionStatusId"));
+		q.setRefQuestionStatusId(QuestionStatusEnum.from(rs.getInt("RefQuestionStatusId")) );
 		q.setVotes(rs.getInt("Votes"));
 		
 		AppUser postedBy = new AppUser();

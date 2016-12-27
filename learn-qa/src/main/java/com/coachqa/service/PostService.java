@@ -1,12 +1,7 @@
 package com.coachqa.service;
 
-import com.coachqa.entity.Question;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
-import com.coachqa.ws.model.AnswerModel;
-import com.coachqa.ws.model.QuestionModel;
-
-import java.util.List;
 
 public interface PostService {
 
