@@ -1,6 +1,6 @@
 package com.expedia.e3.sterling.util
 
-import com.expedia.e3.sterling.util.Ue2eTuidCreator
+
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 

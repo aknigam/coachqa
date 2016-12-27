@@ -146,20 +146,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
-				//joins.add(new JoinTable("questionTag", "qt")
-//				.onJoinCondition(new QueryCondition<String>(alias+".TagId", "qt.tagId")
-//						.withJoinType(JoinTypeEnum.EQUALS)));u.appuserId = p.postedby
 				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
 				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroom())
 				.withTag(q.getTags())
-//				.withDateRange()
-//				.withMostViewed()
-//				.withDifficultyLevel(q.getQuestionLevelEnum())
-//				.withAnsweredQuestionsOnly()
-//				.withMostActiveQuestions()
 				.withPostedByUser(q.getPostedBy())
 				.withPublicOnly(q.isPublic())
 				.buildQuery();
@@ -178,20 +170,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
-				//joins.add(new JoinTable("questionTag", "qt")
-//				.onJoinCondition(new QueryCondition<String>(alias+".TagId", "qt.tagId")
-//						.withJoinType(JoinTypeEnum.EQUALS)));u.appuserId = p.postedby
 				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
 				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(1)
 				.withClassroom(new Classroom(1, ""))
 				.withTag(Arrays.asList(new Integer[]{1, 2}))
-//				.withDateRange()
-//				.withMostViewed()
-//				.withDifficultyLevel(q.getQuestionLevelEnum())
-//				.withAnsweredQuestionsOnly()
-//				.withMostActiveQuestions()
 				.withPostedByUser(new AppUser(1, "", "", "", ""))
 				.withPublicOnly(true)
 				.buildQuery();
@@ -371,10 +355,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				return this;
 			}
 			conditions.add(new QueryCondition<Integer>("TagId", tagId.get(0)).withJoinType(JoinTypeEnum.EQUALS));
-//			joins.add(new JoinTable("questionTag", "qt", 3)
-//					.onJoinCondition(new QueryCondition<String>(alias+".questionId", "qt.questionId")
-//							.withJoinType(JoinTypeEnum.EQUALS)));
-
 			return this;
 		}
 
@@ -406,9 +386,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 			conditions.add(new QueryCondition<Integer>("PostedBy", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
-//			joins.add(new JoinTable("post", "p", 1)
-//					.onJoinCondition(new QueryCondition<String>(alias+".QuestionId", "p.PostId")
-//							.withJoinType(JoinTypeEnum.EQUALS)));
 			return this;
 		}
 
