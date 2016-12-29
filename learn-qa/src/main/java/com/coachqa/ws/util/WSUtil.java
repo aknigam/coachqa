@@ -23,6 +23,16 @@ public class WSUtil {
 		return (AppUser) session.getAttribute("userId") ;
 	}
 
+	public static AppUser getUser(HttpServletRequest request, UserService userService) {
+
+		String username = request.getHeader("username");
+		if(username ==  null){
+			return null;
+		}
+		return userService.getUserByEmail(username);
+
+	}
+
 	public static void setLocationHeader(HttpServletRequest request,
 			HttpServletResponse response, Integer resourceIdentifier) {
 		

@@ -38,7 +38,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 		userAddOrUpdateSproc = new AppUserAddSproc(getDataSource());
 	}
 
-	private static String m_userByEmailQuery = "select AppUserId, firstname, email  from AppUser where Email = ?";
+	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from AppUser where Email = ?";
 	
 	@Override
 	public AppUser getUserByEmail(String userEmail) {
@@ -52,6 +52,9 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					
 					AppUser user = new AppUser();
 					user.setAppUserId(rs.getInt("AppUserId"));
+					user.setEmail(rs.getString("email"));
+					user.setFirstName(rs.getString("firstname"));
+					user.setLastName(rs.getString("lastname"));
 					return user;
 				}
 			});

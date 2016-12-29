@@ -65,10 +65,11 @@ public class UserControllor {
 	@RequestMapping(value="/ping",method = RequestMethod.GET)
 	public @ResponseBody String ping(String ping, HttpServletRequest request)
 	{
-		HttpSession session = request.getSession();
+
+		AppUser user = WSUtil.getUser(request, userService);
 		
-		if(session.getAttribute("userId")!= null)
-			return "TRUE"+ session.getAttribute("userId");
+		if(user != null)
+			return "TRUE"+ user.getFirstName() +" "+ user.getLastName();
 		else 
 			return "FALSE";
 		

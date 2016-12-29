@@ -30,7 +30,8 @@ public class QuestionControllorAPI {
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
 	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
 	{
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+
+		AppUser user = WSUtil.getUser(request, userService);
 
 		question.setPostedBy(user);
 
