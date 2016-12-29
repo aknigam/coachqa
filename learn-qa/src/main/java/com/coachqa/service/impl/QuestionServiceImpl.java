@@ -6,10 +6,7 @@ import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.QuestionPostException;
 import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.service.ClassroomService;
-import com.coachqa.service.listeners.*;
-import com.coachqa.service.listeners.question.SimpleEventPublisher;
-import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
-import com.coachqa.service.listeners.question.IndexQuestionListener;
+import com.coachqa.service.listeners.question.EventPublisher;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.slf4j.Logger;
@@ -20,6 +17,7 @@ import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.QuestionService;
 import com.coachqa.ws.model.AnswerModel;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +25,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,35 +41,20 @@ public class QuestionServiceImpl implements QuestionService {
 	@Autowired
 	private ClassroomService classroomService;
 
-	private SimpleEventPublisher questionPostPublisher;
-
-	@PostConstruct
-	public void init(){
-
-		// only stageOneListener may be required here
-		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
-		listeners.add(new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
-		listeners.add(new SimpleRetryingEventListener( new IndexQuestionListener()));
-		listeners.add(new SimpleRetryingEventListener( new UsersNotificationListener()));
-
-		questionPostPublisher = new SimpleEventPublisher(listeners);
-
-		ApplicationEventListener stageOneListener = new SimpleRetryingEventListener(new ContentApprovalListener(questionPostPublisher));
-		questionPostPublisher.setStageOneListener(stageOneListener);
-
-	}
+	@Autowired
+	@Lazy
+	private EventPublisher eventPublisher;
 
 	@Override
-	public Question addQuestion(Integer userId, final Question question) {
+	public Question postQuestion(Integer userId, final Question question) {
 
 		validateTags(question.getTags());
 
-
-		if(!question.isPublicQuestion() && ( question.getClassroom() == null ) ){
+		if(isPrivateQuestionWithoutClassroom(question)){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(question.getClassroom() != null && !classroomService.isMemberOf(question.getClassroom().getClassroomId(), question.getPostedBy().getAppUserId())){
+		if(isNotMemberofProvidedClassroom(question, question.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 
@@ -82,31 +63,41 @@ public class QuestionServiceImpl implements QuestionService {
 			qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 				@Override
 				public Question doInTransaction(TransactionStatus transactionStatus) {
-					return  questionDao.addQuestion(question);
+					return  questionDao.addQuestionWithTags(question);
 				}
 			});
 		}catch(Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add a question");
 			throw e;
 		}
+
 		Integer questionId = qstn.getQuestionId();
-		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId));
+		eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId));
 		return qstn;
+	}
+
+	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {
+		return question.getClassroom() != null && !classroomService.isMemberOf(question.getClassroom().getClassroomId(), question.getPostedBy().getAppUserId());
+	}
+
+	private boolean isPrivateQuestionWithoutClassroom(Question question) {
+		return !question.isPublicQuestion() && ( question.getClassroom() == null );
 	}
 
 	private void validateTags(List<Integer> tags) {
 		if(tags ==  null || tags.isEmpty()){
+			// should we relax this rule ?
 			throw new TagsRequiredForQuestionException(ApplicationErrorCode.TAGS_REQUIRED_FOR_QUESTION);
 		}
 	}
 
 
 	@Override
-	public Question submitAnswer(Integer userId, AnswerModel answer) {
+	public Question postAnswer(Integer userId, AnswerModel answer) {
 
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(!question.isPublicQuestion() && classroomService.isMemberOf(question.getClassroom().getClassroomId(),userId)){
+		if(isNotMemberofProvidedClassroom(question, userId)){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
 
@@ -116,8 +107,7 @@ public class QuestionServiceImpl implements QuestionService {
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
-		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId()));
-
+		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId()));
 
 		return question;
 	}
@@ -127,7 +117,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Transactional
 	public void updateQuestion(Integer userId, Integer questionId, String questionContent) {
 
-		questionPostPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_UPDATED, questionId));
+		eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_UPDATED, questionId));
 	}
 
 

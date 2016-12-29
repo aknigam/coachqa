@@ -11,24 +11,27 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by a.nigam on 13/12/16.
  */
 public class ContentApprovalListener implements ApplicationEventListener {
-    private final SimpleEventPublisher publisher;
+
+
 
 //    @Autowired
 //    private PostService postService;
 
-    public ContentApprovalListener(SimpleEventPublisher publisher) {
-        this.publisher =  publisher;
+    public ContentApprovalListener() {
+
     }
 
+    /**
+     * This will just notify the admin through email or some other mechanism.
+     * On seeing the notification the admin will approve/reject the post.
+     *
+     * @param event
+     */
     @Override
     public void onEvent(ApplicationEvent event) {
-
         processEvent(event);
-//        event.setStage(EventStage.STAGE_TWO);
-//        publisher.publishEvent(event);
 
     }
-
     private void processEvent(ApplicationEvent event) {
 //        postService.updateApprovalStatus();
     }

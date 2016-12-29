@@ -1,7 +1,17 @@
 package com.coachqa;
 
 
+import com.coachqa.service.impl.ContentApprovalListener;
+import com.coachqa.service.impl.UsersNotificationListener;
+import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.service.listeners.SimpleRetryingEventListener;
+import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
+import com.coachqa.service.listeners.question.IndexQuestionListener;
+import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import com.coachqa.web.interceptor.LearnQARequestInterceptor;
+import notification.NotificationService;
+import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
@@ -154,9 +164,23 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         return freeMarkerConfigurer;
     }
 
-    // notification system configuration
+    @Bean
+    public EventPublisher getEventPublisher(NotificationService notificationService){
+        ApplicationEventListener<Integer> userNotificationListener = new UsersNotificationListener(notificationService);
 
+        SimpleEventPublisher<Object> eventPublisher = new SimpleEventPublisher<>();
+        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
+        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new IndexQuestionListener()));
 
+        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventPublisher.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
+
+        ApplicationEventListener<Integer> contentApprovalListener = new ContentApprovalListener();
+        eventPublisher.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( contentApprovalListener ));
+        eventPublisher.attachListener(EventType.ANSWER_POSTED, new SimpleRetryingEventListener( contentApprovalListener ));
+
+        return  eventPublisher;
+    }
 
 
     public static void main(String[] args) throws Exception {

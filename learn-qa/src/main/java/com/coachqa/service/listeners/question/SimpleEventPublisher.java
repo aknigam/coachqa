@@ -1,13 +1,14 @@
 package com.coachqa.service.listeners.question;
 
 import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.util.CollectionUtils;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
+import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -16,22 +17,22 @@ public class SimpleEventPublisher<E> implements EventPublisher<E> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleEventPublisher.class);
 
 
-    private ApplicationEventListener<E> stageOneListener;
-    private List<ApplicationEventListener<E>> listeners ;
+//    private ApplicationEventListener<E> stageOneListener;
+    private Map<EventType, List<ApplicationEventListener<E>>> eventListeners = new HashMap<>();
 
     private BlockingQueue<ApplicationEvent<E>> questionUpdatesQueue =  new LinkedBlockingQueue<>();
 
-    public SimpleEventPublisher(List<ApplicationEventListener<E>> eventListeners){
-        listeners =  eventListeners;
+    public SimpleEventPublisher(){
+
         new Thread("question-event-publisher"){
             @Override
             public void run() {
-                startInvokingListeners(listeners);
+                startInvokingListeners();
             }
         }.start();
     }
 
-    private void startInvokingListeners(List<ApplicationEventListener<E>> listeners)  {
+    private void startInvokingListeners()  {
 
         while(true){
             ApplicationEvent event;
@@ -41,17 +42,14 @@ public class SimpleEventPublisher<E> implements EventPublisher<E> {
                 LOGGER.warn("Queue interrupted", e);
                 continue;
             }
-            EventStage stage= event.getStage();
-            switch (stage  ) {
-                case STAGE_ONE:
-                    stageOneListener.onEvent(event);
-                    break;
-                case STAGE_TWO:
-                    for (ApplicationEventListener l : listeners){
-                        invokeUpdateListener(l, event);
-                    }
-                    break;
+
+            List<ApplicationEventListener<E>> listeners = eventListeners.get(event.getEventType());
+
+            for (ApplicationEventListener l : listeners) {
+                LOGGER.debug("Invoked listener: ["+l.getClass().getName()+"]");
+                invokeUpdateListener(l, event);
             }
+
 
         }
     }
@@ -63,6 +61,17 @@ public class SimpleEventPublisher<E> implements EventPublisher<E> {
         queue.offer(event);
     }
 
+    @Override
+    public void attachListener(EventType eventType, ApplicationEventListener listener) {
+        List<ApplicationEventListener<E>> listeners = eventListeners.get(eventType);
+        if(CollectionUtils.isEmpty(listeners)){
+            listeners = new ArrayList<>();
+            eventListeners.put(eventType, listeners);
+        }
+
+        listeners.add(listener);
+    }
+
     private void invokeUpdateListener(ApplicationEventListener<E> questionPostListener, ApplicationEvent<E> event) {
         try{
             questionPostListener.onEvent(event);
@@ -71,8 +80,4 @@ public class SimpleEventPublisher<E> implements EventPublisher<E> {
         }
     }
 
-
-    public void setStageOneListener(ApplicationEventListener stageOneListener) {
-        this.stageOneListener = stageOneListener;
-    }
 }

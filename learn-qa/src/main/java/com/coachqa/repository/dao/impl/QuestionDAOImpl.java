@@ -47,7 +47,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
     @CachePut(value="questions", key="#result.questionId")
 	@Override
-	public Question addQuestion(Question question) {
+	public Question addQuestionWithTags(Question question) {
 
 		Question addedQuestion = questionAddSproc.addQuestion(question);
 		int questionId =  addedQuestion.getQuestionId();

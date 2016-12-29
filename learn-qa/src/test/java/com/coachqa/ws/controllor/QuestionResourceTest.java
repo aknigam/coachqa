@@ -1,4 +1,7 @@
+package com.coachqa.ws.controllor;
+
 import com.coachqa.LearnQAWebConfig;
+import com.coachqa.LearnQAWebTestConfig;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -7,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -23,14 +27,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by a.nigam on 14/12/16.
  */
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = LearnQAWebConfig.class, loader=AnnotationConfigContextLoader.class)
+
+@ContextConfiguration(classes = LearnQAWebTestConfig.class, loader=AnnotationConfigContextLoader.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Ignore
 public class QuestionResourceTest {
 
     @Autowired
     private WebApplicationContext wac;
+
+
 
     private MockMvc mockMvc;
 
@@ -44,6 +50,6 @@ public class QuestionResourceTest {
         this.mockMvc.perform(get("/api/classrooms/1/id").accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
-        // .andExpect(jsonPath("$.name").value("Lee"));
+//                .andExpect(jsonPath("$.name").value("Lee"));
     }
 }

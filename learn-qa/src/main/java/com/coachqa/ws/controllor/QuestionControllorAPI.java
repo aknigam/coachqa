@@ -34,7 +34,7 @@ public class QuestionControllorAPI {
 
 		question.setPostedBy(user);
 
-		Question addedQuestion = questionService.addQuestion(user.getAppUserId(), question);
+		Question addedQuestion = questionService.postQuestion(user.getAppUserId(), question);
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
 
@@ -118,7 +118,7 @@ public class QuestionControllorAPI {
 		AppUser user = WSUtil.getUser(request.getSession(), userService);
 		model.setAnsweredByUserId(user.getAppUserId());
 
-		return questionService.submitAnswer(user.getAppUserId(), model);
+		return questionService.postAnswer(user.getAppUserId(), model);
 
 	}
 

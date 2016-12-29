@@ -7,13 +7,16 @@ import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
+import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.service.listeners.question.ImageToTextQuestionConverterQuestionListener;
 import com.coachqa.service.listeners.question.IndexQuestionListener;
 import com.coachqa.service.listeners.question.SimpleEventPublisher;
+import com.coachqa.ws.model.PostApproval;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,25 +28,12 @@ import java.util.Map;
 @Component
 public class PostServiceImpl implements PostService {
 
-
 	@Autowired
 	private PostDAO postDao;
-	private SimpleEventPublisher postPublisher;
 
-
-	@PostConstruct
-	public void init(){
-
-		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
-
-		listeners.add(new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
-		listeners.add(new SimpleRetryingEventListener( new IndexQuestionListener()));
-		listeners.add(new SimpleRetryingEventListener( new UsersNotificationListener()));
-
-		postPublisher = new SimpleEventPublisher(listeners);
-
-
-	}
+	@Autowired
+	@Lazy
+	private EventPublisher postPublisher;
 
 	@Override
 	public void ratePost(Integer userId, Integer postId, QuestionRatingEnum meduim) {
@@ -76,12 +66,15 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void updateApprovalStatus(Integer approverUserId, Integer postId, boolean isApproved, String comments, PostTypeEnum postType) {
-		// update post approval status in DB
-		// generate the event if post got approved
-		ApplicationEvent event= new ApplicationEvent(postType == PostTypeEnum.ANSWER ? EventType.QUESTION_UPDATED : EventType.QUESTION_ANSWERED, postId);
-		event.setStage(EventStage.STAGE_TWO);
+	public void updateApprovalStatus(PostApproval postApproval) {
+		postDao.updatePostApproval(postApproval);
+		ApplicationEvent event= new ApplicationEvent(postApproval.isApproved() ? EventType.POST_APPROVED : EventType.POST_REJECTED, postApproval.getPostId());
 		postPublisher.publishEvent(event);
+	}
+
+	@Override
+	public Post getPostById(Integer postId) {
+		return postDao.getPostById(postId);
 	}
 
 }

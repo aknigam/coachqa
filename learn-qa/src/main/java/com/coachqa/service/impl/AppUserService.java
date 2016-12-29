@@ -1,5 +1,7 @@
 package com.coachqa.service.impl;
 
+import notification.NotificationService;
+import notification.entity.NotificationPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +17,18 @@ public class AppUserService implements UserService {
 	@Autowired
 	private UserDAO userDAO;
 
+	@Autowired
+	private NotificationService notificationService;
+
+	/**
+	 *
+	 * TODO: Add user notification preferences
+	 */
 	@Override
 	@Transactional
 	public AppUser addUser(UserModel user) {
+
+
 		return userDAO.addUser(user);
 	}
 
@@ -31,6 +42,11 @@ public class AppUserService implements UserService {
 	public AppUser getUserByEmail(String userEmail) {
 		return userDAO.getUserByEmail(userEmail);
 	}
-	
+
+	@Override
+	public void addOrUpdateUserNotificationPreference(NotificationPreference preference) {
+		notificationService.setNotificationPreference(preference);
+	}
+
 
 }

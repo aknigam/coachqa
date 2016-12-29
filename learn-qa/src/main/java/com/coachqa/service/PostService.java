@@ -1,7 +1,10 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.Post;
+import com.coachqa.entity.Question;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.ws.model.PostApproval;
 
 public interface PostService {
 
@@ -9,8 +12,8 @@ public interface PostService {
 
 	void vote(Integer userId, Integer postId, boolean isUpVoted, PostTypeEnum postType);
 
-	void updateApprovalStatus(Integer userId, Integer postId, boolean isApproved, String comments, PostTypeEnum postType);
+	void updateApprovalStatus(PostApproval postApproval);
 
 
-
+	Post getPostById(Integer postId);
 }

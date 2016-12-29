@@ -5,12 +5,10 @@ import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
+import com.coachqa.ws.model.PostApproval;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,11 +28,12 @@ public class PostControllor {
     @Autowired
     private PostService postService;
 
-    @RequestMapping(value="/{type}/{id}/approve/{val}", method = RequestMethod.POST)
-    public void approvePostContent(@PathVariable(value ="type")Integer postType,
-                                   @PathVariable(value ="id")Integer postId,
-                                   @PathVariable(value ="val")Integer val){
-
+    @RequestMapping(value="/approve", method = RequestMethod.POST)
+    public void approvePostContent(@RequestBody PostApproval postApproval,
+                                   HttpServletRequest request , HttpServletResponse response){
+        AppUser user = WSUtil.getUser(request.getSession(), userService);
+        postApproval.setApprovedBy(user.getAppUserId());
+        postService.updateApprovalStatus(postApproval);
     }
 
     /**

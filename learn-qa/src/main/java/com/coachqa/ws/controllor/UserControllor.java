@@ -4,6 +4,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.UserModel;
 import com.coachqa.ws.util.WSUtil;
+import notification.entity.NotificationPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,20 @@ public class UserControllor {
 		
 		return newUser;
 	}
+
+	@ResponseBody
+	@RequestMapping(value="/notificationpreference", method = RequestMethod.POST)
+	public void addOrUpdateUserNotificationPreference(@RequestBody NotificationPreference preference, HttpServletRequest request, HttpServletResponse response)
+	{
+		/*
+		 * Steps:
+		 * 1. register the user
+		 */
+		userService.addOrUpdateUserNotificationPreference(preference);
+
+	}
+
+
 
 	@ResponseBody
 	@RequestMapping(value="/{id}" , method = RequestMethod.GET)

@@ -2,6 +2,7 @@ package com.coachqa.repository.dao;
 
 import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
+import com.coachqa.ws.model.PostApproval;
 
 import java.util.Map;
 
@@ -17,4 +18,6 @@ public interface PostDAO {
 	void adjustVotes(Integer questionId, int votes);
 
 	Post getPostById(Integer postId);
+
+	void updatePostApproval(PostApproval postApproval);
 }

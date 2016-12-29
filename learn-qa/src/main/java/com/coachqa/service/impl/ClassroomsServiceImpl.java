@@ -23,11 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.coachqa.entity.Classroom;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.sql.Date;
@@ -49,15 +51,14 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private NotificationService notificationService;
-
+	@Lazy
 	private EventPublisher<Integer> publisher;
 
 	@PostConstruct
 	public void init(){
-		List<ApplicationEventListener<Integer>> listeners = new ArrayList<>();
-		this.publisher = new SimpleEventPublisher(listeners);
+		Assert.notNull(publisher , "Publisher cannot be null");
 	}
+
 
 	@Override
 	public Classroom getClassroom(Integer classroomId) {
@@ -94,7 +95,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	private void notifyAdministrator(Integer classroomId) {
 		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
-		notificationService.notifyUsers(event);
+		publisher.publishEvent(event);
 	}
 
 	@Override

@@ -30,7 +30,6 @@ public class Post {
     private boolean approvalStatus;
     
     private String approvalComment;
-    
 
 
     public Post(){

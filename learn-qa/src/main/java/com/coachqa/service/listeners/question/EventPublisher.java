@@ -1,6 +1,9 @@
 package com.coachqa.service.listeners.question;
 
+import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.service.listeners.SimpleRetryingEventListener;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventType;
 
 
 /**
@@ -23,4 +26,5 @@ public interface EventPublisher<E> {
 
     void publishEvent(ApplicationEvent<E> event);
 
+    void attachListener(EventType eventType, ApplicationEventListener listener);
 }

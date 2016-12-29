@@ -36,7 +36,7 @@ public interface QuestionService {
 	 */
 
 	//void postQuestion();
-	Question addQuestion(Integer userId, Question model);
+	Question postQuestion(Integer userId, Question model);
 	
 	
 	/**
@@ -79,7 +79,7 @@ public interface QuestionService {
 	
 
 
-	Question submitAnswer(Integer userId, AnswerModel model);
+	Question postAnswer(Integer userId, AnswerModel model);
 
 	Question getQuestionById(Integer questionId);
 

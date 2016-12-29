@@ -5,6 +5,7 @@ import com.coachqa.entity.Post;
 import com.coachqa.entity.QuestionVote;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.repository.dao.PostDAO;
+import com.coachqa.ws.model.PostApproval;
 import org.joda.time.DateTime;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -104,6 +105,15 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 
 
+	}
+
+	private String updatePostApprovalQuery =  "Update Post set ApprovalStatus =  ? , " +
+			" ApprovalComment = ? " +
+			" where postId = ? ";
+
+	@Override
+	public void updatePostApproval(PostApproval postApproval) {
+		jdbcTemplate.update(updatePostApprovalQuery, new Object[]{postApproval.isApproved() ? 0 : 1, postApproval.getComments(), postApproval.getPostId() });
 	}
 
 	private String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
