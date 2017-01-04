@@ -38,16 +38,9 @@
             <groupId>com.coachqa</groupId>
             <artifactId>coachqa-shared</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <!--
-                 http://stackoverflow.com/questions/24652753/java-lang-noclassdeffounderror-javax-validation-parameternameprovider
-                -->
-                <exclusion>
-                    <groupId>javax.validation</groupId>
-                    <artifactId>validation-api</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency>
+
 
 
         <dependency>
@@ -198,6 +191,11 @@
             <artifactId>scalatest_2.11</artifactId>
             <version>3.0.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.coachqa</groupId>
+            <artifactId>coachqa-shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
