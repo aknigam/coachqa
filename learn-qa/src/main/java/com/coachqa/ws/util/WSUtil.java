@@ -6,8 +6,12 @@ import javax.servlet.http.HttpSession;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WSUtil {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(WSUtil.class);
 
 	private static final String LOCATION_HEADER = "location";
 	private static final String FORWARD_SLASH = "/";
@@ -27,7 +31,8 @@ public class WSUtil {
 
 		String username = request.getHeader("username");
 		if(username ==  null){
-			return null;
+			username =  "anigam@expedia.com";
+			LOGGER.warn("Username header is missing. Using the default user.");
 		}
 		return userService.getUserByEmail(username);
 
