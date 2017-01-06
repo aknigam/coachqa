@@ -102,8 +102,5 @@ public class AppUser implements java.io.Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getName() {
-		return firstName+" "+ middleName+" "+lastName;
-	}
 
 }

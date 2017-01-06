@@ -71,7 +71,13 @@ public class Classroom implements java.io.Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-/*
+
+	@Override
+	public String toString() {
+		return className;
+	}
+
+	/*
 	public static void main(String[] args) throws IOException {
 		Classroom c = new Classroom();
 		c.setClassName("Physics class");
