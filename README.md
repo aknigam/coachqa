@@ -21,3 +21,7 @@ http://localhost:8080/login.html
 sample username: anigam@expedia.com
 password: pass
 
+# Authentication
+run the following command to generate the bearer token. Refer: https://github.com/spring-projects/spring-boot/blob/master/spring-boot-samples/spring-boot-sample-secure-oauth2/src/main/java/sample/secure/oauth2/SampleSecureOAuth2Application.java
+curl localhost:8080/oauth/token -d "grant_type=password&scope=read&username=greg&password=turnquist" -u foo:bar
+

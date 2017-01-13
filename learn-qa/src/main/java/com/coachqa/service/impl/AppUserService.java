@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.coachqa.entity.AppUser;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.service.UserService;
-import com.coachqa.ws.model.UserModel;
+
 
 @Component
 public class AppUserService implements UserService {
@@ -22,13 +22,12 @@ public class AppUserService implements UserService {
 
 	/**
 	 *
+	 * Create the user in the DB and add the default notification preference
 	 * TODO: Add user notification preferences
 	 */
 	@Override
 	@Transactional
-	public AppUser addUser(UserModel user) {
-
-
+	public AppUser addUser(AppUser user) {
 		return userDAO.addUser(user);
 	}
 

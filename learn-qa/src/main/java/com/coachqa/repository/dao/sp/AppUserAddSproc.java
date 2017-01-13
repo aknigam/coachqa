@@ -8,13 +8,14 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.coachqa.App;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.ws.model.UserModel;
+
 
 public class AppUserAddSproc
 {
@@ -48,14 +49,14 @@ public class AppUserAddSproc
 			new SqlParameter(P_ASTNAME	,Types.VARCHAR)
 		)
 		.returningResultSet("user", new UserMapper());
-		;
+
 	}
 
 
-	public AppUser addUser(UserModel user) {
+	public AppUser addUser(AppUser user) {
 		MapSqlParameterSource in = new MapSqlParameterSource();
 		in.addValue(P_MAIL, user.getEmail());
-		in.addValue(P_ASWORD, user.getPasword());
+		in.addValue(P_ASWORD, user.getPassword());
 		in.addValue(P_IRSTNAME, user.getFirstName());
 		in.addValue(P_ASTNAME, user.getLastName());
 		in.addValue(P_MIDDLENAME, user.getMiddleName());

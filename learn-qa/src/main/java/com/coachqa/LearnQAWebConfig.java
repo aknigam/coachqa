@@ -1,6 +1,7 @@
 package com.coachqa;
 
 
+import com.coachqa.config.DBConfig;
 import com.coachqa.service.impl.ContentApprovalListener;
 import com.coachqa.service.impl.UsersNotificationListener;
 import com.coachqa.service.listeners.ApplicationEventListener;
@@ -13,7 +14,9 @@ import com.coachqa.web.interceptor.LearnQARequestInterceptor;
 import notification.NotificationService;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
@@ -28,6 +31,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -54,8 +59,12 @@ The @SpringBootApplication annotation is equivalent to using @Configuration, @En
 @Order(1)
 @SpringBootApplication
 @EnableSwagger2
+@EnableAuthorizationServer
+@EnableResourceServer
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
+    @Autowired
+    private YamlMapFactoryBean yamlMapFactoryBean;
     /**
      * http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#mvc-default-servlet-handler
      */
@@ -125,6 +134,10 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     /*
     http://stackoverflow.com/questions/27843788/resource-annotation-no-qualifying-bean-of-type-javax-sql-datasource-is-define
      */
+
+    @Autowired
+    private DBConfig dbConfig;
+
     @Bean
     @Primary
     public DataSource learnqadataSource(){

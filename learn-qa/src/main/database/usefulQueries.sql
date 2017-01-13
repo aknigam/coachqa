@@ -21,7 +21,7 @@ JOIN post p ON  q.questionId = p.postId
 JOIN AppUser u ON  p.postedby = u.appuserId
 JOIN questionTag qt ON  q.questionId = qt.questionId
 JOIN Tag t on t.tagId = qt.tagId
-where postId = 45;
+where postId > 206;
 
 
 -- posts waiting for approval
@@ -44,9 +44,16 @@ join notificationsystem.eventType et on et.eventTypeId = e.eventTypeId;
 
 select * from notificationsystem.eventType;
 
-select unp.* from notificationsystem.usernotificationpreference unp
+select * from notificationsystem.usernotificationpreference where userId = 4 and isenabled = 1;
+
+select * from UserEventNotification;
+
+
+
+select * from notificationsystem.usernotificationpreference unp
 join notificationsystem.notificationType nt on nt.NotificationTypeId = unp.NotificationTypeId
-right join `learn-qa`.appuser au on au.appuserid = unp.UserID;
+right join `learn-qa`.appuser au on au.appuserid = unp.UserID
+where au.email = "anigam@expedia.com";
 
 select 
 uen.UserEventNotificationStatusId,
@@ -59,9 +66,27 @@ e.EventSourceId,
 e.LatestEventDate, 
 e.ExpirationDate 
 from UserEventNotification uen 
-join Event e on e.eventId = uen.eventId ;
+join Event e on e.eventId = uen.eventId 
+;
+
+select 
+            uen.UserEventNotificationStatusId,
+            uen.NotificationTypeId, 
+            uen.eventId, 
+            uen.userId, 
+            e.EventTypeId, 
+            e.EventSourceId, 
+            e.LatestEventDate, 
+            e.ExpirationDate 
+            from UserEventNotification uen 
+            join Event e on e.eventId = uen.eventId 
+            where uen.userId =4;
 
 select * from notificationsystem.usereventstatus;
+
+SELECT * FROM EVENT;
+
+select * from UserEventNotification;
 
 
 

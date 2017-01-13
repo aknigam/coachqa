@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.coachqa.App;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.exception.UserNotFoundException;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.repository.dao.sp.AppUserAddSproc;
-import com.coachqa.ws.model.UserModel;
+
 
 @Component
 public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
@@ -74,7 +75,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	@CachePut(value="usersByIdCache", key="#result.appUserId")
 	@Override
-	public AppUser addUser(UserModel user) {
+	public AppUser addUser(AppUser user) {
 		try {
 			return userAddOrUpdateSproc.addUser(user);
 		}catch (DuplicateKeyException dke){

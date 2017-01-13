@@ -2,9 +2,10 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
-import com.coachqa.ws.model.UserModel;
+
 import com.coachqa.ws.util.WSUtil;
 import notification.entity.NotificationPreference;
+import notification.enums.NotificationTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +28,15 @@ public class UserControllor {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/register", method = RequestMethod.POST)
-	public AppUser register(@RequestBody UserModel user, HttpServletRequest request, HttpServletResponse response)
+	public AppUser register(@RequestBody AppUser user, HttpServletRequest request, HttpServletResponse response)
 	{
 		/*
 		 * Steps:
 		 * 1. register the user
 		 */
 		AppUser newUser = userService.addUser(user);
+		NotificationPreference preference = new NotificationPreference(newUser.getAppUserId(), NotificationTypeEnum.APP);
+		userService.addOrUpdateUserNotificationPreference(preference);
 		WSUtil.setLocationHeader(request, response, newUser.getAppUserId());
 		
 		return newUser;
@@ -48,6 +51,7 @@ public class UserControllor {
 		 * 1. register the user
 		 */
 		userService.addOrUpdateUserNotificationPreference(preference);
+
 
 	}
 

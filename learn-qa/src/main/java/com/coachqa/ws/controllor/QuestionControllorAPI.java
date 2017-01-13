@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,10 +29,10 @@ public class QuestionControllorAPI {
 
 
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
+	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response, Principal principal)
 	{
 
-		AppUser user = WSUtil.getUser(request, userService);
+		AppUser user = WSUtil.getUser(principal, userService);
 
 		question.setPostedBy(user);
 
@@ -48,9 +49,9 @@ public class QuestionControllorAPI {
     @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
     public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
                            String rating,
-                           HttpServletRequest request , HttpServletResponse response) {
+							 Principal principal) {
 
-        AppUser user = WSUtil.getUser(request.getSession(), userService);
+        AppUser user = WSUtil.getUser(principal, userService);
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
@@ -70,9 +71,11 @@ public class QuestionControllorAPI {
 			@RequestParam(required = false)  Integer classroomId,
 			@RequestParam(required = false)  Integer ownerId,
 			@RequestParam(required = false)  Integer subjectId,
-			@RequestParam(required = false)  Boolean isPublic
+			@RequestParam(required = false)  Boolean isPublic,
+			Principal principal
 	)
 	{
+		AppUser user = WSUtil.getUser(principal, userService);
 		/*
 		subject, class, tag , postedby , isPublic
 		 */
@@ -98,8 +101,9 @@ public class QuestionControllorAPI {
 	}
 
 	@RequestMapping(value="/question/{id}" , method = RequestMethod.GET)
-	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
+	public Question getQuestion(@PathVariable(value = "id") Integer questionId, Principal principal)
 	{
+		AppUser user = WSUtil.getUser(principal, userService);
 		return questionService.getQuestionByIdAndIncrementViewCount(questionId);
 	}
 

@@ -9,6 +9,8 @@ import com.coachqa.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.Principal;
+
 public class WSUtil {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(WSUtil.class);
@@ -49,4 +51,8 @@ public class WSUtil {
 		response.setStatus(201);
 	}
 
+	public static AppUser getUser(Principal principal, UserService userService) {
+		String username = principal.getName();
+		return userService.getUserByEmail(username);
+	}
 }
