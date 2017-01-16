@@ -9,6 +9,8 @@ import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,7 @@ public class QuestionControllorAPI {
 	{
 
 		AppUser user = WSUtil.getUser(principal, userService);
+
 
 		question.setPostedBy(user);
 
@@ -76,6 +79,7 @@ public class QuestionControllorAPI {
 	)
 	{
 		AppUser user = WSUtil.getUser(principal, userService);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		/*
 		subject, class, tag , postedby , isPublic
 		 */

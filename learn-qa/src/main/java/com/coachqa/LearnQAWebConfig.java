@@ -73,6 +73,9 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         configurer.enable();
     }
 
+
+
+
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
@@ -83,6 +86,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+
 
 
     @Override

@@ -36,7 +36,8 @@ public class UserControllor {
 		 */
 		AppUser newUser = userService.addUser(user);
 		NotificationPreference preference = new NotificationPreference(newUser.getAppUserId(), NotificationTypeEnum.APP);
-		userService.addOrUpdateUserNotificationPreference(preference);
+//		If the preference is not set then notification system will use the defualt pref type.
+//		userService.addOrUpdateUserNotificationPreference(preference);
 		WSUtil.setLocationHeader(request, response, newUser.getAppUserId());
 		
 		return newUser;
