@@ -1,5 +1,5 @@
 
-
+select * from AppUser
 
 -- post
 select * from post p where postId = 45;

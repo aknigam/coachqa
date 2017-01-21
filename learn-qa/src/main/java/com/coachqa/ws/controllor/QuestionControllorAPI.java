@@ -80,6 +80,7 @@ public class QuestionControllorAPI {
 	{
 		AppUser user = WSUtil.getUser(principal, userService);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String name = auth.getName();
 		/*
 		subject, class, tag , postedby , isPublic
 		 */

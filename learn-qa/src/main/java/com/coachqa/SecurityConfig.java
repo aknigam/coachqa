@@ -42,8 +42,8 @@ import javax.sql.DataSource;
  *  https://dzone.com/articles/secure-rest-services-using
  *
  */
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 //@ComponentScan(basePackages = "com.coachqa.security")
 @Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -110,22 +110,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-//        http
-//                .antMatcher("/**")
-//                .authorizeRequests()
-//                .antMatchers("/", "/login**", "/webjars/**")
-//                .permitAll()
-//                .and().logout().logoutSuccessUrl("/").permitAll()
-//                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-
-//        http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
-
-        http
-                .authorizeRequests().antMatchers("/api/**").permitAll().and()
-                // default protection for all resources (including /oauth/authorize)
-                .authorizeRequests()
-                .anyRequest().hasRole("USER");
-
+        http.authorizeRequests()
+//                .antMatchers("/api/**").access("hasRole('ROLE_USER')")
+                .anyRequest().authenticated();
 
 
     }

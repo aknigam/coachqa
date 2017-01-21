@@ -19,11 +19,13 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -31,6 +33,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -116,6 +125,25 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
          */
     }
+
+    /**
+     * This bean disables the {@link AuthenticationManagerConfiguration}
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Primary
+    public AuthenticationManager authenticationManager() throws Exception {
+        JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder> c = new JdbcUserDetailsManagerConfigurer<>();
+        c.dataSource(learnqadataSource())
+                .usersByUsernameQuery("select email , pasword, true as enabled from appuser where email =?")
+                .authoritiesByUsernameQuery("select email, 'ROLE_USER' from appuser where email = ?");
+
+        DaoAuthenticationProvider daoAuthenticationProvide = new DaoAuthenticationProvider();
+        daoAuthenticationProvide.setUserDetailsService(c.getUserDetailsService());
+        return new ProviderManager(Arrays.asList(new AuthenticationProvider[]{daoAuthenticationProvide}));
+    }
+
 
     @Bean
     public PropertyPlaceholderConfigurer propertyConfigurer(){
