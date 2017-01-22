@@ -96,36 +96,6 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LearnQARequestInterceptor());
-    }
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-    }
-
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-
-        registry.freeMarker().cache(false);
-        registry.freeMarker().prefix("");
-        registry.freeMarker().suffix(".html");
-
-        /*&
-
-        <property name="cache" value="false"/>
-      <property name="prefix" value=""/>
-      <property name="suffix" value=".html"/>
-
-
-         */
-    }
-
     /**
      * This bean disables the {@link AuthenticationManagerConfiguration}
      * @return

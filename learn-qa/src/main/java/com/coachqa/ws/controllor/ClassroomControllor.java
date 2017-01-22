@@ -27,7 +27,7 @@ public class ClassroomControllor {
 	@GetMapping(value="/create")
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
-		classroom.setClassOwner(WSUtil.getUser(request.getSession(), userService));
+		classroom.setClassOwner(WSUtil.getUser( userService));
 		Classroom newClassroom = classroomService.createClassroom(classroom );
 
 		WSUtil.setLocationHeader(request, response, newClassroom.getClassroomId());
@@ -61,7 +61,7 @@ public class ClassroomControllor {
 	@ResponseBody
 	public String requestClassroomMembership(@RequestParam Integer classroomId, @RequestParam String comments, HttpServletRequest request)
 	{
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser( userService);
 		classroomService.requestClassroomMembership(user.getAppUserId(), classroomId, comments);
 		return "success";
 	}
@@ -82,7 +82,7 @@ public class ClassroomControllor {
 											   @RequestParam String comments,
 											   HttpServletRequest request)
 	{
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser(userService);
 		classroomService.leaveClassroom(classroomId, requestedByUserId, memberId, comments);
 		return "success";
 	}
@@ -93,7 +93,7 @@ public class ClassroomControllor {
 	@RequestMapping(value="/processMembershipRequest" , method = RequestMethod.POST)
 	@ResponseBody
 	public String processJoinRequest(@RequestBody ClassroomMembershipRequest membershipRequests, HttpServletRequest  request ,HttpServletResponse response ){
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser( userService);
 		classroomService.processJoinRequest(user, membershipRequests);
 		return "success";
 	}
@@ -101,7 +101,7 @@ public class ClassroomControllor {
 	@RequestMapping(value="/showmembershiprequests/{id}", method = RequestMethod.GET)
 	public @ResponseBody ClassroomMembershipRequest showJoinRequests(@PathVariable(value = "id") Integer classroomId, HttpServletRequest request){
 
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser(userService);
 		ClassroomMembershipRequest membershipRequest = classroomService.getMemberShipRequests(user, classroomId);
 
 		return membershipRequest;
@@ -111,7 +111,7 @@ public class ClassroomControllor {
 	@RequestMapping(value="/usermemberships", method = RequestMethod.GET)
 	public @ResponseBody List<Classroom> getUsermemberships(HttpServletRequest request){
 
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser(userService);
 		return classroomService.getUserMemberships(user);
 
 	}

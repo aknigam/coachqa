@@ -31,10 +31,10 @@ public class QuestionControllorAPI {
 
 
 	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
-	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response, Principal principal)
+	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
 	{
 
-		AppUser user = WSUtil.getUser(principal, userService);
+		AppUser user = WSUtil.getUser(userService);
 
 
 		question.setPostedBy(user);
@@ -51,10 +51,9 @@ public class QuestionControllorAPI {
 
     @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
     public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
-                           String rating,
-							 Principal principal) {
+                           String rating) {
 
-        AppUser user = WSUtil.getUser(principal, userService);
+        AppUser user = WSUtil.getUser( userService);
         questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 
@@ -74,13 +73,11 @@ public class QuestionControllorAPI {
 			@RequestParam(required = false)  Integer classroomId,
 			@RequestParam(required = false)  Integer ownerId,
 			@RequestParam(required = false)  Integer subjectId,
-			@RequestParam(required = false)  Boolean isPublic,
-			Principal principal
+			@RequestParam(required = false)  Boolean isPublic
 	)
 	{
-		AppUser user = WSUtil.getUser(principal, userService);
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
+		AppUser user = WSUtil.getUser( userService);
+
 		/*
 		subject, class, tag , postedby , isPublic
 		 */
@@ -106,9 +103,9 @@ public class QuestionControllorAPI {
 	}
 
 	@RequestMapping(value="/question/{id}" , method = RequestMethod.GET)
-	public Question getQuestion(@PathVariable(value = "id") Integer questionId, Principal principal)
+	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
 	{
-		AppUser user = WSUtil.getUser(principal, userService);
+		AppUser user = WSUtil.getUser( userService);
 		return questionService.getQuestionByIdAndIncrementViewCount(questionId);
 	}
 
@@ -125,7 +122,7 @@ public class QuestionControllorAPI {
 	public Question submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
 	{
 
-		AppUser user = WSUtil.getUser(request.getSession(), userService);
+		AppUser user = WSUtil.getUser(userService);
 		model.setAnsweredByUserId(user.getAppUserId());
 
 		return questionService.postAnswer(user.getAppUserId(), model);
