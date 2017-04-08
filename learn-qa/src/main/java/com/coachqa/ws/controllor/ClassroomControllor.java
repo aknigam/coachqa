@@ -24,7 +24,7 @@ public class ClassroomControllor {
 	private UserService userService;
 
 	@ResponseBody
-	@GetMapping(value="/create")
+	@PostMapping(value="/create")
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
 		classroom.setClassOwner(WSUtil.getUser( userService));

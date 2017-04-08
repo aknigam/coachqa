@@ -138,13 +138,13 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	}
 
-	private static String getMembershipRequestsQuery  = "select c.classroomId, c.className, au.email,  au.appUserId, au.FirstName, au.MiddleName, au.lastName , " +
+	private static String getMembershipRequestsQuery  = "select c.classroomId, c.className, au.email,  au.appUserId, au.FirstName, au.MiddleName, au.lastName " +
 			" , cm.MembershipRequestDate " +
 			" , cm.comments" +
-			"from classroomMember cm " +
-			"join appUser au on au.appuserId =  cm.AppUserId " +
-			"join Classroom c on c.classroomId = cm.classroomId " +
-			"where cm.status = ?  and c.classroomId = ?";
+			" from classroomMember cm " +
+			" join appUser au on au.appuserId =  cm.AppUserId " +
+			" join Classroom c on c.classroomId = cm.classroomId " +
+			" where cm.status = ?  and c.classroomId = ?";
 
 	@Override
 	public ClassroomMembershipRequest getMembershipRequests(Integer classroomId) {

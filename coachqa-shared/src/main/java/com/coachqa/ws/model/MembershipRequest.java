@@ -8,6 +8,9 @@ public class MembershipRequest {
     private DateTime requestDate;
     private String comments;
 
+    public MembershipRequest(){
+
+    }
     public MembershipRequest(AppUser user, DateTime requestDate){
         this.user = user;
         this.requestDate = requestDate;
