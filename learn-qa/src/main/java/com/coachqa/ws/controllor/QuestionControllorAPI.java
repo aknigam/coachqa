@@ -85,7 +85,7 @@ public class QuestionControllorAPI {
 		if(subjectId != null)
 			criteria.setRefSubjectId(subjectId);
 		if(classroomId != null)
-			criteria.setClassroom(new Classroom(classroomId, ""));
+			criteria.setClassroomId(classroomId);
 		if(tagId != null)
 			criteria.setTags(Arrays.asList(new Integer[]{tagId}));
 		if(isPublic != null)

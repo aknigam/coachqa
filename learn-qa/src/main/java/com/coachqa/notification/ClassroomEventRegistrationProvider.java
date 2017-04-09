@@ -3,15 +3,18 @@ package com.coachqa.notification;
 import com.coachqa.entity.Classroom;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
-import notification.DefaultEventConsumersProvider;
+
+import notification.EventRegisteredUsersProvider;
 import notification.entity.ApplicationEvent;
+import notification.repository.EventRegistrationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
-public class ClassroomEventRegistrationProvider implements DefaultEventConsumersProvider {
+public class ClassroomEventRegistrationProvider implements EventRegisteredUsersProvider {
 
     private final ClassroomService classroomService;
 
@@ -21,9 +24,11 @@ public class ClassroomEventRegistrationProvider implements DefaultEventConsumers
     }
 
     @Override
-    public Collection<? extends Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event) {
+    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
         int classroomId = event.getEventSource();
         Classroom classroom = classroomService.getClassroom(classroomId);
-        return Collections.singleton(classroom.getClassOwner().getAppUserId());
+        return Collections.singletonList(classroom.getClassOwner().getAppUserId());
     }
+
+
 }

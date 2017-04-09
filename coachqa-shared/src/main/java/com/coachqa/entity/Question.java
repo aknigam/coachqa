@@ -33,7 +33,7 @@ public class Question extends Post implements java.io.Serializable {
 	
 	private boolean publicQuestion;
 	
-	private Classroom classroom;
+
 
 	
 	private List<Integer> tags = Collections.emptyList();
@@ -97,14 +97,6 @@ public class Question extends Post implements java.io.Serializable {
 
 	public void setPublicQuestion(boolean publicQuestion) {
 		this.publicQuestion = publicQuestion;
-	}
-
-	public Classroom getClassroom() {
-		return classroom;
-	}
-
-	public void setClassroom(Classroom classroom) {
-		this.classroom = classroom;
 	}
 
 	public List<Integer> getTags() {

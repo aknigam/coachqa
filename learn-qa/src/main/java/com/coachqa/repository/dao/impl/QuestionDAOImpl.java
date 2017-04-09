@@ -149,7 +149,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
 				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(q.getRefSubjectId())
-				.withClassroom(q.getClassroom())
+				.withClassroom(q.getClassroomId())
 				.withTag(q.getTags())
 				.withPostedByUser(q.getPostedBy())
 				.withPublicOnly(q.isPublicQuestion())
@@ -173,7 +173,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
 				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(1)
-				.withClassroom(new Classroom(1, ""))
+				.withClassroom(1)
 				.withTag(Arrays.asList(new Integer[]{1, 2}))
 				.withPostedByUser(new AppUser(1, "", "", "", ""))
 				.withPublicOnly(true)
@@ -340,9 +340,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			return this;
 		}
 
-		public QuestionQueryBuilder withClassroom(Classroom classroom) {
-			if(classroom!= null && classroom.getClassroomId()!= null) {
-				conditions.add(new QueryCondition<Integer>("ClassroomId", classroom.getClassroomId()));
+		public QuestionQueryBuilder withClassroom(Integer classroomId) {
+			if(classroomId!= null ) {
+				conditions.add(new QueryCondition<Integer>("ClassroomId", classroomId));
 			}else{
 				LOGGER.debug("Classroom condition not added");
 			}

@@ -2,12 +2,15 @@ package com.coachqa;
 
 
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
-import com.coachqa.notification.PostOwnerRegistrationProvider;
+import com.coachqa.notification.ContentApproverProvider;
+import com.coachqa.notification.PostApprovedInterestedUsersProvider;
 import com.coachqa.notification.QuestionOwnerRegistrationProvider;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.QuestionService;
-import notification.DefaultEventConsumersProvider;
+import com.coachqa.service.UserService;
+
+import notification.EventRegisteredUsersProvider;
 import notification.NotificationService;
 import notification.SendEventNotificationProcessor;
 import notification.entity.ApplicationEvent;
@@ -99,23 +102,41 @@ public class NotificationSystemConfig  {
         return new AsyncEventQueuePublisher(eventNotificationProcessor);
     }
 
+    /**
+     * We need to support following scenarios:
+     *
+     * - Any question posted to the class -> all the class members should be notified
+     * @param questionService
+     * @param classroomService
+     * @param postService
+     * @return
+     */
     @Bean
-    public DefaultRegsitrationProviderFactory eventRegistrationFactory(QuestionService questionService, ClassroomService classroomService, PostService postService){
-        Map<EventType, DefaultEventConsumersProvider> defaultRegistrationProviderMap = new HashMap<>();
+    public DefaultRegsitrationProviderFactory eventRegistrationFactory(QuestionService questionService, ClassroomService classroomService, PostService postService,
+                                                                       UserService UserService){
+        Map<EventType, EventRegisteredUsersProvider> defaultRegistrationProviderMap = new HashMap<>();
 
         defaultRegistrationProviderMap.put(EventType.MEMBERSHIP_REQUEST, new ClassroomEventRegistrationProvider(classroomService));
 
-        QuestionOwnerRegistrationProvider questionOnwerRegistrationProvider = new QuestionOwnerRegistrationProvider(questionService);
-        PostOwnerRegistrationProvider postOwnerRegistrationProvider = new PostOwnerRegistrationProvider(postService);
+        EventRegisteredUsersProvider contentApprover = new ContentApproverProvider(UserService);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, contentApprover); // not yet approved
+        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, contentApprover);// not yet approved
 
-        defaultRegistrationProviderMap.put(EventType.POST_APPROVED, postOwnerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.POST_REJECTED, postOwnerRegistrationProvider);
+        QuestionOwnerRegistrationProvider questionOnwerRegistrationProvider = new QuestionOwnerRegistrationProvider(questionService);
+        PostApprovedInterestedUsersProvider approvedInterestedUsersProvider = new PostApprovedInterestedUsersProvider(postService, classroomService);
+        PostApprovedInterestedUsersProvider rejectedPostInterestedUsersProvider = new PostApprovedInterestedUsersProvider(postService, classroomService);
+
+        defaultRegistrationProviderMap.put(EventType.POST_APPROVED, approvedInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_REJECTED, questionOnwerRegistrationProvider);
+
         defaultRegistrationProviderMap.put(EventType.QUESTION_ANSWERED, questionOnwerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, questionOnwerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, questionOnwerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, questionOnwerRegistrationProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, questionOnwerRegistrationProvider); // not yet approved
+//
+        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, approvedInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, questionOnwerRegistrationProvider);
         defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, questionOnwerRegistrationProvider);
+
+
 
 
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
@@ -127,7 +148,7 @@ public class NotificationSystemConfig  {
                                                    EventRegistrationDao eventRegistrationDao,
                                                    UserEventNotificationDao userEventNotificationDao,
                                                    UserNotificationPreferenceDao userNotificationPreferenceDao){
-        return new NotificationServiceImpl(notificationPublisher, eventDao, eventNotificationProcessor, eventRegistrationFactory, eventRegistrationDao,
+        return new NotificationServiceImpl( eventDao, eventNotificationProcessor, eventRegistrationFactory, eventRegistrationDao,
                 userEventNotificationDao, userNotificationPreferenceDao);
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -45,6 +46,25 @@ public class QuestionServiceImpl implements QuestionService {
 	@Lazy
 	private EventPublisher eventPublisher;
 
+	/*
+
+
+	Lifecycle
+		->QUESTION_POSTED - unapproved question posted
+			- notify the admin for content approval
+			if(approved){
+				->POST_APPROVED
+					: notification should go to
+						- owner
+						- people interested in the subject, tag etc
+						- people belonging to the class if the they are interested
+			}
+			else{
+				->POST_REJECTED :
+					- notification should go to owner with reason
+			}
+
+	 */
 	@Override
 	public Question postQuestion(Integer userId, final Question question) {
 
@@ -58,30 +78,32 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 
-		Question qstn = null;
-		try{
-			qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
-				@Override
-				public Question doInTransaction(TransactionStatus transactionStatus) {
-					return  questionDao.addQuestionWithTags(question);
-				}
-			});
-		}catch(Exception e){
-			LOGGER.error("Unexpected excepted error occurred while trying to add a question");
-			throw e;
-		}
+		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
+            @Override
+            public Question doInTransaction(TransactionStatus transactionStatus) {
+                return  questionDao.addQuestionWithTags(question);
+            }
+        });
 
 		Integer questionId = qstn.getQuestionId();
-		eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId));
+		publishPostQuestionEvent(qstn);
+
 		return qstn;
 	}
 
+	private void publishPostQuestionEvent(Question qstn) {
+
+		Integer questionId = qstn.getQuestionId();
+		// TODO: 08/04/17
+		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId));
+	}
+
 	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {
-		return question.getClassroom() != null && !classroomService.isMemberOf(question.getClassroom().getClassroomId(), question.getPostedBy().getAppUserId());
+		return !classroomService.isMemberOf(question.getClassroomId(), question.getPostedBy().getAppUserId());
 	}
 
 	private boolean isPrivateQuestionWithoutClassroom(Question question) {
-		return !question.isPublicQuestion() && ( question.getClassroom() == null );
+		return !question.isPublicQuestion() && ( question.getClassroomId() == null );
 	}
 
 	private void validateTags(List<Integer> tags) {

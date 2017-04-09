@@ -186,8 +186,8 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         SimpleEventPublisher<Object> eventPublisher = new SimpleEventPublisher<>();
         eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
         eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new IndexQuestionListener()));
-
         eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( userNotificationListener ));
+
         eventPublisher.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
 
         ApplicationEventListener<Integer> contentApprovalListener = new ContentApprovalListener();

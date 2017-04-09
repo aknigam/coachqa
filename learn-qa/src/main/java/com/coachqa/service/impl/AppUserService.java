@@ -10,6 +10,9 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.service.UserService;
 
+import java.util.Collection;
+import java.util.List;
+
 
 @Component
 public class AppUserService implements UserService {
@@ -45,6 +48,11 @@ public class AppUserService implements UserService {
 	@Override
 	public void addOrUpdateUserNotificationPreference(NotificationPreference preference) {
 		notificationService.setNotificationPreference(preference);
+	}
+
+	@Override
+	public List<Integer> getPostContentApprovers() {
+		return userDAO.getPostContentApprovers();
 	}
 
 

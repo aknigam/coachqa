@@ -154,7 +154,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classroomDAO.getMembershipRequests(classroomId);
 	}
 
-	@Override
+	@Override // TODO: 08/04/17 add implementation
 	public boolean isMemberOf(Integer classroomId, int user) {
 		return true;
 	}
