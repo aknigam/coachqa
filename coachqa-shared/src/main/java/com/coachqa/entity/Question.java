@@ -2,6 +2,7 @@ package com.coachqa.entity;
 
 // Generated Dec 21, 2014 1:45:02 PM by Hibernate Tools 3.4.0.CR1
 
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 
@@ -41,6 +42,7 @@ public class Question extends Post implements java.io.Serializable {
 	private List<Answer> answers = Collections.emptyList();
 
 	public Question() {
+		setPostTypeEnum(PostTypeEnum.QUESTION);
 	}
 
 	public Integer getQuestionId() {

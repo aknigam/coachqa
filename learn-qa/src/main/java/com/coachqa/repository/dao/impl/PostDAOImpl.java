@@ -99,7 +99,7 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 		});
 
 		if(posts!= null && posts.size()==0){
-			throw new RuntimeException("Post not found: "+ postId);
+			return null;
 		}
 
 		return posts.get(0);

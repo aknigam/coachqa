@@ -8,6 +8,7 @@ import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,8 +95,8 @@ public class QuestionServiceImpl implements QuestionService {
 	private void publishPostQuestionEvent(Question qstn) {
 
 		Integer questionId = qstn.getQuestionId();
-		// TODO: 08/04/17
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId));
+		// stage 1 indicates approval pending
+		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
 	}
 
 	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {

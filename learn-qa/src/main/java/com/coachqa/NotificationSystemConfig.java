@@ -3,8 +3,7 @@ package com.coachqa;
 
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.notification.ContentApproverProvider;
-import com.coachqa.notification.PostApprovedInterestedUsersProvider;
-import com.coachqa.notification.QuestionOwnerRegistrationProvider;
+import com.coachqa.notification.PostEventInterestedUsersProvider;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.QuestionService;
@@ -13,7 +12,6 @@ import com.coachqa.service.UserService;
 import notification.EventRegisteredUsersProvider;
 import notification.NotificationService;
 import notification.SendEventNotificationProcessor;
-import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import notification.impl.DefaultRegsitrationProviderFactory;
 import notification.impl.EventNotificationConsumer;
@@ -88,12 +86,7 @@ public class NotificationSystemConfig  {
 
     @Bean
     public SendEventNotificationProcessor eventNotificationProcessor(EventDao eventDAO, UserEventNotificationDao userEventNotificationDao){
-        return new EventNotificationConsumer(eventDAO, userEventNotificationDao) {
-            @Override
-            protected String getNotificationMessage(ApplicationEvent eventInstance) {
-                return "dummy message "+ eventInstance.getEventSource();
-            }
-        };
+        return new EventNotificationConsumer(eventDAO, userEventNotificationDao);
     }
 
 
@@ -109,6 +102,7 @@ public class NotificationSystemConfig  {
      * @param questionService
      * @param classroomService
      * @param postService
+     * @param userService
      * @return
      */
     @Bean
@@ -119,22 +113,20 @@ public class NotificationSystemConfig  {
         defaultRegistrationProviderMap.put(EventType.MEMBERSHIP_REQUEST, new ClassroomEventRegistrationProvider(classroomService));
 
         EventRegisteredUsersProvider contentApprover = new ContentApproverProvider(UserService);
+
         defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, contentApprover); // not yet approved
         defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, contentApprover);// not yet approved
+        // TODO: 10/04/17 handle rejected post event
 
-        QuestionOwnerRegistrationProvider questionOnwerRegistrationProvider = new QuestionOwnerRegistrationProvider(questionService);
-        PostApprovedInterestedUsersProvider approvedInterestedUsersProvider = new PostApprovedInterestedUsersProvider(postService, classroomService);
-        PostApprovedInterestedUsersProvider rejectedPostInterestedUsersProvider = new PostApprovedInterestedUsersProvider(postService, classroomService);
 
-        defaultRegistrationProviderMap.put(EventType.POST_APPROVED, approvedInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.POST_REJECTED, questionOnwerRegistrationProvider);
+        PostEventInterestedUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, UserService);
 
-        defaultRegistrationProviderMap.put(EventType.QUESTION_ANSWERED, questionOnwerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, questionOnwerRegistrationProvider); // not yet approved
-//
-        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, approvedInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, questionOnwerRegistrationProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, questionOnwerRegistrationProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, postEventInterestedUsersProvider);
 
 
 

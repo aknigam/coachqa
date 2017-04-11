@@ -84,7 +84,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				}
 			});
 		}catch(DuplicateKeyException e){
-			LOGGER.warn("Ussr %d already requested for classroom %d membership", appUserId, classroomId);
+			LOGGER.warn("User %d already requested for classroom %d membership", appUserId, classroomId);
 		}catch (Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add membership");
 			throw e;

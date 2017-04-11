@@ -3,6 +3,8 @@ package com.coachqa.service.impl;
 import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.ApplicationEventListener;
@@ -74,7 +76,12 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public Post getPostById(Integer postId) {
-		return postDao.getPostById(postId);
+		Post post = postDao.getPostById(postId);
+		if(post == null){
+			// TODO: 11/04/17 correct the params below
+			throw new QAEntityNotFoundException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION, "message");
+		}
+		return post;
 	}
 
 }
