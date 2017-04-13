@@ -78,7 +78,7 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 		jdbcTemplate.update(incrementPostVotesQuery, new Integer[]{votes, questionId });
 	}
 
-	private String postGetQuery = "select postId, postType, postedBy, postDate, Votes from post where postid = ?";
+	private String postGetQuery = "select postId, postType, postedBy, postDate, Votes, classroomId from post where postid = ?";
 	@Override
 	public Post getPostById(final Integer postId) {
 
@@ -93,12 +93,13 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 				p.setPostId(postId);
 				p.setVotes(rs.getInt("Votes"));
 
+
 				return p;
 			}
 		});
 
 		if(posts!= null && posts.size()==0){
-			throw new RuntimeException("Post not found: "+ postId);
+			return null;
 		}
 
 		return posts.get(0);

@@ -18,14 +18,14 @@ public class LearnQARequestInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		/*
+
 		HttpSession session = request.getSession();
 		if(session.getAttribute("userId") == null)
 		{
 			response.sendRedirect("/assess/login.html");
 			return false;
 		}
-		*/
+
 		return true;
 		
 	}

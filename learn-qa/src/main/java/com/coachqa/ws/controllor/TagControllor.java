@@ -44,7 +44,7 @@ public class TagControllor {
         Principal principal = request.getUserPrincipal();
         String username = principal.getName();
 
-        AppUser appUser =  WSUtil.getUser(request.getSession(), userService);
+        AppUser appUser =  WSUtil.getUser( userService);
         tag =  tagService.addTag(appUser.getAppUserId(), tag);
         WSUtil.setLocationHeader(request, response, tag.getTagId());
 

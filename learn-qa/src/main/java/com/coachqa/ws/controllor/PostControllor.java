@@ -31,7 +31,7 @@ public class PostControllor {
     @RequestMapping(value="/approve", method = RequestMethod.POST)
     public void approvePostContent(@RequestBody PostApproval postApproval,
                                    HttpServletRequest request , HttpServletResponse response){
-        AppUser user = WSUtil.getUser(request.getSession(), userService);
+        AppUser user = WSUtil.getUser(userService);
         postApproval.setApprovedBy(user.getAppUserId());
         postService.updateApprovalStatus(postApproval);
     }
@@ -47,7 +47,7 @@ public class PostControllor {
                      HttpServletRequest request , HttpServletResponse response) {
 
 
-        AppUser user = WSUtil.getUser(request.getSession(), userService);
+        AppUser user = WSUtil.getUser(userService);
         boolean isUpVote = vote > 0 ? true: false;
         postService.vote(user.getAppUserId(), postId, isUpVote, PostTypeEnum.getPostType(postType));
     }
@@ -64,7 +64,7 @@ public class PostControllor {
                              String rating,
                              HttpServletRequest request , HttpServletResponse response) {
 
-        AppUser user = WSUtil.getUser(request.getSession(), userService);
+        AppUser user = WSUtil.getUser( userService);
          postService.ratePost(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
     }
 

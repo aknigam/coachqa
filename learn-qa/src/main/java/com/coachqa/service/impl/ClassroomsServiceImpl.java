@@ -84,7 +84,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				}
 			});
 		}catch(DuplicateKeyException e){
-			LOGGER.warn("Ussr %d already requested for classroom %d membership", appUserId, classroomId);
+			LOGGER.warn("User %d already requested for classroom %d membership", appUserId, classroomId);
 		}catch (Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add membership");
 			throw e;
@@ -154,7 +154,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classroomDAO.getMembershipRequests(classroomId);
 	}
 
-	@Override
+	@Override // TODO: 08/04/17 add implementation
 	public boolean isMemberOf(Integer classroomId, int user) {
 		return true;
 	}

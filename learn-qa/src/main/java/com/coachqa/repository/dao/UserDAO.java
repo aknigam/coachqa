@@ -2,6 +2,9 @@ package com.coachqa.repository.dao;
 
 import com.coachqa.entity.AppUser;
 
+import java.util.Collection;
+import java.util.List;
+
 
 public interface UserDAO {
 
@@ -12,4 +15,5 @@ public interface UserDAO {
 	AppUser getUserByIdentifier(Integer userId);
 
 
+	List<Integer> getPostContentApprovers();
 }

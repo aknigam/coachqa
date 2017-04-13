@@ -3,6 +3,7 @@ package com.coachqa.service.listeners.question;
 
 import com.coachqa.service.listeners.ApplicationEventListener;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,10 @@ public abstract class QuestionPostListener implements  ApplicationEventListener<
 
     @Override
     public void onEvent(ApplicationEvent<Integer> event) {
+        if(event.getStage() == EventStage.STAGE_ONE){
+            System.out.println("Post not yet approved");
+            return;
+        }
         EventType eventType = event.getEventType();
         if(eventType == EventType.QUESTION_POSTED){
             questionPosted(event.getEventSource());

@@ -24,7 +24,9 @@ public enum ApplicationErrorCode {
     QUESTION_POST_PRIVATE(4000, "Private question can only be posted to a valid classroom"),
     QUESTION_POST_CLASSROOM(4001, "You need to be a member of the classroom for posting the question"),
 
-    ANSWER_PRIVATE_QUESTION(5001,"Cannot answer a private question" );
+    ANSWER_PRIVATE_QUESTION(5001,"Cannot answer a private question" ),
+
+    ENTITY_NOT_FOUND(6001,"Cannot find entity" );
 
 
     private final int errorCode;

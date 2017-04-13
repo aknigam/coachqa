@@ -8,6 +8,8 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;
 
@@ -17,28 +19,6 @@ public class WSUtil {
 
 	private static final String LOCATION_HEADER = "location";
 	private static final String FORWARD_SLASH = "/";
-
-	public static AppUser getUser(HttpSession session, UserService userService) {
-		String username = (String) session.getAttribute("username");
-		username= "anigam@expedia.com";
-		if(username!=null && session.getAttribute("userId") == null){
-			// remove this hardcoding once the user identification is done.
-			AppUser appUser = userService.getUserByEmail(username);
-			session.setAttribute("userId", appUser);
-		}
-		return (AppUser) session.getAttribute("userId") ;
-	}
-
-	public static AppUser getUser(HttpServletRequest request, UserService userService) {
-
-		String username = request.getHeader("username");
-		if(username ==  null){
-			username =  "anigam@expedia.com";
-			LOGGER.warn("Username header is missing. Using the default user.");
-		}
-		return userService.getUserByEmail(username);
-
-	}
 
 	public static void setLocationHeader(HttpServletRequest request,
 			HttpServletResponse response, Integer resourceIdentifier) {
@@ -51,8 +31,9 @@ public class WSUtil {
 		response.setStatus(201);
 	}
 
-	public static AppUser getUser(Principal principal, UserService userService) {
-		String username = principal.getName();
+	public static AppUser getUser( UserService userService) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
 		return userService.getUserByEmail(username);
 	}
 }

@@ -2,6 +2,7 @@ package com.coachqa.repository.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -113,6 +114,24 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 		}
 
 	}
-	
+
+	private static String m_adminUserQuery = "select AppUserId from AppUser where UserTypeId = 2";
+
+	@Override
+	public List<Integer> getPostContentApprovers() {
+		return jdbcTemplate.query(m_adminUserQuery, new RowMapper<Integer>() {
+
+			@Override
+			public Integer mapRow(ResultSet rs, int i)
+					throws SQLException {
+
+
+				return rs.getInt("AppUserId");
+
+			}
+		});
+
+	}
+
 
 }

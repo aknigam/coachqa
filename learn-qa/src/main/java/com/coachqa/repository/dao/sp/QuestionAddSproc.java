@@ -60,8 +60,8 @@ public class QuestionAddSproc
 		in.addValue(P_TITLE, model.getTitle());
 		in.addValue(P_CONTENT, model.getContent());
 		in.addValue(P_SUBJECT, model.getRefSubjectId());
-		if(model.getClassroom() != null)
-			in.addValue(P_CLASSROOMID,  model.getClassroom().getClassroomId());
+		if(model.getClassroomId() != null)
+			in.addValue(P_CLASSROOMID,  model.getClassroomId());
 		else
 			in.addValue(P_CLASSROOMID,  null);
 		in.addValue(P_ISPUBLIC,  model.isPublicQuestion());

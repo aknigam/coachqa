@@ -31,6 +31,8 @@ public class Post {
     
     private String approvalComment;
 
+    private Integer classroomId;
+
 
     public Post(){
 
@@ -106,5 +108,14 @@ public class Post {
 
     public void setPostTypeEnum(PostTypeEnum postTypeEnum) {
         this.postTypeEnum = postTypeEnum;
+    }
+
+
+    public Integer getClassroomId() {
+        return classroomId;
+    }
+
+    public void setClassroomId(Integer classroomId) {
+        this.classroomId = classroomId;
     }
 }
