@@ -2,26 +2,24 @@
 
 Deployment Instructions:
 
-1. Download tomcat and unzip it from 
-http://apache.mirrors.hoobly.com/tomcat/tomcat-8/v8.0.26/bin/apache-tomcat-8.0.26.zip
+a) Build the projects
+1. Checkout NotificationSystem project from git and run maven clean install for this project. (Git url: https://github.com/aknigam/NotificationSystem.git)
+2. Checkout CoachQA project from git and run maven clean install for this project. (Git url: https://github.com/aknigam/coachqa.git). 
+Run the maven command from the coachqa folder which contains coachqa-shared and learn-qa folders.
 
-2. Run following maven command from command line or IDE. Run it from the root of the project as shown below:
+b) Run the learnqa service
+2. Navigate to /coachqa/learn-qa folder and run following command from command line:
+    
+        mvn spring-boot:run
 
-C:\workspace\coachqa\learn-qa>mvn package
-
-This will generate a war file in following location: C:\workspace\coachqa\learn-qa\target
-rename the war file from learn-qa.war to ROOT.war
-
-3. Go to tomcat webapps folder. Rename Exitign ROOT folder to ROOT-original. 
-4. Copy the ROOT.war file created in step 2 here.
-5. Start the tomcat folder.
-6. To login to the application go to following link:
-
-http://localhost:8080/login.html
-sample username: anigam@expedia.com
-password: pass
+   Note: You can also run the service by adding a maven configuration for this project.
 
 # Authentication
-run the following command to generate the bearer token. Refer: https://github.com/spring-projects/spring-boot/blob/master/spring-boot-samples/spring-boot-sample-secure-oauth2/src/main/java/sample/secure/oauth2/SampleSecureOAuth2Application.java
-curl localhost:8080/oauth/token -d "grant_type=password&scope=read&username=greg&password=turnquist" -u foo:bar
+run the following command to generate the bearer token. 
+
+curl 'http://localhost:8080/oauth/token?grant_type=password&scope=read&username=anigam@expedia.com&password=pass' -X POST -H 'Origin: chrome-extension://fdmmgilgnpjigdojojpjoooidkmcomcm' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: en-US,en;q=0.8' -H 'Authorization: Basic Zm9vOmJhcg==' -H 'Accept: */*' -H 'Cache-Control: no-cache' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36' -H 'Connection: keep-alive' -H 'Content-Length: 0' --compressed
+
+Above is a post call with required basic authorisation (user: foo, password:bar)
+
+username and passwords can be read from the`learn-qa`.appuser table in DB.
 
