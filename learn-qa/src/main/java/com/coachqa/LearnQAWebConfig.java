@@ -48,10 +48,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+
+import static springfox.documentation.builders.PathSelectors.regex;
 
 
 /*
@@ -196,7 +201,16 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
         return  eventPublisher;
     }
-
+    /*
+    Added to make swagger ui work with spring boot oauth-2
+     */
+    @Bean
+    public Docket productApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()                 .apis(RequestHandlerSelectors.basePackage("com.coachqa.ws.controllor"))
+//                .paths(regex("/api*"))
+                .build();
+    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(LearnQAWebConfig.class, args);
