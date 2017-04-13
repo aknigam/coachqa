@@ -23,3 +23,6 @@ Above is a post call with required basic authorisation (user: foo, password:bar)
 
 username and passwords can be read from the`learn-qa`.appuser table in DB.
 
+
+# Swagger
+http://localhost:8080/swagger-ui.html
