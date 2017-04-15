@@ -4,18 +4,17 @@ package com.coachqa;
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.notification.ContentApproverProvider;
 import com.coachqa.notification.PostEventInterestedUsersProvider;
-import com.coachqa.service.ClassroomService;
-import com.coachqa.service.PostService;
-import com.coachqa.service.QuestionService;
-import com.coachqa.service.UserService;
+import com.coachqa.service.*;
 
 import notification.EventRegisteredUsersProvider;
 import notification.NotificationService;
+import notification.NotifierFactory;
 import notification.SendEventNotificationProcessor;
 import notification.entity.EventType;
 import notification.impl.DefaultRegsitrationProviderFactory;
 import notification.impl.EventNotificationConsumer;
 import notification.impl.NotificationServiceImpl;
+import notification.impl.UserDetailService;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
 import notification.repository.EventDao;
@@ -85,8 +84,13 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public SendEventNotificationProcessor eventNotificationProcessor(EventDao eventDAO, UserEventNotificationDao userEventNotificationDao){
-        return new EventNotificationConsumer(eventDAO, userEventNotificationDao);
+    public NotifierFactory notifierFactory(UserService userService){
+        return new NotifierFactory(userService);
+    }
+
+    @Bean
+    public SendEventNotificationProcessor eventNotificationProcessor(EventDao eventDAO, UserEventNotificationDao userEventNotificationDao, NotifierFactory notifierFactory){
+        return new EventNotificationConsumer(eventDAO, userEventNotificationDao, notifierFactory);
     }
 
 
@@ -102,7 +106,6 @@ public class NotificationSystemConfig  {
      * @param questionService
      * @param classroomService
      * @param postService
-     * @param userService
      * @return
      */
     @Bean

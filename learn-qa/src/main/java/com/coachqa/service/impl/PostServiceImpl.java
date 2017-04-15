@@ -70,7 +70,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void updateApprovalStatus(PostApproval postApproval) {
 		postDao.updatePostApproval(postApproval);
-		ApplicationEvent event= new ApplicationEvent(postApproval.isApproved() ? EventType.POST_APPROVED : EventType.POST_REJECTED, postApproval.getPostId());
+		ApplicationEvent event= new ApplicationEvent(postApproval.isApproved() ? EventType.ANSWER_POSTED : EventType.POST_REJECTED, postApproval.getPostId());
 		postPublisher.publishEvent(event);
 	}
 

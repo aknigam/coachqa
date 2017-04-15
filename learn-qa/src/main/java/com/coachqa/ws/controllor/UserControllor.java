@@ -1,5 +1,6 @@
 package com.coachqa.ws.controllor;
 
+import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
 
@@ -52,6 +53,16 @@ public class UserControllor {
 		 * 1. register the user
 		 */
 		userService.addOrUpdateUserNotificationPreference(preference);
+
+
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/androidtoken", method = RequestMethod.POST)
+	public void addAndroidUserToken(@RequestBody AndroidToken androidToken)
+	{
+
+		userService.addAndroidUserToken(androidToken);
 
 
 	}

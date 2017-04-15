@@ -25,4 +25,8 @@ username and passwords can be read from the`learn-qa`.appuser table in DB.
 
 
 # Swagger
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui.html#/
+
+https://console.firebase.google.com/project/leanqaandroidapp/settings/general/android:com.crajee.learnqa
+
+Web API Key: AIzaSyDYNBHuO2_WCmqP5C6U5swyyM4-9ci9iO0

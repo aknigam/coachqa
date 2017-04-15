@@ -1,5 +1,7 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.AndroidToken;
+import com.coachqa.exception.UserNotFoundException;
 import notification.NotificationService;
 import notification.entity.NotificationPreference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.service.UserService;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,5 +58,23 @@ public class AppUserService implements UserService {
 		return userDAO.getPostContentApprovers();
 	}
 
+	@Override
+	public void addAndroidUserToken(AndroidToken androidToken) {
+		userDAO.addAndroidUserToken(androidToken);
+	}
 
+
+	@Override
+	public List<String> getAndroidTokens(Integer userId) {
+		return userDAO.getAndroidTokens(userId);
+	}
+
+	@Override
+	public List<String> getEmailAddresses(Integer userId) {
+		AppUser user = userDAO.getUserByIdentifier(userId);
+		if(user != null){
+			return Arrays.asList(user.getEmail());
+		}
+		throw new UserNotFoundException("User with id ["+userId+"] does not exists.");
+	}
 }

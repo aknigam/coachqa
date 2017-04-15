@@ -1,20 +1,17 @@
 package com.coachqa.repository.dao.impl;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-import javax.sql.DataSource;
-
-import com.coachqa.App;
+import com.coachqa.entity.AndroidToken;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
@@ -128,6 +125,28 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 				return rs.getInt("AppUserId");
 
+			}
+		});
+
+	}
+
+	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
+
+	@Override
+	public void addAndroidUserToken(AndroidToken androidToken) {
+		jdbcTemplate.update(addAndroidToken, new Object[]{androidToken.getAppUserId()
+				, androidToken.getAndroidToken()});
+	}
+
+	private static String getAddAndroidTokenQuery = "select AndroidToken from AppUser where UserTypeId = 2";
+	public List<String> getAndroidTokens(Integer userId){
+		return jdbcTemplate.query(m_userByIdQuery, new Integer[]{userId}, new RowMapper<String>() {
+
+			@Override
+			public String mapRow(ResultSet rs, int i)
+					throws SQLException {
+
+				return rs.getString("AndroidToken");
 			}
 		});
 

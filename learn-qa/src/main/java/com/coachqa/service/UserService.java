@@ -1,12 +1,14 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import notification.entity.NotificationPreference;
+import notification.impl.UserDetailService;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailService {
 
 	AppUser addUser(AppUser user);
 
@@ -17,4 +19,6 @@ public interface UserService {
 	void addOrUpdateUserNotificationPreference(NotificationPreference preference);
 
 	List<Integer> getPostContentApprovers();
+
+	void addAndroidUserToken(AndroidToken androidToken);
 }

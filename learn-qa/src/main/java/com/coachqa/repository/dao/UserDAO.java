@@ -1,5 +1,6 @@
 package com.coachqa.repository.dao;
 
+import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 
 import java.util.Collection;
@@ -16,4 +17,8 @@ public interface UserDAO {
 
 
 	List<Integer> getPostContentApprovers();
+
+	void addAndroidUserToken(AndroidToken androidToken);
+
+	List<String> getAndroidTokens(Integer userId);
 }
