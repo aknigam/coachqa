@@ -24,9 +24,20 @@ Above is a post call with required basic authorisation (user: foo, password:bar)
 username and passwords can be read from the`learn-qa`.appuser table in DB.
 
 
-# Swagger
+# API documentation using swagger
 http://localhost:8080/swagger-ui.html#/
 
+Install : Modify headers chrome extension to set bearer token while loading swagger UI otherwise you will get authentication error.
+
+
+# Android app details
+
+Checkout android project and import it into Android studio. Setup an emulator or use an android device by debug options enabled.
+Git url: https://github.com/aknigam/LearnQAApp
+
+This app connects to the learn QA service running locally. You should be able to login and see the list of questions and ask a new question using this app.
+
+
+# Firebase 
 https://console.firebase.google.com/project/leanqaandroidapp/settings/general/android:com.crajee.learnqa
 
-Web API Key: AIzaSyDYNBHuO2_WCmqP5C6U5swyyM4-9ci9iO0

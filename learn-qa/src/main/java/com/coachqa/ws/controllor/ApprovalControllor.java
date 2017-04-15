@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Both question and answer can be treated as posts. Some common operations like voting, rating etc can be done in a common manner.
- */
+
 @RestController
 @RequestMapping("/api/approval")
 public class ApprovalControllor {
@@ -55,6 +53,8 @@ public class ApprovalControllor {
                 || eventType == EventType.QUESTION_POSTED || eventType == EventType.QUESTION_UPDATED){
             // find the post and set it to approved
         }
+
+        // if not approved then the stage two rejected event is generated.
 
         ApplicationEvent applicationEvent = new ApplicationEvent(eventType, eventSourceId, EventStage.STAGE_TWO );
         raiseApplicationEvent(applicationEvent);
