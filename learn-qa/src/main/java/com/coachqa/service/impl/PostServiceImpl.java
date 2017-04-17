@@ -37,6 +37,7 @@ public class PostServiceImpl implements PostService {
 	@Lazy
 	private EventPublisher postPublisher;
 
+	// TODO: 17/04/17 to be implemented
 	@Override
 	public void ratePost(Integer userId, Integer postId, QuestionRatingEnum meduim) {
 

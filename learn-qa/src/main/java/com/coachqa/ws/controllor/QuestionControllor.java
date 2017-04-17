@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
-public class QuestionControllorAPI {
+public class QuestionControllor {
 	
 	@Autowired
 	private QuestionService questionService;
@@ -30,7 +30,7 @@ public class QuestionControllorAPI {
 	private UserService userService;
 
 
-	@RequestMapping(value="/ask/submit", method = RequestMethod.POST)
+	@PostMapping
 	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
 	{
 
@@ -49,13 +49,6 @@ public class QuestionControllorAPI {
 		return addedQuestion;
 	}
 
-    @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
-    public void rateQuestion(@PathVariable(value ="questionId")Integer questionId,
-                           String rating) {
-
-        AppUser user = WSUtil.getUser( userService);
-        questionService.rateQuestion(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
-    }
 
 	/**
 	 * http://localhost:8080/api/questions/list?tagId=12&classroomId=1&ownerId=1&subjectId=1&isPublic=true
@@ -67,7 +60,7 @@ public class QuestionControllorAPI {
 	 * @param isPublic
      * @return
      */
-	@RequestMapping( value="/list", method = RequestMethod.GET)
+	@RequestMapping( value="/search", method = RequestMethod.GET)
 	public List<Question> getQuestions(
 			@RequestParam(required = false) Integer tagId,
 			@RequestParam(required = false)  Integer classroomId,
@@ -102,8 +95,8 @@ public class QuestionControllorAPI {
 		return questionService.findSimilarQuestions(criteria, 10);
 	}
 
-	@RequestMapping(value="/question/{id}" , method = RequestMethod.GET)
-	public Question getQuestion(@PathVariable(value = "id") Integer questionId)
+	@RequestMapping(value="/{questionId}" , method = RequestMethod.GET)
+	public Question getQuestion(@PathVariable(value = "questionId") Integer questionId)
 	{
 		AppUser user = WSUtil.getUser( userService);
 		return questionService.getQuestionByIdAndIncrementViewCount(questionId);
@@ -111,19 +104,20 @@ public class QuestionControllorAPI {
 
 
 
-	@RequestMapping(value="/{id}" , method = RequestMethod.PUT)
-	public Object updateQuestion(@PathVariable(value ="id")Integer questionId , @RequestBody Object model)
+	@RequestMapping(value="/{questionId}" , method = RequestMethod.PUT)
+	public Object updateQuestion(@PathVariable(value ="questionId")Integer questionId , @RequestBody Object model)
 	{
 		return null;
 	}
 
 
-	@RequestMapping(value="/answer/submit" , method = RequestMethod.POST)
-	public Question submitAnswer(@RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value="/{questionId}/answer" , method = RequestMethod.POST)
+	public Question submitAnswer(@PathVariable(value ="questionId")Integer questionId , @RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
 	{
 
 		AppUser user = WSUtil.getUser(userService);
 		model.setAnsweredByUserId(user.getAppUserId());
+		model.setQuestionId(questionId);
 
 		return questionService.postAnswer(user.getAppUserId(), model);
 
@@ -131,15 +125,8 @@ public class QuestionControllorAPI {
 
 
 
-	@RequestMapping(value="/tag/{tagId}", method = RequestMethod.GET)
-	public Object getAllQuestionsWithTag(@RequestParam("tagId") int tagId)
-	{
-		return questionService.getQuestionsByTag(tagId);
-	}
-	
-	
-	@RequestMapping(value = "/request",  method = RequestMethod.POST)
-	public void requestToAnswer(Integer questionId, List<Integer> userIds){
+	@RequestMapping(value = "/{questionId}/answerrequest",  method = RequestMethod.POST)
+	public void requestToAnswer(@PathVariable(value ="questionId")Integer questionId, List<Integer> userIds){
 
 	}
 

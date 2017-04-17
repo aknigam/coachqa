@@ -28,7 +28,7 @@ public class UserControllor {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value="/register", method = RequestMethod.POST)
+	@PostMapping
 	public AppUser register(@RequestBody AppUser user, HttpServletRequest request, HttpServletResponse response)
 	{
 		/*
@@ -45,8 +45,9 @@ public class UserControllor {
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/notificationpreference", method = RequestMethod.POST)
-	public void addOrUpdateUserNotificationPreference(@RequestBody NotificationPreference preference, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value="/{userId}/notification/preference", method = RequestMethod.POST)
+	public void addOrUpdateUserNotificationPreference(@PathVariable("userId") int userId,
+													  @RequestBody NotificationPreference preference, HttpServletRequest request, HttpServletResponse response)
 	{
 		/*
 		 * Steps:
@@ -58,10 +59,10 @@ public class UserControllor {
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/androidtoken", method = RequestMethod.POST)
-	public void addAndroidUserToken(@RequestBody AndroidToken androidToken)
+	@RequestMapping(value="/{userId}/androidtoken", method = RequestMethod.POST)
+	public void addAndroidUserToken(@PathVariable("userId") int userId, @RequestBody AndroidToken androidToken)
 	{
-
+		androidToken.setAppUserId(userId);
 		userService.addAndroidUserToken(androidToken);
 
 

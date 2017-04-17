@@ -37,7 +37,7 @@ public class TagControllor {
      * {"tagName":"java","tagDescription":"This is an OO programming language","noOfTaggedQuestions":0}
      *
      */
-    @RequestMapping(value="/add",method = RequestMethod.POST)
+    @PostMapping
     @ResponseBody
     public Tag addTag(@RequestBody Tag tag, HttpServletRequest request, HttpServletResponse response){
 
@@ -62,7 +62,7 @@ public class TagControllor {
     }
 
 
-    @RequestMapping(value="/get/match",method = RequestMethod.GET)
+    @RequestMapping(value="/search",method = RequestMethod.GET)
     @ResponseBody
     public List<Tag> getMatchingTagsByName(HttpServletRequest request, @RequestParam("q") String name){
 
@@ -70,9 +70,9 @@ public class TagControllor {
         return tags;
     }
 
-    @RequestMapping(value="/get",method = RequestMethod.GET)
+    @RequestMapping(value="/{name}",method = RequestMethod.GET)
     @ResponseBody
-    public Tag getTagByName(HttpServletRequest request, @RequestParam("q") String name){
+    public Tag getTagByName(HttpServletRequest request, @PathVariable("name") String name){
 
         return tagService.getTagByName(name);
     }

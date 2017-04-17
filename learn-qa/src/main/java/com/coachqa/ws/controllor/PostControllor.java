@@ -28,11 +28,13 @@ public class PostControllor {
     @Autowired
     private PostService postService;
 
-    @RequestMapping(value="/approve", method = RequestMethod.POST)
-    public void approvePostContent(@RequestBody PostApproval postApproval,
+    @RequestMapping(value="/{postId}/approve", method = RequestMethod.POST)
+    public void approvePostContent(@PathVariable(value ="postId")Integer postId,
+            @RequestBody PostApproval postApproval,
                                    HttpServletRequest request , HttpServletResponse response){
         AppUser user = WSUtil.getUser(userService);
         postApproval.setApprovedBy(user.getAppUserId());
+        postApproval.setPostId(postId);
         postService.updateApprovalStatus(postApproval);
     }
 
@@ -40,9 +42,9 @@ public class PostControllor {
      * No of votes for the question shows people's interest in that particular question.
      * type - can have two values - 1 for question 2 for answer
      */
-    @RequestMapping(value="/{type}/{id}/vote/{vote}", method = RequestMethod.POST)
+    @RequestMapping(value="/{postId}/{type}/vote/{vote}", method = RequestMethod.POST)
     public void vote(@PathVariable(value ="type")Integer postType,
-                     @PathVariable(value ="id")Integer postId,
+                     @PathVariable(value ="postId")Integer postId,
                      @PathVariable(value ="vote")Integer vote,
                      HttpServletRequest request , HttpServletResponse response) {
 
@@ -59,13 +61,13 @@ public class PostControllor {
      *
      * Final rating will be cumalative of rating.
      */
-    @RequestMapping(value="/rate/{questionId}", method = RequestMethod.POST)
-    public void rate(@PathVariable(value ="questionId")Integer questionId,
+    @RequestMapping(value="/rate/{postId}", method = RequestMethod.POST)
+    public void rate(@PathVariable(value ="{postId}")Integer postId,
                              String rating,
                              HttpServletRequest request , HttpServletResponse response) {
 
         AppUser user = WSUtil.getUser( userService);
-         postService.ratePost(user.getAppUserId(), questionId, QuestionRatingEnum.MEDUIM);
+        postService.ratePost(user.getAppUserId(), postId, QuestionRatingEnum.MEDUIM);
     }
 
 

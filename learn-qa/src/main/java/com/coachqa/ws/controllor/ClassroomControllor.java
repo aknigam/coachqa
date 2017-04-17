@@ -24,7 +24,7 @@ public class ClassroomControllor {
 	private UserService userService;
 
 	@ResponseBody
-	@PostMapping(value="/create")
+	@PostMapping
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
 		classroom.setClassOwner(WSUtil.getUser( userService));
@@ -35,15 +35,15 @@ public class ClassroomControllor {
 	}
 
 	@ResponseBody
-	@GetMapping(path = "/{id}/id")
-	public Classroom showClassroomById(@PathVariable(value = "id") Integer classroomId)
+	@GetMapping(path = "/id/{classroomId}")
+	public Classroom showClassroomById(@PathVariable(value = "classroomId") Integer classroomId)
 	{
 		return classroomService.getClassroom(classroomId);
 
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/{name}/name" , method = RequestMethod.GET)
+	@RequestMapping(value="/name/{name}" , method = RequestMethod.GET)
 	public Classroom showClassroomByName(@PathVariable(value = "name") String classname)
 	{
 		return classroomService.getClassroomByName(classname);
@@ -57,9 +57,9 @@ public class ClassroomControllor {
 	 * Classroom coordinator will aprove/reject the request.
 	 * @return 
 	 */
-	@RequestMapping(value="/membership" , method = RequestMethod.POST)
+	@RequestMapping(value="/{classroomId}/membership" , method = RequestMethod.POST)
 	@ResponseBody
-	public String requestClassroomMembership(@RequestParam Integer classroomId, @RequestParam String comments, HttpServletRequest request)
+	public String requestClassroomMembership(@PathVariable Integer classroomId, @RequestParam String comments, HttpServletRequest request)
 	{
 		AppUser user = WSUtil.getUser( userService);
 		classroomService.requestClassroomMembership(user.getAppUserId(), classroomId, comments);
@@ -74,9 +74,9 @@ public class ClassroomControllor {
 	 * This request can be made by the user himself or by the owener of the classroom.
 	 *
 	 */
-	@RequestMapping(value="/leave" , method = RequestMethod.POST)
+	@RequestMapping(value="/{classroomId}/leave" , method = RequestMethod.POST)
 	@ResponseBody
-	public String requestMembershipTermination(@RequestParam Integer classroomId,
+	public String requestMembershipTermination(@PathVariable Integer classroomId,
 											   @RequestParam Integer requestedByUserId,
 											   @RequestParam Integer memberId,
 											   @RequestParam String comments,
@@ -90,7 +90,7 @@ public class ClassroomControllor {
 	 * Input should be the list of userIds and action. Action can be approve or reject.
 	 * The class owner must be the logged-in user. 
 	 */
-	@RequestMapping(value="/processMembershipRequest" , method = RequestMethod.POST)
+	@RequestMapping(value="/{classroomId}/processMembershipRequest" , method = RequestMethod.POST)
 	@ResponseBody
 	public String processJoinRequest(@RequestBody ClassroomMembershipRequest membershipRequests, HttpServletRequest  request ,HttpServletResponse response ){
 		AppUser user = WSUtil.getUser( userService);
@@ -98,8 +98,8 @@ public class ClassroomControllor {
 		return "success";
 	}
 
-	@RequestMapping(value="/showmembershiprequests/{id}", method = RequestMethod.GET)
-	public @ResponseBody ClassroomMembershipRequest showJoinRequests(@PathVariable(value = "id") Integer classroomId, HttpServletRequest request){
+	@RequestMapping(value="/{classroomId}/membershiprequests", method = RequestMethod.GET)
+	public @ResponseBody ClassroomMembershipRequest showJoinRequests(@PathVariable(value = "classroomId") Integer classroomId, HttpServletRequest request){
 
 		AppUser user = WSUtil.getUser(userService);
 		ClassroomMembershipRequest membershipRequest = classroomService.getMemberShipRequests(user, classroomId);
