@@ -125,7 +125,7 @@ public class QuestionControllor {
 
 
 
-	@RequestMapping(value = "/{questionId}/answerrequest",  method = RequestMethod.POST)
+	@RequestMapping(value = "/{questionId}/requestanswer",  method = RequestMethod.POST)
 	public void requestToAnswer(@PathVariable(value ="questionId")Integer questionId, List<Integer> userIds){
 
 	}

@@ -59,7 +59,7 @@ public class UserControllor {
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/{userId}/androidtoken", method = RequestMethod.POST)
+	@PostMapping(value="/{userId}/androidtoken")
 	public void addAndroidUserToken(@PathVariable("userId") int userId, @RequestBody AndroidToken androidToken)
 	{
 		androidToken.setAppUserId(userId);
@@ -71,8 +71,8 @@ public class UserControllor {
 
 
 	@ResponseBody
-	@RequestMapping(value="/{id}" , method = RequestMethod.GET)
-	public AppUser getUserDetails(@PathVariable(value = "id") Integer userId)
+	@RequestMapping(value="/{userId}" , method = RequestMethod.GET)
+	public AppUser getUserDetails(@PathVariable(value = "userId") Integer userId)
 	{
 		return userService.getUserDetails(userId);
 
