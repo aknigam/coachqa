@@ -14,4 +14,8 @@ public class AndroidToken {
     public String getAndroidToken() {
         return androidToken;
     }
+
+    public void setAppUserId(Integer appUserId) {
+        this.appUserId = appUserId;
+    }
 }
