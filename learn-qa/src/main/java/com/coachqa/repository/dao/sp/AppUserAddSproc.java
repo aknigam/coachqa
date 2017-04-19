@@ -1,20 +1,17 @@
 package com.coachqa.repository.dao.sp;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import com.coachqa.App;
+import com.coachqa.entity.AppUser;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
-import com.coachqa.entity.AppUser;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.List;
+import java.util.Map;
 
 
 public class AppUserAddSproc

@@ -1,16 +1,12 @@
 package com.coachqa.notification;
 
 import com.coachqa.entity.Classroom;
-import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
-
 import notification.EventRegisteredUsersProvider;
 import notification.entity.ApplicationEvent;
 import notification.repository.EventRegistrationDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

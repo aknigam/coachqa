@@ -5,7 +5,6 @@ import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.TagAlreadyExistsException;
 import com.coachqa.exception.TagNotFoundException;
 import com.coachqa.repository.dao.TagDao;
-import com.coachqa.repository.dao.impl.DBTagDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -5,20 +5,11 @@ import com.coachqa.entity.Tag;
 import com.coachqa.service.TagService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.security.Principal;
 import java.util.List;
 

@@ -1,15 +1,13 @@
 package com.coachqa.repository.dao.sp;
 
-import java.sql.Types;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import com.coachqa.ws.model.AnswerModel;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
-import com.coachqa.ws.model.AnswerModel;
+import javax.sql.DataSource;
+import java.sql.Types;
+import java.util.Map;
 
 public class AnswerAddSproc
 {

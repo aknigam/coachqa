@@ -1,20 +1,19 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomAlreadyExistsException;
 import com.coachqa.exception.NotAClassroomMemberException;
+import com.coachqa.repository.dao.ClassroomDAO;
+import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-
-import com.coachqa.entity.Classroom;
-import com.coachqa.repository.dao.ClassroomDAO;
-import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;

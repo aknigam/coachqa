@@ -1,19 +1,17 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.AndroidToken;
+import com.coachqa.entity.AppUser;
 import com.coachqa.exception.UserNotFoundException;
+import com.coachqa.repository.dao.UserDAO;
+import com.coachqa.service.UserService;
 import notification.NotificationService;
 import notification.entity.NotificationPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coachqa.entity.AppUser;
-import com.coachqa.repository.dao.UserDAO;
-import com.coachqa.service.UserService;
-
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 

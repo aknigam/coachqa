@@ -1,12 +1,11 @@
 package com.coachqa.repository.dao.mapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.springframework.jdbc.core.RowMapper;
-
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ClassRoomMapper implements RowMapper<Classroom> {
 	

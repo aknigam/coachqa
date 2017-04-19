@@ -1,11 +1,7 @@
 package com.coachqa.service.impl;
 
-import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.ApplicationEventListener;
-import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.entity.ApplicationEvent;
-import notification.entity.EventStage;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by a.nigam on 13/12/16.

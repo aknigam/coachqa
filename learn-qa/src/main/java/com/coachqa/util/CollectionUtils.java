@@ -1,7 +1,6 @@
 package com.coachqa.util;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by a.nigam on 25/12/16.

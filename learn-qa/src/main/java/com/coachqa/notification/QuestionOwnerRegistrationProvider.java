@@ -5,11 +5,9 @@ import com.coachqa.service.QuestionService;
 import notification.EventRegisteredUsersProvider;
 import notification.entity.ApplicationEvent;
 import notification.repository.EventRegistrationDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

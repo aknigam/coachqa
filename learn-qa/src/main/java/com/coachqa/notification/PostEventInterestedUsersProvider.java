@@ -12,11 +12,11 @@ import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
 import notification.repository.EventRegistrationDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *

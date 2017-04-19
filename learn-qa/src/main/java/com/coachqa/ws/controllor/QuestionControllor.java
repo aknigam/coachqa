@@ -1,21 +1,16 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
-import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 

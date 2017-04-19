@@ -1,9 +1,5 @@
 package com.coachqa.ws.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
 import org.slf4j.Logger;
@@ -11,7 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class WSUtil {
 

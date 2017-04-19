@@ -5,7 +5,6 @@ import com.coachqa.entity.AppUser;
 import notification.entity.NotificationPreference;
 import notification.impl.UserDetailService;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface UserService extends UserDetailService {

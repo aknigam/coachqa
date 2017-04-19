@@ -3,7 +3,6 @@ package com.coachqa.ws.controllor;
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.UserService;
-
 import com.coachqa.ws.util.WSUtil;
 import notification.entity.NotificationPreference;
 import notification.enums.NotificationTypeEnum;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/api/users")

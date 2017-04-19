@@ -1,14 +1,13 @@
 package com.coachqa.repository.dao.mapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Question;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Question;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class QuestionMapper implements RowMapper<Question> {
 

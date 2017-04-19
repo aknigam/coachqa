@@ -1,7 +1,6 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.repository.dao.QuestionDAO;

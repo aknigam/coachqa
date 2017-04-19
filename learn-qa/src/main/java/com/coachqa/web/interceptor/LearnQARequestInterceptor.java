@@ -1,15 +1,14 @@
 package com.coachqa.web.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.coachqa.entity.AppUser;
+import com.coachqa.ws.model.HomePageModel;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.coachqa.entity.AppUser;
-import com.coachqa.ws.model.HomePageModel;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Component
 public class LearnQARequestInterceptor extends HandlerInterceptorAdapter {

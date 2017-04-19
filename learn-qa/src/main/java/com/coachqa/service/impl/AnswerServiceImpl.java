@@ -1,8 +1,7 @@
 package com.coachqa.service.impl;
 
-import org.springframework.stereotype.Component;
-
 import com.coachqa.service.AnswerService;
+import org.springframework.stereotype.Component;
 
 @Component
 public class AnswerServiceImpl implements AnswerService {

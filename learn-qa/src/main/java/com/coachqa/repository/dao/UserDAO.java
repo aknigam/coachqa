@@ -3,7 +3,6 @@ package com.coachqa.repository.dao;
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 
-import java.util.Collection;
 import java.util.List;
 
 

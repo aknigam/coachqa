@@ -3,10 +3,7 @@ package com.coachqa.service.impl;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * All the events which require user action through notification should be handled by this listener.

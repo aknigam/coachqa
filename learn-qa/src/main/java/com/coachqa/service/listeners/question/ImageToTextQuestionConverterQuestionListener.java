@@ -2,7 +2,6 @@ package com.coachqa.service.listeners.question;
 
 import com.coachqa.entity.Question;
 import com.coachqa.service.QuestionService;
-import com.coachqa.service.listeners.ApplicationEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,28 +1,22 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
 import com.coachqa.exception.NotAuthorizedToApprovemembershipRequest;
 import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
-
-
+import com.coachqa.repository.dao.ClassroomDAO;
+import com.coachqa.service.ClassroomService;
 import com.coachqa.service.UserService;
-import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.question.EventPublisher;
-import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
-import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.coachqa.entity.Classroom;
-import com.coachqa.repository.dao.ClassroomDAO;
-import com.coachqa.service.ClassroomService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -33,7 +27,6 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

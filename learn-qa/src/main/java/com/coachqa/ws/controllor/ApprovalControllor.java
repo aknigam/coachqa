@@ -1,22 +1,19 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.enums.PostTypeEnum;
-import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.question.EventPublisher;
-import com.coachqa.ws.model.PostApproval;
 import com.coachqa.ws.util.WSUtil;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -41,7 +38,7 @@ public class ApprovalControllor {
                 AppUser postedBy = post.getPostedBy();
                 String message  = getApprovalMessage(content, eventType, postedBy );
      */
-
+    // TODO: 19/04/17 Incomplete
     @RequestMapping(value="/approve/{eventtype}/{eventsourceId}/{eventId}/{postedby}", method = RequestMethod.POST)
     public void approveRequests(@PathVariable(value = "eventtype") EventType eventType,
                                 @PathVariable(value = "eventsourceId") Integer eventSourceId,

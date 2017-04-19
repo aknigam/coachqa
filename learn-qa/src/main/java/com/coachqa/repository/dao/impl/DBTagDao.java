@@ -4,15 +4,12 @@ import com.coachqa.entity.Tag;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.TagNotFoundException;
 import com.coachqa.repository.dao.TagDao;
-import com.coachqa.repository.dao.impl.BaseDao;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.HashMap;

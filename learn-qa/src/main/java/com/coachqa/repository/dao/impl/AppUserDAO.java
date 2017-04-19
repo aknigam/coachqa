@@ -1,14 +1,12 @@
 package com.coachqa.repository.dao.impl;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
-
 import com.coachqa.entity.AndroidToken;
+import com.coachqa.entity.AppUser;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.UserAlreadyExistsException;
+import com.coachqa.exception.UserNotFoundException;
+import com.coachqa.repository.dao.UserDAO;
+import com.coachqa.repository.dao.sp.AppUserAddSproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,10 +17,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import com.coachqa.entity.AppUser;
-import com.coachqa.exception.UserNotFoundException;
-import com.coachqa.repository.dao.UserDAO;
-import com.coachqa.repository.dao.sp.AppUserAddSproc;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 
 @Component

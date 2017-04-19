@@ -4,7 +4,6 @@ import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.AnswerModel;
 
-
 import java.util.List;
 
 public interface QuestionService {
