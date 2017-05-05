@@ -26,7 +26,9 @@ public enum ApplicationErrorCode {
 
     ANSWER_PRIVATE_QUESTION(5001,"Cannot answer a private question" ),
 
-    ENTITY_NOT_FOUND(6001,"Cannot find entity" );
+    ENTITY_NOT_FOUND(6001,"Cannot find entity" ),
+
+    NOT_AUTHORIZEDTO_APPROVE(3007,"Not authorized to approve" );
 
 
     private final int errorCode;
