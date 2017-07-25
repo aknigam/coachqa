@@ -28,7 +28,12 @@ username and passwords can be read from the`learn-qa`.appuser table in DB.
 http://localhost:8080/swagger-ui.html#/
 
 Install : Modify headers chrome extension to set bearer token while loading swagger UI otherwise you will get authentication error.
+header name: Authorization
+header value: bearer 0987111f-3e99-4840-851e-f8f9e2a88585
 
+Swagger yml is available at: http://localhost:8080/v2/api-docs
+It can be imported to postman by providing the contents of above url.
+Name of postman collection: Crajee-API docs
 
 ## Android app details
 
