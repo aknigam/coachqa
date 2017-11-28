@@ -5,6 +5,9 @@ import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
+import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
+import com.coachqa.repository.dao.mybatis.mapper.QuestionMybatisMapper;
+import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
 import com.coachqa.repository.dao.sp.QuestionAddSproc;
 import com.coachqa.repository.dao.sp.QuestionGetSproc;
@@ -13,14 +16,17 @@ import com.coachqa.ws.model.AnswerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.*;
 
 @Component
@@ -70,7 +76,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Cacheable(value="questions", key="#questionId")
 	@Override
 	public Question getQuestionById(Integer questionId) {
-		return questionGetSproc.getQuestionById(questionId);
+		try{
+			return questionGetSproc.getQuestionById(questionId);
+		}
+		catch (DataAccessException se){
+			LOGGER.error("Question does not exists: "+ questionId, se);
+			return null;
+		}
+
 	}
 
 	@Override
@@ -86,9 +99,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	}
 
 
-	private String incrementQuestionViewsQuery =  "Update question set NoOfViews = NoOfViews + 1 where questionId =  ?";
+	private String incrementQuestionViewsQuery =  "Update post set NoOfViews = NoOfViews + 1 where PostId =  ?";
 
-	private String incrementQuestionVotesQuery =  "Update Question set Votes = Votes + ? where questionId = ?";
+	private String incrementQuestionVotesQuery =  "Update post set Votes = Votes + ? where postId = ?";
 
 	@Override
 	public void incrementQuestionViews(Integer questionId) {
@@ -103,6 +116,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			" order by p.postDate desc";
 	@Override
 	public List<Question> getQuestionsByTag(int tagId) {
+		// todo
 		return null;
 	}
 	/**
@@ -160,6 +174,29 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		return qstns;
 
 
+	}
+	@Autowired
+	private PostMapper postMapper;
+
+
+	@Autowired
+	private QuestionMybatisMapper questionMapper;
+
+	@Autowired
+	private TagMapper tagMapper;
+
+
+	@Override
+	public Question updateQuestion(Question updatedQuestion) {
+		// classroom, content, updatedate, approval status
+		postMapper.updateQuestion(updatedQuestion);
+		// subject, title, isPublic
+		questionMapper.updateQuestion(updatedQuestion);
+
+		tagMapper.deleteTags(updatedQuestion.getQuestionId());
+		tagMapper.addTags(updatedQuestion.getQuestionId(), updatedQuestion.getTags());
+
+		return updatedQuestion;
 	}
 
 	public static void main(String[] args) {

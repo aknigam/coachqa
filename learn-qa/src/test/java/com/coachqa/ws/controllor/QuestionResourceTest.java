@@ -27,10 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by a.nigam on 14/12/16.
  */
 @RunWith(SpringRunner.class)
-
+@WebAppConfiguration
 @ContextConfiguration(classes = LearnQAWebTestConfig.class, loader=AnnotationConfigContextLoader.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class QuestionResourceTest {
 
     @Autowired

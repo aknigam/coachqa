@@ -46,6 +46,7 @@ public class ClassroomControllor {
 	@RequestMapping(value="/name/{name}" , method = RequestMethod.GET)
 	public Classroom showClassroomByName(@PathVariable(value = "name") String classname)
 	{
+		// todo
 		return classroomService.getClassroomByName(classname);
 
 	}

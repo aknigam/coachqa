@@ -35,8 +35,6 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
 
     private UserService userService;
 
-
-
     public PostEventInterestedUsersProvider(PostService postService, ClassroomService classroomService, UserService userService){
         this.postService = postService;
         this.classroomService = classroomService;

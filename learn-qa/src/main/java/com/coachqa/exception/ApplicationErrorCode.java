@@ -20,6 +20,7 @@ public enum ApplicationErrorCode {
     NOT_AUTHORIZEDTO_APPROVE_MEMBERSHIP(3004, "Not authorized to approve membership request"),
     NOT_AUTHORIZEDTO_VIEW_MEMBERSHIP_REQUESTS(3005),
     CLASSROOM_ALREADY_EXISTS(3006 ),
+    NOT_AUTHORIZEDTO_UPDATE(3007),
 
     QUESTION_POST_PRIVATE(4000, "Private question can only be posted to a valid classroom"),
     QUESTION_POST_CLASSROOM(4001, "You need to be a member of the classroom for posting the question"),

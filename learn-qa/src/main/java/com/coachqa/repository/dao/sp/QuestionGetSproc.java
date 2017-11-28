@@ -32,7 +32,8 @@ public class QuestionGetSproc
 			new SqlParameter(P_QUESTIONID	,Types.INTEGER)
 		)
 		.returningResultSet("question", new QuestionMapper())
-		.returningResultSet("answers", new AnswerMapper());
+		.returningResultSet("answers", new AnswerMapper())
+		.returningResultSet("tags", new TagJDBCMapper());
 	}
 
 
@@ -47,6 +48,8 @@ public class QuestionGetSproc
 		
 		List<Answer> answers =   (List<Answer>) out.get("answers");
 		question.setAnswers(answers);
+
+		question.setTags((List<Integer>) out.get("tags"));
 		return question;
 	}
 	

@@ -4,6 +4,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.service.ApprovalProcessor;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
+import com.coachqa.service.impl.PostApprovalProcessor;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.util.WSUtil;
 import notification.NotificationService;
@@ -65,6 +66,9 @@ public class ApprovalControllor {
         ApplicationEvent<Integer> event = notificationService.fetchEventDetails(eventId);
         EventType eventType = event.getEventType();
         ApprovalProcessor processor = getApprovalProcessor(eventType);
+
+
+
         processor.processApprovalRequest(event,approver, isRequestApproved);
 
         return;
@@ -73,6 +77,9 @@ public class ApprovalControllor {
     }
 
     private ApprovalProcessor getApprovalProcessor(EventType eventType) {
+        if(eventType ==  EventType.QUESTION_POSTED || eventType == EventType.QUESTION_ANSWERED){
+            return new PostApprovalProcessor();
+        }
         return null;
     }
 
