@@ -11,6 +11,9 @@ public class QuestionVote extends Vote {
 
     private int questionId;
 
+    public QuestionVote(){
+
+    }
     public QuestionVote(int votedByUserId, boolean upOrDown, DateTime voteDate, int questionId) {
         super(votedByUserId, upOrDown, voteDate);
         this.questionId = questionId;

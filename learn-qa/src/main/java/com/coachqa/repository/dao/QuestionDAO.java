@@ -20,4 +20,6 @@ public interface QuestionDAO {
 	List<Question> getQuestionsByTag(int tagId);
 
 	List<Question> findSimilarQuestions(Question criteria);
+
+	Question updateQuestion(Question updatedQuestion);
 }

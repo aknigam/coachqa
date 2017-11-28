@@ -49,7 +49,7 @@ public interface QuestionService {
 	 * when can the question be updated and who can update
 	 * Only the user who 
 	 */
-	void updateQuestion(Integer userId, Integer questionId, String questionContent);
+	void updateQuestion(Question updatedQuestion);
 	
 	/**
 	 * Ability to do the rating of difficulty level - EASY, MEDIUM , TOUGH

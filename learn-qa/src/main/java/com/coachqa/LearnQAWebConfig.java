@@ -11,6 +11,10 @@ import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
@@ -150,6 +154,20 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         dataSource.setPassword("root");
         return dataSource;
     }
+
+    /*
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(){
+
+        TransactionFactory transactionFactory = new JdbcTransactionFactory();
+        org.apache.ibatis.mapping.Environment myBatisEnvironment =
+                new org.apache.ibatis.mapping.Environment("dev", transactionFactory, learnqadataSource());
+        org.apache.ibatis.session.Configuration mybatisConfiguration = new org.apache.ibatis.session.Configuration(myBatisEnvironment);
+        SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(mybatisConfiguration);
+        mybatisConfiguration.addMappers("com.smartbookmark.repository.mybatis.mapper");
+        return sessionFactory;
+    }
+    */
 
     @Bean
     public PlatformTransactionManager txManager(){
