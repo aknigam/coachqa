@@ -4,6 +4,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.service.ApprovalProcessor;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
+import com.coachqa.service.impl.ApprovalService;
 import com.coachqa.service.impl.PostApprovalProcessor;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.util.WSUtil;
@@ -34,6 +35,10 @@ public class ApprovalControllor {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    @Lazy
+    private EventPublisher eventPublisher;
+
     /*
                 String content = post.getContent();
                 EventTypeD eventType = event.getEventType();
@@ -46,6 +51,8 @@ public class ApprovalControllor {
                                 @PathVariable(value = "isApproved") int isApproved){
         boolean isRequestApproved = isApproved == 0 ? true : false;
         AppUser approver = WSUtil.getUser(userService);
+
+
 
         /*
         Steps:
@@ -78,7 +85,7 @@ public class ApprovalControllor {
 
     private ApprovalProcessor getApprovalProcessor(EventType eventType) {
         if(eventType ==  EventType.QUESTION_POSTED || eventType == EventType.QUESTION_ANSWERED){
-            return new PostApprovalProcessor();
+            return new ApprovalService(postService, eventPublisher);
         }
         return null;
     }

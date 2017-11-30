@@ -116,14 +116,14 @@ public class NotificationSystemConfig  {
 
         defaultRegistrationProviderMap.put(EventType.MEMBERSHIP_REQUEST, new ClassroomEventRegistrationProvider(classroomService));
 
-        EventRegisteredUsersProvider contentApprover = new ContentApproverProvider(UserService);
+//        EventRegisteredUsersProvider contentApprover = new ContentApproverProvider(UserService);
 
-        defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, contentApprover); // not yet approved
-        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, contentApprover);// not yet approved
+//        defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, contentApprover); // not yet approved
+//        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, contentApprover);// not yet approved
         // TODO: 10/04/17 handle rejected post event
 
 
-        PostEventInterestedUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, UserService);
+        EventRegisteredUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, UserService);
 
         defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, postEventInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, postEventInterestedUsersProvider);
@@ -131,8 +131,6 @@ public class NotificationSystemConfig  {
         defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, postEventInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, postEventInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, postEventInterestedUsersProvider);
-
-
 
 
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
