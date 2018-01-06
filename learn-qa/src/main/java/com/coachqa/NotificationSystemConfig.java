@@ -4,10 +4,14 @@ package com.coachqa;
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
 import com.coachqa.notification.ContentApproverProvider;
 import com.coachqa.notification.PostEventInterestedUsersProvider;
+import com.coachqa.service.ApprovalProcessor;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
+import com.coachqa.service.impl.ClassroomEventApprovalProcessor;
+import com.coachqa.service.impl.PostApprovalProcessor;
+import com.coachqa.ws.controllor.ApprovalProcessorFactory;
 import notification.EventRegisteredUsersProvider;
 import notification.NotificationService;
 import notification.NotifierFactory;
@@ -138,11 +142,38 @@ public class NotificationSystemConfig  {
 
     @Bean
     public NotificationService notificationService(NotificationPublisher notificationPublisher, EventDao eventDao,
-                                                   SendEventNotificationProcessor eventNotificationProcessor, DefaultRegsitrationProviderFactory eventRegistrationFactory,
+                                                   SendEventNotificationProcessor eventNotificationProcessor,
+                                                   DefaultRegsitrationProviderFactory eventRegistrationFactory,
                                                    EventRegistrationDao eventRegistrationDao,
                                                    UserEventNotificationDao userEventNotificationDao,
                                                    UserNotificationPreferenceDao userNotificationPreferenceDao){
         return new NotificationServiceImpl( eventDao, eventNotificationProcessor, eventRegistrationFactory, eventRegistrationDao,
                 userEventNotificationDao, userNotificationPreferenceDao);
     }
+
+    @Bean
+    public PostApprovalProcessor postApprovalProcessor(PostService postService){
+        return new PostApprovalProcessor();
+    }
+
+    @Bean
+    public ClassroomEventApprovalProcessor classroomEventApprovalProcessor(){
+        return new ClassroomEventApprovalProcessor();
+    }
+    @Bean
+    public ApprovalProcessorFactory postApprovalProcessorFactory(ApprovalProcessor postApprovalProcessor,
+                                                                 ClassroomEventApprovalProcessor classroomEventApprovalProcessor){
+
+        ApprovalProcessorFactory factory = new ApprovalProcessorFactory();
+//        ApprovalProcessor postApprovalProcessor = new PostApprovalProcessor();
+        factory.register(EventType.QUESTION_POSTED, postApprovalProcessor);
+        factory.register(EventType.QUESTION_ANSWERED, postApprovalProcessor);
+        factory.register(EventType.ANSWER_POSTED, postApprovalProcessor);
+
+//        ClassroomEventApprovalProcessor classroomEventApprovalProcessor = new ClassroomEventApprovalProcessor();
+        factory.register(EventType.MEMBERSHIP_REQUEST, classroomEventApprovalProcessor);
+
+        return factory;
+    }
+
 }

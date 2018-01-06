@@ -25,6 +25,7 @@ public class QuestionMapper implements RowMapper<Question> {
 		q.setNoOfViews(rs.getInt("NoOfViews"));
 		q.setRefQuestionStatusId(QuestionStatusEnum.from(rs.getInt("RefQuestionStatusId")) );
 		q.setVotes(rs.getInt("Votes"));
+		q.setClassroomId(rs.getInt("ClassroomId"));
 		
 		AppUser postedBy = new AppUser();
 		postedBy.setAppUserId(rs.getInt("PostedBy"));

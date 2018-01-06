@@ -28,15 +28,6 @@ public class PostControllor {
     @Autowired
     private PostService postService;
 
-    @RequestMapping(value="/{postId}/approve", method = RequestMethod.POST)
-    public void approvePostContent(@PathVariable(value ="postId")Integer postId,
-            @RequestBody PostApproval postApproval,
-                                   HttpServletRequest request , HttpServletResponse response){
-        AppUser user = WSUtil.getUser(userService);
-        postApproval.setApprovedBy(user.getAppUserId());
-        postApproval.setPostId(postId);
-        postService.updateApprovalStatus(postApproval);
-    }
 
     /**
      * No of votes for the question shows people's interest in that particular question.

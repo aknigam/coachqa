@@ -1,19 +1,42 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.repository.dao.impl.FileUploadDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Refer below links:
+ * 1. http://www.baeldung.com/spring-mvc-image-media-data
+ * 2. https://github.com/eugenp/tutorials/blob/master/spring-mvc-xml/src/main/java/com/baeldung/spring/controller/ImageController.java
+ *
+ */
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/api/image")
 public class FileUploadResource {
 
+    @Autowired
     private FileUploadDao fileUploadDao;
 
-    @GetMapping
-    public @ResponseBody
-    String provideUploadInfo() {
-        return "You can upload a file by posting to this same URL.";
+    public static void main(String[] args) {
+        String url = "http://localhost:8080/api/image/1";
+        int imageId = Integer.valueOf(url.substring(url.lastIndexOf("/")+1, url.length()));
+        System.out.println(imageId);
+    }
+
+    @GetMapping(value="/{imageId}")
+    public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable(value = "imageId") Integer imageId)  {
+        ResponseEntity<byte[]> responseEntity;
+        final HttpHeaders headers = new HttpHeaders();
+
+        byte[] media = fileUploadDao.readImage(imageId);
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+        responseEntity = new ResponseEntity<>(media, headers, HttpStatus.OK);
+        return responseEntity;
     }
 
     @PostMapping
@@ -22,11 +45,10 @@ public class FileUploadResource {
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-
-                int fileId = fileUploadDao.persist(bytes);
-
-                return "You successfully uploaded " + name + "!";
+                Integer fileId = fileUploadDao.persist(bytes);
+                return fileId.toString();
             } catch (Exception e) {
+                e.printStackTrace();
                 return "You failed to upload " + name + " => " + e.getMessage();
             }
         } else {

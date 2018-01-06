@@ -1,5 +1,7 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Classroom;
+import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.*;
@@ -22,6 +24,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -132,12 +135,34 @@ public class QuestionServiceImpl implements QuestionService {
 	private void publishPostQuestionEvent(Question qstn) {
 
 		Integer questionId = qstn.getQuestionId();
-		// stage 1 indicates approval pending
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
+
+		/*
+		Check classroom settings whether approval is required or not
+		 */
+		if(isApprovalRequired(qstn)){
+// stage 1 indicates approval pending
+			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
+		}
+		else
+		{
+			// stage 1 indicates approval pending
+			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_TWO));
+		}
+
+
+	}
+
+	private boolean isApprovalRequired(Question qstn) {
+		if(qstn.isPublicQuestion()){
+			return true;
+		}
+		ClassroomSettings cs = classroomService.getClassroomSettings(qstn.getClassroomId());
+
+		return cs.isPostApprovalRequired();
 	}
 
 	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {
-		return !classroomService.isMemberOf(question.getClassroomId(), question.getPostedBy().getAppUserId());
+		return !classroomService.isActiveMemberOf(question.getClassroomId(), postedByUserId);
 	}
 
 	private boolean isPrivateQuestionWithoutClassroom(Question question) {
@@ -167,7 +192,9 @@ public class QuestionServiceImpl implements QuestionService {
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId()));
+		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId(),
+				userId,new Date(System.currentTimeMillis()),
+				new Date(System.currentTimeMillis()) ));
 
 		return question;
 	}
@@ -215,6 +242,7 @@ public class QuestionServiceImpl implements QuestionService {
 	 * @param tagId
 	 * @return
 	 */
+	@Deprecated
 	@Override
 	public List<Question> getQuestionsByTag(int tagId) {
 		return questionDao.getQuestionsByTag(tagId);

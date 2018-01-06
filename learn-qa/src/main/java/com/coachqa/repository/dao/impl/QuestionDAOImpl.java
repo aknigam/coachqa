@@ -110,14 +110,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	}
 
-	private String questionGetByTagQuery = "select questionId from questiontag qt" +
-			" join question q on q.questionId = qt.questionId " +
-			" join post p on p.postId = q.questionId " +
-			" order by p.postDate desc";
+
 	@Override
 	public List<Question> getQuestionsByTag(int tagId) {
 		// todo
-		return null;
+		return tagMapper.getQuestionsByTag(tagId);
 	}
 	/**
 	 * Following items can be specified in the criteria:
@@ -152,22 +149,30 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Override
 	public List<Question> findSimilarQuestions(Question q) {
 
+		// todo: access check should also be added here. i.e the logged in user should be the member of the classroom
+		// todo: if the question is private.
 
 		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
-		String query = queryBuilder
+
+		queryBuilder
+		 = queryBuilder
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType", "ClassroomId"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
 				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
-				.withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroomId())
-				.withTag(q.getTags())
 				.withPostedByUser(q.getPostedBy())
 				.withPublicOnly(q.isPublicQuestion())
-				.buildQuery();
+				.withApprovedOnly();
 
+
+		if(tagCriteriaExists(q)) {
+			queryBuilder.withTagsCondition(q.getTags());
+		}
+		
+		String query = queryBuilder.buildQuery();
 		RowMapper<Question> qm= new QuestionMapper();
 		List<Question> qstns = jdbcTemplate.query(query, qm);
 
@@ -175,6 +180,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 	}
+
+	private boolean tagCriteriaExists(Question q) {
+		return q.getTags()!= null && !q.getTags().isEmpty();
+	}
+
 	@Autowired
 	private PostMapper postMapper;
 
@@ -256,6 +266,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 						}
 						return q.toString();
 					}
+				case IN_SUBQUERY:
+					return lhs + " in "+ rhs;
 				default:
 					return "";
 			}
@@ -273,7 +285,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	static enum JoinTypeEnum{
 		EQUALS,
-		IN
+		IN,
+		IN_SUBQUERY
 	}
 
 	static class JoinTable implements Comparable<JoinTable>{
@@ -448,6 +461,30 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 							.withJoinType(JoinTypeEnum.EQUALS)));
 			return this;
 		}
+
+		public QuestionQueryBuilder withApprovedOnly() {
+			//  0 means approved questions
+			conditions.add(new QueryCondition("ApprovalStatus", 0).withJoinType(JoinTypeEnum.EQUALS));
+			return this;
+		}
+
+		public void withTagsCondition(List<Integer> tags) {
+			StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.QuestionId from questiontag qt where TagId in (");
+
+			int size = tags.size();
+			int i =1;
+			for (Integer tagId:tags) {
+				tagSelectQuery.append(tagId);
+				if(i++ != size) {
+					tagSelectQuery.append(",");
+				}
+			}
+			tagSelectQuery.append(" ) ");
+
+			conditions.add(new QueryCondition("questionId", "( "+tagSelectQuery+" ) ").withJoinType(JoinTypeEnum.IN_SUBQUERY));
+		}
+
+
 	}
 
 

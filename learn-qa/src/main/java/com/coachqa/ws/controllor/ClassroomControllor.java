@@ -42,6 +42,12 @@ public class ClassroomControllor {
 
 	}
 
+	/**
+	 * shall be required in case some wants to search classroom by name.
+	 * LOW PRIORITY
+	 * @param classname
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/name/{name}" , method = RequestMethod.GET)
 	public Classroom showClassroomByName(@PathVariable(value = "name") String classname)

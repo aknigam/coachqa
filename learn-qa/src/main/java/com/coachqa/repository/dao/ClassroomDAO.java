@@ -23,4 +23,6 @@ public interface ClassroomDAO {
 	ClassroomMembershipRequest getMembershipRequests(Integer classroomId);
 
 	List<Classroom> getUserMemberships(AppUser user);
+
+	boolean isActiveMemberOf(Integer classroomId, Integer user);
 }

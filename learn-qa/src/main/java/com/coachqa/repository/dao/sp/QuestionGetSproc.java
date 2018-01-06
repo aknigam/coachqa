@@ -44,6 +44,10 @@ public class QuestionGetSproc
 		Map<String, Object> out = m_QuestionGetSproc.execute(in);
 		
 		List<Question> result = (List<Question>) out.get("question");
+		if(result.isEmpty())
+		{
+			return null;
+		}
 		Question question = result.get(0);
 		
 		List<Answer> answers =   (List<Answer>) out.get("answers");

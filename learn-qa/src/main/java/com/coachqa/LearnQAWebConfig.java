@@ -15,6 +15,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
@@ -74,10 +75,9 @@ The @SpringBootApplication annotation is equivalent to using @Configuration, @En
 @EnableSwagger2
 @EnableAuthorizationServer
 @EnableResourceServer
+@MapperScan("com.coachqa.repository.dao.mybatis.mapper")
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private YamlMapFactoryBean yamlMapFactoryBean;
     /**
      * http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#mvc-default-servlet-handler
      */

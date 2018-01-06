@@ -7,6 +7,8 @@ import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomAlreadyExistsException;
 import com.coachqa.exception.NotAClassroomMemberException;
 import com.coachqa.repository.dao.ClassroomDAO;
+import com.coachqa.repository.dao.mapper.ClassRoomMapper;
+import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
 import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
@@ -14,6 +16,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,6 +34,9 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 	private static Logger LOGGER = LoggerFactory.getLogger(ClassroomDAOImpl.class);
 
 	private ClassroomGetByIdSproc classroomGetByIdSproc;
+
+	@Autowired
+	private ClassroomMyBatisMapper classroomMapper;
 
 
 	@Override
@@ -99,7 +105,8 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		}
 	}
 
-	private static String approveMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? , MembershipStartDate = ? " +
+	private static String approveMembershipRequestQuery =
+			"Update classroomMember set status = ?, comments = ? , MembershipStartDate = ? , " +
 			" MembershipExpirartionDate= ? " +
 			" where classroomId = ? and appUserId = ? and status = ? ";
 	private static String denyMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? where classroomId = ? and appUserId = ? and status = ? ";
@@ -107,7 +114,7 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 	public void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments) {
 
 		int updatedRows = 0;
-		if(approve){
+		if(!approve){
 			LOGGER.debug(String.format("Approving the join request"));
 			jdbcTemplate.update(denyMembershipRequestQuery, new Object[]{
 					ClassroomMembershipStatusEnum.REJECTED.getId()
@@ -174,7 +181,14 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	@Override
 	public List<Classroom> getUserMemberships(AppUser user) {
-		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
+		return  classroomMapper.getUserClassrooms(user.getAppUserId());
+//		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
+	}
+
+	@Override
+	public boolean isActiveMemberOf(Integer classroomId, Integer user) {
+		Integer ClassroomMemberId = classroomMapper.getMembership(classroomId, user);
+		return ClassroomMemberId != null;
 	}
 
 }

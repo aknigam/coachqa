@@ -28,16 +28,14 @@ public class ApprovalControllor {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PostService postService;
 
 
     @Autowired
     private NotificationService notificationService;
 
+
     @Autowired
-    @Lazy
-    private EventPublisher eventPublisher;
+    private ApprovalProcessorFactory approvalProcessorFactory;
 
     /*
                 String content = post.getContent();
@@ -72,7 +70,7 @@ public class ApprovalControllor {
 
         ApplicationEvent<Integer> event = notificationService.fetchEventDetails(eventId);
         EventType eventType = event.getEventType();
-        ApprovalProcessor processor = getApprovalProcessor(eventType);
+        ApprovalProcessor processor = approvalProcessorFactory.getApprovalProcessor(eventType);
 
 
 
@@ -81,13 +79,6 @@ public class ApprovalControllor {
         return;
 
 
-    }
-
-    private ApprovalProcessor getApprovalProcessor(EventType eventType) {
-        if(eventType ==  EventType.QUESTION_POSTED || eventType == EventType.QUESTION_ANSWERED){
-            return new ApprovalService(postService, eventPublisher);
-        }
-        return null;
     }
 
 

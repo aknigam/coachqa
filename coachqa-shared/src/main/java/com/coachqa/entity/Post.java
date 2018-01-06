@@ -26,7 +26,8 @@ public class Post {
     private Integer votes;
     
     private String content;
-    
+
+    // value 1 means pending approval, 0 means approved
     private boolean approvalStatus;
     
     private String approvalComment;
