@@ -2,6 +2,8 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
+import com.coachqa.entity.RefQuestionStatus;
+import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
@@ -33,6 +35,7 @@ public class QuestionControllor {
 
 
 		question.setPostedBy(user);
+		question.setRefQuestionStatusId(QuestionStatusEnum.NEW);
 
 		Question addedQuestion = questionService.postQuestion(user.getAppUserId(), question);
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());

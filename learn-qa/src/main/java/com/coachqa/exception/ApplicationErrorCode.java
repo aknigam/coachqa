@@ -35,6 +35,7 @@ public enum ApplicationErrorCode {
     IN_VALID_EVENT(5001, "Invalid event type");
 
 
+
     private final int errorCode;
     private final String message;
 

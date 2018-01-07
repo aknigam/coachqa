@@ -17,7 +17,7 @@ public class Post {
 
     private PostTypeEnum postTypeEnum;
     
-    private Integer noOfViews;
+    private Integer noOfViews= 0;
     
     private AppUser postedBy;
     
@@ -52,7 +52,10 @@ public class Post {
     }
 
     public void setNoOfViews(Integer noOfViews) {
-        this.noOfViews = noOfViews;
+        if(noOfViews != null){
+            this.noOfViews = noOfViews;
+        }
+
     }
 
     public AppUser getPostedBy() {

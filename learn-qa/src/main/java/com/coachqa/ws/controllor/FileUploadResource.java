@@ -22,11 +22,6 @@ public class FileUploadResource {
     @Autowired
     private FileUploadDao fileUploadDao;
 
-    public static void main(String[] args) {
-        String url = "http://localhost:8080/api/image/1";
-        int imageId = Integer.valueOf(url.substring(url.lastIndexOf("/")+1, url.length()));
-        System.out.println(imageId);
-    }
 
     @GetMapping(value="/{imageId}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable(value = "imageId") Integer imageId)  {

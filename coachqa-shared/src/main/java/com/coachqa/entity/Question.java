@@ -25,7 +25,13 @@ public class Question extends Post implements java.io.Serializable {
 	
 	private QuestionLevelEnum questionLevelEnum;
 	
-	private QuestionStatusEnum refQuestionStatusId;
+	private QuestionStatusEnum refQuestionStatusId = QuestionStatusEnum.NEW;
+
+	public int getStatusId() {
+		return refQuestionStatusId.getId();
+	}
+
+	private int statusId;
 	
 	private String title;
 	

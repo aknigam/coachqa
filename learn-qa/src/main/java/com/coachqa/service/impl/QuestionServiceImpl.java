@@ -74,13 +74,19 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 
 		if(isNotMemberofProvidedClassroom(question, question.getPostedBy().getAppUserId())){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_CLASSROOM);
 		}
 
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
             @Override
             public Question doInTransaction(TransactionStatus transactionStatus) {
-                return  questionDao.addQuestionWithTags(question);
+				question.setApprovalStatus(false);
+            	if(isApprovalRequired(question)){
+            		question.setApprovalStatus(true);
+				}
+
+				// TODO: 06/01/18 the default approval status in the post table is 1 (false). This also needs to be set to true in case approval is not required.
+				return  questionDao.addQuestionWithTags(question);
             }
         });
 

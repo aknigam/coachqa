@@ -41,6 +41,18 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	private QuestionGetSproc questionUpdateStatsSproc;
 	
 	private AnswerAddSproc answerAddSproc;
+
+
+	@Autowired
+	public PostMapper postMapper;
+
+
+	@Autowired
+	private QuestionMybatisMapper questionMapper;
+
+	@Autowired
+	private TagMapper tagMapper;
+
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -50,18 +62,18 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
-    @CachePut(value="questions", key="#result.questionId")
+    @CachePut(value="questions", key="#result.postId")
 	@Override
 	public Question addQuestionWithTags(Question question) {
 
-		Question addedQuestion = questionAddSproc.addQuestion(question);
-		int questionId =  addedQuestion.getQuestionId();
-		// should be able to add question even if duplicate tags are provided
+		postMapper.addPost(question);
+		questionMapper.addQuestion(question);
 
-		for (Integer tagId : question.getTags())
-			tagQuestion(questionId, tagId);
+		tagMapper.addTags(question.getPostId(), question.getTags());
 
-		return addedQuestion;
+		question.setQuestionId(question.getPostId());
+
+		return question;
 	}
 	private static String tagQuestionInsertQuery = "Insert into questiontag  (questionId, tagId) values (?,?)";
 
@@ -185,15 +197,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		return q.getTags()!= null && !q.getTags().isEmpty();
 	}
 
-	@Autowired
-	private PostMapper postMapper;
-
-
-	@Autowired
-	private QuestionMybatisMapper questionMapper;
-
-	@Autowired
-	private TagMapper tagMapper;
 
 
 	@Override
