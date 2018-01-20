@@ -17,6 +17,7 @@ public class AnswerMapper implements RowMapper<Answer> {
 		a.setAnswerId(rs.getInt("AnswerId"));
 		a.setQuestionId(rs.getInt("QuestionId"));
 		a.setVotes(rs.getInt("Votes"));
+		a.setApprovalStatus(rs.getBoolean("ApprovalStatus"));
 		return a;
 	}
 

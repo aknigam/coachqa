@@ -9,8 +9,6 @@ import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
 import com.coachqa.repository.dao.mybatis.mapper.QuestionMybatisMapper;
 import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
-import com.coachqa.repository.dao.sp.QuestionAddSproc;
-import com.coachqa.repository.dao.sp.QuestionGetSproc;
 import com.coachqa.util.CollectionUtils;
 import com.coachqa.ws.model.AnswerModel;
 import org.slf4j.Logger;
@@ -26,19 +24,23 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionDAOImpl.class);
 	
-	private QuestionAddSproc questionAddSproc;
+//	private QuestionAddSproc questionAddSproc;
 	
-	private QuestionGetSproc questionGetSproc;
+//	private QuestionGetSproc questionGetSproc;
 	
-	private QuestionGetSproc questionUpdateStatsSproc;
+//	private QuestionGetSproc questionUpdateStatsSproc;
 	
 	private AnswerAddSproc answerAddSproc;
 
@@ -57,8 +59,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		DataSource dataSource = getDataSource();
-		questionAddSproc = new QuestionAddSproc(dataSource);
-		questionGetSproc = new QuestionGetSproc(dataSource);
+
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
@@ -89,7 +90,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Override
 	public Question getQuestionById(Integer questionId) {
 		try{
-			return questionGetSproc.getQuestionById(questionId);
+
+			Question question = questionMapper.getQuestionById(questionId);
+			return question;
+
+//			return questionGetSproc.getQuestionById(questionId);
 		}
 		catch (DataAccessException se){
 			LOGGER.error("Question does not exists: "+ questionId, se);
@@ -169,14 +174,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		queryBuilder
 		 = queryBuilder
 				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType", "ClassroomId"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType", "ClassroomId", "ApprovalStatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
 				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionId", 1)
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroomId())
 				.withPostedByUser(q.getPostedBy())
-				.withPublicOnly(q.isPublicQuestion())
+				.withPublicOnly(true)
 				.withApprovedOnly();
 
 
@@ -210,6 +215,41 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		tagMapper.addTags(updatedQuestion.getQuestionId(), updatedQuestion.getTags());
 
 		return updatedQuestion;
+	}
+
+	/*
+		not fetching questions and answers data in the same query because questions and answers content can be large
+
+	 */
+	@Override
+	public List<Question> getUsersPosts(Integer appUserId) {
+		List<Question> questions =  questionMapper.getUsersQuestions(appUserId);
+
+		return questions;
+	}
+
+	@Override
+	public void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite) {
+		try {
+			if (isFavorite) {
+				questionMapper.markAsFavorite(appUserId, questionId);
+
+			} else {
+				questionMapper.removeFromFavorites(appUserId, questionId);
+			}
+		}catch (Exception e){
+			if(isFavorite) {
+				LOGGER.warn("Question already marked favorite", e);
+			}
+			else {
+				LOGGER.warn("Question not a favorite", e);
+			}
+		}
+	}
+
+	@Override
+	public List<Question> getMyFavorites(Integer appUserId) {
+		return questionMapper.getFavoriteQuestions(appUserId);
 	}
 
 	public static void main(String[] args) {
@@ -269,6 +309,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 						}
 						return q.toString();
 					}
+
 				case IN_SUBQUERY:
 					return lhs + " in "+ rhs;
 				default:
@@ -467,7 +508,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 		public QuestionQueryBuilder withApprovedOnly() {
 			//  0 means approved questions
-			conditions.add(new QueryCondition("ApprovalStatus", 0).withJoinType(JoinTypeEnum.EQUALS));
+			conditions.add(new QueryCondition("ApprovalStatus", 1).withJoinType(JoinTypeEnum.EQUALS));
 			return this;
 		}
 

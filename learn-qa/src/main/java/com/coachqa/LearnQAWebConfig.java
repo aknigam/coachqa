@@ -2,7 +2,6 @@ package com.coachqa;
 
 
 import com.coachqa.config.DBConfig;
-import com.coachqa.service.impl.ContentApprovalListener;
 import com.coachqa.service.impl.UsersNotificationListener;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
@@ -11,14 +10,9 @@ import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.transaction.TransactionFactory;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
@@ -64,6 +58,10 @@ Look for annotation @AutoConfigureAfter(value = {MetricsConfiguration.class, Dat
 Using this we can define the order in which the configurations files are loaded and used to configure beans.
 
 The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration and @ComponentScan with their default attributes:
+
+todo : This service should only return the error code to the clients and not the exact error message.
+todo: This way we can hide the system specific error and still give the ability to the client to debug if somethign doesn't
+todo: works as expected.
 
  */
 @EnableWebMvc

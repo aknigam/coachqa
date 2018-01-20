@@ -1,10 +1,15 @@
 package com.coachqa.service.impl;
 
-import com.coachqa.entity.Classroom;
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
-import com.coachqa.exception.*;
+import com.coachqa.exception.AnswerPostException;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.NotAuthorisedToUpdateException;
+import com.coachqa.exception.QAEntityNotFoundException;
+import com.coachqa.exception.QuestionPostException;
+import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.QuestionService;
@@ -73,16 +78,16 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(isNotMemberofProvidedClassroom(question, question.getPostedBy().getAppUserId())){
+		if(isClassroomProvidedAndNotMember(question.getClassroomId(), question.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_CLASSROOM);
 		}
 
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
             @Override
             public Question doInTransaction(TransactionStatus transactionStatus) {
-				question.setApprovalStatus(false);
+				question.setApprovalStatus(true);
             	if(isApprovalRequired(question)){
-            		question.setApprovalStatus(true);
+            		question.setApprovalStatus(false);
 				}
 
 				// TODO: 06/01/18 the default approval status in the post table is 1 (false). This also needs to be set to true in case approval is not required.
@@ -117,13 +122,17 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(isNotMemberofProvidedClassroom(updatedQuestion, updatedQuestion.getPostedBy().getAppUserId())){
+		if(isClassroomProvidedAndNotMember(updatedQuestion.getClassroomId(), updatedQuestion.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 			@Override
 			public Question doInTransaction(TransactionStatus transactionStatus) {
+				updatedQuestion.setApprovalStatus(true);
+				if(isApprovalRequired(updatedQuestion)){
+					updatedQuestion.setApprovalStatus(false);
+				}
 				return  questionDao.updateQuestion(updatedQuestion);
 			}
 		});
@@ -160,15 +169,19 @@ public class QuestionServiceImpl implements QuestionService {
 
 	private boolean isApprovalRequired(Question qstn) {
 		if(qstn.isPublicQuestion()){
-			return true;
+			// TODO: 14/01/18 change the following line to return true; to make approval necessary for public questions
+			return false;
 		}
 		ClassroomSettings cs = classroomService.getClassroomSettings(qstn.getClassroomId());
 
 		return cs.isPostApprovalRequired();
 	}
 
-	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {
-		return !classroomService.isActiveMemberOf(question.getClassroomId(), postedByUserId);
+	private boolean isClassroomProvidedAndNotMember(Integer classroomId , Integer postedByUserId ) {
+		if(classroomId == null){
+			return false;
+		}
+		return !classroomService.isActiveMemberOf(classroomId, postedByUserId);
 	}
 
 	private boolean isPrivateQuestionWithoutClassroom(Question question) {
@@ -188,7 +201,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(isNotMemberofProvidedClassroom(question, userId)){
+		if(isClassroomProvidedAndNotMember(question.getClassroomId(), userId)){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
 
@@ -252,6 +265,21 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public List<Question> getQuestionsByTag(int tagId) {
 		return questionDao.getQuestionsByTag(tagId);
+	}
+
+	@Override
+	public List<Question> getUsersPosts(AppUser user) {
+		return questionDao.getUsersPosts(user.getAppUserId());
+	}
+
+	@Override
+	public void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite) {
+		questionDao.markAsFavorite(appUserId, questionId, isFavorite);
+	}
+
+	@Override
+	public List<Question> getMyFavorites(Integer appUserId) {
+		return questionDao.getMyFavorites(appUserId);
 	}
 
 	@Override

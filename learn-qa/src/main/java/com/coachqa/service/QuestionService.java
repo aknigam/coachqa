@@ -1,5 +1,6 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.AnswerModel;
@@ -90,4 +91,9 @@ public interface QuestionService {
 	List<Question> getQuestionsByTag(int tagId);
 
 
+	List<Question> getUsersPosts(AppUser user);
+
+	void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite);
+
+	List<Question> getMyFavorites(Integer appUserId);
 }

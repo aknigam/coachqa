@@ -2,7 +2,6 @@ package com.coachqa;
 
 
 import com.coachqa.notification.ClassroomEventRegistrationProvider;
-import com.coachqa.notification.ContentApproverProvider;
 import com.coachqa.notification.PostEventInterestedUsersProvider;
 import com.coachqa.service.ApprovalProcessor;
 import com.coachqa.service.ClassroomService;
@@ -56,7 +55,7 @@ public class NotificationSystemConfig  {
     public DataSource notificationDataSource(){
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/notificationsystem");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/notificationsystem-1");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         return dataSource;

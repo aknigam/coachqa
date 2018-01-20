@@ -9,8 +9,6 @@ import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
-import notification.entity.ApplicationEvent;
-import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

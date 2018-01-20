@@ -2,35 +2,40 @@ package com.coachqa.repository.dao.mybatis.typehandler;
 
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.joda.time.DateTime;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by a.nigam on 24/07/17.
  */
-public class DateTimeTypeHandler implements TypeHandler<DateTime> {
+public class DateTimeTypeHandler implements TypeHandler<Date> {
 
     @Override
-    public void setParameter(PreparedStatement ps, int i, DateTime parameter, JdbcType jdbcType) throws SQLException {
-        ps.setTimestamp(i, new Timestamp(parameter.getMillis()));
+    public void setParameter(PreparedStatement ps, int i, Date parameter, JdbcType jdbcType) throws SQLException {
+        // https://stackoverflow.com/questions/23944370/how-to-get-milliseconds-from-localdatetime-in-java-8
+        ps.setTimestamp(i, new Timestamp(parameter.getTime()));
     }
 
     @Override
-    public DateTime getResult(ResultSet rs, String columnName) throws SQLException {
+    public Date getResult(ResultSet rs, String columnName) throws SQLException {
+        // https://stackoverflow.com/questions/44883432/long-timestamp-to-localdatetime/44883570
+        return rs.getDate(columnName);
 
-        Timestamp voteDate = rs.getTimestamp(columnName);
-        return new DateTime(voteDate.getTime());
     }
 
     @Override
-    public DateTime getResult(ResultSet rs, int columnIndex) throws SQLException {
-        Timestamp voteDate = rs.getTimestamp(columnIndex);
-        return new DateTime(voteDate.getTime());
+    public Date getResult(ResultSet rs, int columnIndex) throws SQLException {
+        return rs.getDate(columnIndex);
+
     }
 
     @Override
-    public DateTime getResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public Date getResult(CallableStatement cs, int columnIndex) throws SQLException {
         return null;
     }
 }

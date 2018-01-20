@@ -1,17 +1,11 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.service.ApprovalProcessor;
-import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
-import com.coachqa.ws.model.PostApproval;
 import notification.entity.ApplicationEvent;
-import notification.entity.EventStage;
-import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * Created by a.nigam on 21/04/17.

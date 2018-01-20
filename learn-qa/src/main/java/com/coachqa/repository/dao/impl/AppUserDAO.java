@@ -74,8 +74,8 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 		try {
 			return userAddOrUpdateSproc.addUser(user);
 		}catch (DuplicateKeyException dke){
-			LOGGER.error(String.format( "User with email %s already exists"), dke);
-			throw new UserAlreadyExistsException(ApplicationErrorCode.USER_ALREADY_EXISTS, String.format( "User with email %s already exists"));
+			LOGGER.error(String.format( "User with email %s already exists", user.getEmail()), dke);
+			throw new UserAlreadyExistsException(ApplicationErrorCode.USER_ALREADY_EXISTS, String.format( "User with email %s already exists", user.getEmail()));
 		}
 	}
 

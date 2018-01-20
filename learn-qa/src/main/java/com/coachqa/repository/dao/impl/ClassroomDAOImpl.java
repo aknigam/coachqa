@@ -7,7 +7,6 @@ import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomAlreadyExistsException;
 import com.coachqa.exception.NotAClassroomMemberException;
 import com.coachqa.repository.dao.ClassroomDAO;
-import com.coachqa.repository.dao.mapper.ClassRoomMapper;
 import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
 import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
@@ -24,8 +23,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository

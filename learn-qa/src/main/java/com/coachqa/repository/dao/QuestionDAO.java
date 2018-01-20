@@ -22,4 +22,10 @@ public interface QuestionDAO {
 	List<Question> findSimilarQuestions(Question criteria);
 
 	Question updateQuestion(Question updatedQuestion);
+
+    List<Question> getUsersPosts(Integer appUserId);
+
+    void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite);
+
+	List<Question> getMyFavorites(Integer appUserId);
 }

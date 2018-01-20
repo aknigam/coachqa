@@ -3,9 +3,7 @@ package com.coachqa.entity;
 import com.coachqa.enums.PostTypeEnum;
 
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Anand on 8/25/2015.
@@ -27,7 +25,7 @@ public class Post {
     
     private String content;
 
-    // value 1 means pending approval, 0 means approved
+    // value 1 means true (approved) , 0 (false) means pending approval
     private boolean approvalStatus;
     
     private String approvalComment;

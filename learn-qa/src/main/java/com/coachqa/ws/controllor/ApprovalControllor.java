@@ -2,17 +2,12 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.ApprovalProcessor;
-import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
-import com.coachqa.service.impl.ApprovalService;
-import com.coachqa.service.impl.PostApprovalProcessor;
-import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.util.WSUtil;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

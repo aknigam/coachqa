@@ -7,6 +7,7 @@ import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,9 @@ public class Question extends Post implements java.io.Serializable {
 	private int statusId;
 	
 	private String title;
-	
+
+
+
 	private Date lastActiveDate;
 
 	
@@ -91,13 +94,7 @@ public class Question extends Post implements java.io.Serializable {
 		this.title = title;
 	}
 
-	public Date getLastActiveDate() {
-		return lastActiveDate;
-	}
 
-	public void setLastActiveDate(Date lastActiveDate) {
-		this.lastActiveDate = lastActiveDate;
-	}
 
 	public boolean isPublicQuestion() {
 		return publicQuestion;
@@ -123,5 +120,12 @@ public class Question extends Post implements java.io.Serializable {
 		this.answers = answers;
 	}
 
+	public Date getLastActiveDate() {
+		return lastActiveDate;
+	}
+
+	public void setLastActiveDate(Date lastActiveDate) {
+		this.lastActiveDate = lastActiveDate;
+	}
 
 }

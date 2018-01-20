@@ -1,6 +1,5 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Post;
 import com.coachqa.entity.PostVote;
 import com.coachqa.entity.QuestionVote;
@@ -11,13 +10,8 @@ import com.coachqa.ws.model.PostApproval;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

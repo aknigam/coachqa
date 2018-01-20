@@ -157,7 +157,8 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	@Override
 	public List<Classroom> getUserMemberships(AppUser user) {
-		return classroomDAO.getUserMemberships(user);
+		List<Classroom> classrooms = classroomDAO.getUserMemberships(user);
+		return classrooms;
 	}
 
 	@Override

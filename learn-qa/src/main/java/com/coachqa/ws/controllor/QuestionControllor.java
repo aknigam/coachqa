@@ -2,24 +2,34 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
-import com.coachqa.entity.RefQuestionStatus;
 import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.util.WSUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
 public class QuestionControllor {
-	
+
 	@Autowired
 	private QuestionService questionService;
 
@@ -28,8 +38,7 @@ public class QuestionControllor {
 
 
 	@PostMapping
-	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
-	{
+	public Question submitQuestion(@RequestBody Question question, HttpServletRequest request, HttpServletResponse response) {
 
 		AppUser user = WSUtil.getUser(userService);
 
@@ -42,7 +51,7 @@ public class QuestionControllor {
 
 
 		Integer addedQuestionId = addedQuestion.getQuestionId();
-		List<Question> similarQuestionIds =  questionService.findSimilarQuestions(addedQuestion, 5);
+		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 5);
 
 		return addedQuestion;
 	}
@@ -54,22 +63,32 @@ public class QuestionControllor {
 	 * 2. Content
 	 * 3. Classroom
 	 * 4. Tags
-	 *
+	 * <p>
 	 * Fields which can't be edited
-	 *
-	 *
+	 * <p>
+	 * <p>
 	 * Question can be edited only if it is unanswered. Edit also requires approval.
 	 */
-	@PutMapping(value="/{questionId}" )
-	public void updateQuestion(@PathVariable(value ="questionId")Integer questionId ,
-								 @RequestBody Question question, HttpServletRequest request, HttpServletResponse response)
-	{
+	@PutMapping(value = "/{questionId}")
+	public void updateQuestion(@PathVariable(value = "questionId") Integer questionId,
+							   @RequestBody Question question, HttpServletRequest request, HttpServletResponse response) {
 		AppUser user = WSUtil.getUser(userService);
 
 		questionService.updateQuestion(question);
 
 	}
 
+	@RequestMapping(value = "/myquestions", method = RequestMethod.GET)
+	public List<Question> getMyQuestions() {
+		AppUser user = WSUtil.getUser(userService);
+		return questionService.getUsersPosts(user);
+
+	}
+
+	public static void main(String[] args) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println(mapper.writeValueAsString(new Date()));
+	}
 
 	/**
 	 * http://localhost:8080/api/questions/list?tagId=12&classroomId=1&ownerId=1&subjectId=1&isPublic=true
@@ -143,6 +162,18 @@ public class QuestionControllor {
 	@RequestMapping(value = "/{questionId}/requestanswer",  method = RequestMethod.POST)
 	public void requestToAnswer(@PathVariable(value ="questionId")Integer questionId, List<Integer> userIds){
 
+	}
+
+	@RequestMapping(value = "/favorite/{questionId}",  method = RequestMethod.POST)
+	public void markAsFavorite(@PathVariable(value ="questionId")Integer questionId, @RequestParam boolean isFavorite){
+		AppUser user = WSUtil.getUser(userService);
+		questionService.markAsFavorite(user.getAppUserId(), questionId, isFavorite);
+	}
+
+	@GetMapping(value = "/favorite")
+	public List<Question> getMyFavorites(){
+		AppUser user = WSUtil.getUser(userService);
+		return questionService.getMyFavorites(user.getAppUserId());
 	}
 
 

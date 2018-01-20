@@ -4,9 +4,7 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.InvalidEventForApprovalException;
 import com.coachqa.exception.NotAuthorisedToApproveException;
-import com.coachqa.service.ApprovalProcessor;
 import com.coachqa.service.PostService;
-import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
@@ -42,6 +40,7 @@ public class PostApprovalProcessor extends ApprovalService {
 
     protected ApplicationEvent<Integer> processApproval(ApplicationEvent<Integer> event, boolean isRequestApproved, AppUser approver) {
         PostApproval postApproval = new PostApproval();
+        postApproval.setApproved(true);
         postApproval.setApprovedBy(approver.getAppUserId());
         postApproval.setPostId(event.getEventSource());
         postService.updateApprovalStatus(postApproval);
