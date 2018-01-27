@@ -17,6 +17,8 @@ public class FileUploadDao extends BaseDao {
 
     private static String fileInsertQuery = "INSERT INTO PostMedia (ImageContent) VALUES (?)";
 
+    private static String imageReadQuery = "Select ImageContent from PostMedia where id = ?";
+
     public int persist(byte[] bytes) throws SQLException {
 
         jdbcTemplate = getJdbcTemplate();
@@ -42,7 +44,7 @@ public class FileUploadDao extends BaseDao {
 
     }
 
-    private static String imageReadQuery = "Select ImageContent from PostMedia where id = ?";
+
 
     public byte[] readImage(Integer imageId) {
 

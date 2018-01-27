@@ -16,8 +16,6 @@ import java.util.Set;
 /**
  * Refer : http://stackoverflow.com/questions/3854192/java-read-metadata-from-procedure
  * 
- * TODO anigam Describe MetadataReader
- * 
  * @author <a href="mailto:anigam@expedia.com">anigam</a>
  *
  */

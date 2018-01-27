@@ -28,13 +28,24 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 	private static Logger LOGGER = LoggerFactory.getLogger(AppUserDAO.class);
 
 	private AppUserAddSproc userAddOrUpdateSproc;
-	
+
+	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from AppUser where appUserId = ?";
+
+	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from AppUser where Email = ?";
+
+	private static String m_adminUserQuery = "select AppUserId from AppUser where UserTypeId = 2";
+
+	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
+
+	private static String getAddAndroidTokenQuery = "select AndroidToken from AppUser where UserTypeId = 2";
+
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		userAddOrUpdateSproc = new AppUserAddSproc(getDataSource());
 	}
 
-	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from AppUser where Email = ?";
+
 	
 	@Override
 	public AppUser getUserByEmail(String userEmail) {
@@ -79,7 +90,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 		}
 	}
 
-	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from AppUser where appUserId = ?";
+
 
 	@Cacheable(value="usersByIdCache", key="#userId")
 	@Override
@@ -109,7 +120,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	}
 
-	private static String m_adminUserQuery = "select AppUserId from AppUser where UserTypeId = 2";
+
 
 	@Override
 	public List<Integer> getPostContentApprovers() {
@@ -127,7 +138,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	}
 
-	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
+
 
 	@Override
 	public void addAndroidUserToken(AndroidToken androidToken) {
@@ -135,7 +146,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 				, androidToken.getAndroidToken()});
 	}
 
-	private static String getAddAndroidTokenQuery = "select AndroidToken from AppUser where UserTypeId = 2";
+
 	public List<String> getAndroidTokens(Integer userId){
 		return jdbcTemplate.query(m_userByIdQuery, new Integer[]{userId}, new RowMapper<String>() {
 

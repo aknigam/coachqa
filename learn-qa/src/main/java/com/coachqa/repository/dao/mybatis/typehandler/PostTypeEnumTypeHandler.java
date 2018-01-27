@@ -19,7 +19,6 @@ public class PostTypeEnumTypeHandler implements TypeHandler<PostTypeEnum> {
     public PostTypeEnum getResult(ResultSet rs, String columnName) throws SQLException {
 
         int postTypeId = rs.getInt(columnName);
-        System.out.println("!!!!!!!!!! postTypeId:\t"+ postTypeId);
         // TODO: 20/01/18 implement fromId method in the enum
         return postTypeId == 1? PostTypeEnum.QUESTION : PostTypeEnum.ANSWER;
     }

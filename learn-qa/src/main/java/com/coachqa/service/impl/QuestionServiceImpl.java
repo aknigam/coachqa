@@ -35,6 +35,7 @@ import java.util.List;
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
+	private static final int NO_OF_PAGINATED_RESULTS = 5;
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
 	@Autowired
@@ -103,7 +104,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Transactional
 	@Override
-	public void updateQuestion(Question updatedQuestion) {
+	public void updateQuestion(Question updatedQuestion, AppUser user) {
 
 		Question existingQuestion = questionDao.getQuestionById(updatedQuestion.getQuestionId());
 		if(existingQuestion == null){
@@ -234,10 +235,11 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	@Transactional
-	public Question getQuestionByIdAndIncrementViewCount(Integer questionId) {
+	public Question getQuestionByIdAndIncrementViewCount(Integer questionId, AppUser user) {
 
 		Question question = questionDao.getQuestionById(questionId);
 
+		question.setFavorite(questionDao.isFavorite(questionId, user.getAppUserId()));
 		/*
 		Is it right to increment the view every time the user sees it. Or should there be only one view per user?
 		 */
@@ -268,8 +270,8 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
-	public List<Question> getUsersPosts(AppUser user) {
-		return questionDao.getUsersPosts(user.getAppUserId());
+	public List<Question> getUsersPosts(AppUser user, Integer page) {
+		return questionDao.getUsersPosts(user.getAppUserId(), page);
 	}
 
 	@Override
@@ -278,8 +280,8 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
-	public List<Question> getMyFavorites(Integer appUserId) {
-		return questionDao.getMyFavorites(appUserId);
+	public List<Question> getMyFavorites(Integer appUserId, Integer page) {
+		return questionDao.getMyFavorites(appUserId, page);
 	}
 
 	@Override
@@ -306,13 +308,22 @@ public class QuestionServiceImpl implements QuestionService {
 	 * 12. All public questions
 	 *
 	 * @param criteria
-	 * @param noOfResults
-     * @return
+	 * @param page
+     * @param userId
+	 * @return
      */
 	@Override
-	public List<Question> findSimilarQuestions(Question criteria, int noOfResults) {
+	public List<Question> findSimilarQuestions(Question criteria, int page, Integer userId) {
 
-		return questionDao.findSimilarQuestions(criteria);
+		criteria.setPublicQuestion(true);
+		Integer classroomId = criteria.getClassroomId();
+		if(classroomId != null){
+			if(classroomService.isActiveMemberOf(classroomId, userId)){
+				criteria.setPublicQuestion(false);
+			}
+		}
+
+		return questionDao.findSimilarQuestions(criteria, page, userId , NO_OF_PAGINATED_RESULTS);
 	}
 
 	private boolean isAuthorizedToRateQuestion() {

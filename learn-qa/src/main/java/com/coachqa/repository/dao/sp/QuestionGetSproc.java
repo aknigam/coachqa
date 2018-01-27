@@ -13,6 +13,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class QuestionGetSproc
 {
 	private SimpleJdbcCall m_QuestionGetSproc;

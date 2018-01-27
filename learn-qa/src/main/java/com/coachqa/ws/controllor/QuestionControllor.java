@@ -7,8 +7,6 @@ import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.util.WSUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -51,7 +48,7 @@ public class QuestionControllor {
 
 
 		Integer addedQuestionId = addedQuestion.getQuestionId();
-		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 5);
+		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 0, user.getAppUserId());
 
 		return addedQuestion;
 	}
@@ -74,21 +71,20 @@ public class QuestionControllor {
 							   @RequestBody Question question, HttpServletRequest request, HttpServletResponse response) {
 		AppUser user = WSUtil.getUser(userService);
 
-		questionService.updateQuestion(question);
+		questionService.updateQuestion(question, user);
 
 	}
 
 	@RequestMapping(value = "/myquestions", method = RequestMethod.GET)
-	public List<Question> getMyQuestions() {
+	public List<Question> getMyQuestions(@RequestParam(required = false) Integer page) {
+		page = page == null ? 0: page;
 		AppUser user = WSUtil.getUser(userService);
-		return questionService.getUsersPosts(user);
+		List<Question> questions = questionService.getUsersPosts(user, page);
+
+		return questions;
 
 	}
 
-	public static void main(String[] args) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println(mapper.writeValueAsString(new Date()));
-	}
 
 	/**
 	 * http://localhost:8080/api/questions/list?tagId=12&classroomId=1&ownerId=1&subjectId=1&isPublic=true
@@ -98,17 +94,19 @@ public class QuestionControllor {
 	 * @param ownerId
 	 * @param subjectId
 	 * @param isPublic
-     * @return
+     * @param page
+	 * @return
      */
 	@RequestMapping( value="/search", method = RequestMethod.GET)
 	public List<Question> searchQuestions(
 			@RequestParam(required = false) Integer tagId,
-			@RequestParam(required = false)  Integer classroomId,
-			@RequestParam(required = false)  Integer ownerId,
-			@RequestParam(required = false)  Integer subjectId,
-			@RequestParam(required = false)  Boolean isPublic
-	)
+			@RequestParam(required = false) Integer classroomId,
+			@RequestParam(required = false) Integer ownerId,
+			@RequestParam(required = false) Integer subjectId,
+			@RequestParam(required = false) Boolean isPublic,
+			@RequestParam(required = false) Integer page)
 	{
+
 		AppUser user = WSUtil.getUser( userService);
 
 		/*
@@ -132,15 +130,15 @@ public class QuestionControllor {
 		WARNING : if none of the query params are provided then it can lead to loading of all questions in memory.
 		If pagination is implemented then this won't happen though.
 		 */
-
-		return questionService.findSimilarQuestions(criteria, 10);
+		page = page == null ? 0: page;
+		return questionService.findSimilarQuestions(criteria, page, user.getAppUserId());
 	}
 
 	@RequestMapping(value="/{questionId}" , method = RequestMethod.GET)
 	public Question getQuestion(@PathVariable(value = "questionId") Integer questionId)
 	{
 		AppUser user = WSUtil.getUser( userService);
-		return questionService.getQuestionByIdAndIncrementViewCount(questionId);
+		return questionService.getQuestionByIdAndIncrementViewCount(questionId, user);
 	}
 
 
@@ -171,9 +169,10 @@ public class QuestionControllor {
 	}
 
 	@GetMapping(value = "/favorite")
-	public List<Question> getMyFavorites(){
+	public List<Question> getMyFavorites(@RequestParam(required = false) Integer page){
+		page = page == null ? 0: page;
 		AppUser user = WSUtil.getUser(userService);
-		return questionService.getMyFavorites(user.getAppUserId());
+		return questionService.getMyFavorites(user.getAppUserId(), page);
 	}
 
 

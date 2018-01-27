@@ -19,13 +19,15 @@ public interface QuestionDAO {
 
 	List<Question> getQuestionsByTag(int tagId);
 
-	List<Question> findSimilarQuestions(Question criteria);
+	List<Question> findSimilarQuestions(Question criteria, int page, int userId, int noOfResults);
 
 	Question updateQuestion(Question updatedQuestion);
 
-    List<Question> getUsersPosts(Integer appUserId);
+    List<Question> getUsersPosts(Integer appUserId, Integer page);
 
     void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite);
 
-	List<Question> getMyFavorites(Integer appUserId);
+	List<Question> getMyFavorites(Integer appUserId, Integer page);
+
+	boolean isFavorite(Integer questionId, Integer appUserId);
 }

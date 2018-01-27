@@ -24,6 +24,16 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 	@Autowired
 	private PostMapper postMapper;
 
+	private static String updatePostApprovalQuery =  "Update Post set ApprovalStatus =  ? , " +
+			" ApprovalComment = ? " +
+			" where postId = ? ";
+
+	private static String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
+			"from PostVote where VotedByUserId = ? order by VoteDate desc limit 1";
+
+
+
+
 	@Override
 	public Map<Integer, Boolean> getVotedPosts(Integer userId) {
 		return getUserVotedQuestions(userId);
@@ -63,9 +73,6 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 	}
 
 
-	private String updatePostApprovalQuery =  "Update Post set ApprovalStatus =  ? , " +
-			" ApprovalComment = ? " +
-			" where postId = ? ";
 
 	@Override
 	public void updatePostApproval(PostApproval postApproval) {
@@ -74,8 +81,6 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 	}
 
-	private String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
-			"from PostVote where VotedByUserId = ? order by VoteDate desc limit 1";
 
 	private Map<Integer,Boolean> getUserVotedQuestions(Integer userId) {
 

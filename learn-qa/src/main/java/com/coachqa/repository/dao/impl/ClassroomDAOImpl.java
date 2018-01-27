@@ -8,7 +8,7 @@ import com.coachqa.exception.ClassroomAlreadyExistsException;
 import com.coachqa.exception.NotAClassroomMemberException;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
-import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
+
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import org.joda.time.DateTime;
@@ -32,23 +32,40 @@ import java.sql.Statement;
 import java.util.List;
 
 @Repository
-public class ClassroomDAOImpl extends BaseDao implements InitializingBean, ClassroomDAO {
+public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ClassroomDAOImpl.class);
 
-	private ClassroomGetByIdSproc classroomGetByIdSproc;
 
 	@Autowired
 	private ClassroomMyBatisMapper classroomMapper;
 
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		classroomGetByIdSproc = new ClassroomGetByIdSproc(getDataSource());
-	}
+	// TODO: 26/01/18 move these queries to mapper
 
 	private static String addMembershipQuery = "Insert into classroomMember (AppUserId, ClassroomId, Status, Comments, " +
 			"MembershipRequestDate, MembershipStartDate, MembershipExpirartionDate) values (?, ?, ?, ?, ?, ?, ?)";
+
+	private static String addClassroomQuery = "INSERT INTO classroom(ClassOwner,ClassName,IsPublic,description, LastUpdateDate)" +
+			" VALUES(?, ?, ?, ?, ?)";
+
+	private static String endMembershipQuery ="update classroomMember set status = ? , comments = ? where classroomId = ? and appUserId = ?";
+
+	private static String approveMembershipRequestQuery =
+			"Update classroomMember set status = ?, comments = ? , MembershipStartDate = ? , " +
+					" MembershipExpirartionDate= ? " +
+					" where classroomId = ? and appUserId = ? and status = ? ";
+	private static String denyMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? where classroomId = ? and appUserId = ? and status = ? ";
+
+
+	private static String getMembershipRequestsQuery  = "select c.classroomId, c.className, au.email,  au.appUserId, au.FirstName, au.MiddleName, au.lastName " +
+			" , cm.MembershipRequestDate " +
+			" , cm.comments" +
+			" from classroomMember cm " +
+			" join appUser au on au.appuserId =  cm.AppUserId " +
+			" join Classroom c on c.classroomId = cm.classroomId " +
+			" where cm.status = ?  and c.classroomId = ?";
+
 
 	@Override
 	public void joinClassroom(Integer appUserId, Integer classroomId, ClassroomMembershipStatusEnum pendingApproval, String comments) {
@@ -66,11 +83,12 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	@Override
 	public Classroom getClassroomByIdentifier(Integer classroomId) {
-		return classroomGetByIdSproc.getClassroomByIdentifier(classroomId);
+
+		return  classroomMapper.getClassroomByIdentifier(classroomId);
+
 	}
 
-	private static String addClassroomQuery = "INSERT INTO classroom(ClassOwner,ClassName,IsPublic,description, LastUpdateDate)" +
-			" VALUES(?, ?, ?, ?, ?)";
+
 	@Override
 	public Classroom createClassroom(final Classroom classroom) {
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -98,7 +116,7 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		return classroom;
 	}
 
-	private static String endMembershipQuery ="update classroomMember set status = ? , comments = ? where classroomId = ? and appUserId = ?";
+
 	@Override
 	public void endMembership(Integer classroomId, Integer memberId, String comments) {
 
@@ -108,11 +126,7 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		}
 	}
 
-	private static String approveMembershipRequestQuery =
-			"Update classroomMember set status = ?, comments = ? , MembershipStartDate = ? , " +
-			" MembershipExpirartionDate= ? " +
-			" where classroomId = ? and appUserId = ? and status = ? ";
-	private static String denyMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? where classroomId = ? and appUserId = ? and status = ? ";
+
 	@Override
 	public void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments) {
 
@@ -147,13 +161,6 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	}
 
-	private static String getMembershipRequestsQuery  = "select c.classroomId, c.className, au.email,  au.appUserId, au.FirstName, au.MiddleName, au.lastName " +
-			" , cm.MembershipRequestDate " +
-			" , cm.comments" +
-			" from classroomMember cm " +
-			" join appUser au on au.appuserId =  cm.AppUserId " +
-			" join Classroom c on c.classroomId = cm.classroomId " +
-			" where cm.status = ?  and c.classroomId = ?";
 
 	@Override
 	public ClassroomMembershipRequest getMembershipRequests(Integer classroomId) {

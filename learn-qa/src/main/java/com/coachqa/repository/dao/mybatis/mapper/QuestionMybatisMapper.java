@@ -33,7 +33,8 @@ public interface QuestionMybatisMapper {
             " lastactivedate, Title, isPublic) " +
             "values (#{postId},#{refSubjectId},1, #{statusId} ,  now(), #{title}, #{publicQuestion} )")
     void addQuestion(Question question);
-    @Select("select questionId," +
+    @Select({"select " +
+            "questionId," +
             "RefSubjectId," +
             "QuestionLevelId," +
             "p.PostedBy," +
@@ -54,7 +55,7 @@ public interface QuestionMybatisMapper {
             " from Question q    " +
             " join post p on p.postid = q.questionid" +
             " join AppUser u on u.appuserId = p.postedby " +
-            " where questionId = #{questionId}")
+            " where questionId = #{questionId}"})
     @Results({
             @Result(column = "questionId", property = "questionId"),
             @Result(column = "RefSubjectId", property = "refSubjectId"),
@@ -88,7 +89,7 @@ public interface QuestionMybatisMapper {
     List<Integer> getQuestionTags(Integer questionId);
 
 //    https://stackoverflow.com/questions/33151873/one-to-many-relationship-in-mybatis
-    @Select("select questionId," +
+    @Select({"select questionId," +
             "RefSubjectId," +
             "QuestionLevelId," +
             "p.PostedBy," +
@@ -109,7 +110,9 @@ public interface QuestionMybatisMapper {
             " from Question q    " +
             " join post p on p.postid = q.questionid" +
             " join AppUser u on u.appuserId = p.postedby " +
-            " where p.PostedBy = #{appUserId}")
+            " where p.PostedBy = #{appUserId}" +
+            " order by p.PostDate desc limit #{page}, 5 "})
+    // TODO: 27/01/18 remove hardcoded page size of 5 above
     @Results({
             @Result(column = "questionId", property = "questionId"),
             @Result(column = "RefSubjectId", property = "refSubjectId"),
@@ -135,7 +138,7 @@ public interface QuestionMybatisMapper {
 
 
     })
-    List<Question> getUsersQuestions(Integer appUserId);
+    List<Question> getUsersQuestions(@Param("appUserId")Integer appUserId, @Param("page")Integer page);
 
 
     @Select({"SELECT " +
@@ -200,7 +203,10 @@ public interface QuestionMybatisMapper {
             " join post p on p.postid = q.questionid" +
             " join AppUser u on u.appuserId = p.postedby " +
             " join FavoritePost f on f.QuestionId = q.questionId" +
-            " where f.UserId = #{appUserId} ")
+            " where f.UserId = #{appUserId} " +
+            " order by p.PostDate desc limit #{page}, 5 "
+
+    )
     @Results({
             @Result(column = "questionId", property = "questionId"),
             @Result(column = "RefSubjectId", property = "refSubjectId"),
@@ -227,5 +233,8 @@ public interface QuestionMybatisMapper {
             @Result(property="tags", column="questionId", javaType= List.class, many=@Many(select="getQuestionTags"))
 
     })
-    List<Question> getFavoriteQuestions(Integer appUserId);
+    List<Question> getFavoriteQuestions(@Param("appUserId") Integer appUserId, @Param("page") Integer page);
+
+    @Select("SELECT count(Id) from FavoritePost where UserId = #{appUserId} and QuestionId = #{questionId}")
+    boolean isFavorite( @Param("questionId") Integer questionId, @Param("appUserId") Integer appUserId);
 }
