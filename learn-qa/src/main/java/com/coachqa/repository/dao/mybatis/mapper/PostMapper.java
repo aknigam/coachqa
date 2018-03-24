@@ -62,8 +62,8 @@ public interface PostMapper {
     })
     List<QuestionVote> getUserVotedQuestions(Integer userId);
 
-
-    @Update("Update Post set ClassroomId = #{classroomId} , ApprovalStatus =  #{isApproved} ,  Content = #{content}  where postId = #{approvedBy} ")
+    // TODO: 24/03/18 this does not work!
+    @Update("Update Post set ClassroomId = #{classroomId} , ApprovalStatus =  #{approvalStatus} ,  Content = #{content}  where postId = #{postId} ")
     void updateQuestion(Question updatedQuestion);
 
     @Insert("insert into post ( postdate, PostedBy, Content, posttype, classroomId, ApprovalStatus)  " +

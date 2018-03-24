@@ -187,6 +187,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withPostedByUser(q.getPostedBy())
 				.withPublicOnly(true)
 				.withApprovedOnly()
+				.withOderBy("p", "postDate", QuestionQueryBuilder.ORDER.DESC)
 				.withLimit(page, noOfResults);
 
 

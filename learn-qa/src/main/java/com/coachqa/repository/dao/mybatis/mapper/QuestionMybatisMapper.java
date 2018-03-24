@@ -207,6 +207,7 @@ public interface QuestionMybatisMapper {
             " order by p.PostDate desc limit #{page}, 5 "
 
     )
+
     @Results({
             @Result(column = "questionId", property = "questionId"),
             @Result(column = "RefSubjectId", property = "refSubjectId"),
