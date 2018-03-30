@@ -5,9 +5,11 @@ import notification.SendEventNotificationProcessor;
 import notification.entity.*;
 import notification.enums.EventNotificationStatus;
 import notification.enums.NotificationTypeEnum;
-import notification.repository.EventDao;
+import notification.repository.EventDAO;
+
 import notification.repository.EventRegistrationDao;
-import notification.repository.UserEventNotificationDao;
+import notification.repository.UserEventNotificationDAO;
+
 import notification.repository.UserNotificationPreferenceDao;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,14 +41,14 @@ public class NotificationServiceTest extends TestConfig{
         JdbcTemplate jdbcTemplate = jdbcTemplate(dataSource);
 //        EventDao eventDao = eventDAO(jdbcTemplate, dataSource);
         ApplicationEvent event = new ApplicationEvent(EventType.ANSWER_POSTED, 1, EventStage.STAGE_ONE);
-        EventDao eventDao = Mockito.mock(EventDao.class);
+        EventDAO eventDao = Mockito.mock(EventDAO.class);
         Mockito.doNothing().when(eventDao).createEvent(event);
         Mockito.doNothing().when(eventDao).updateEventDate(event);
 
         EventRegistrationDao eventRegistrationDao = Mockito.mock(EventRegistrationDao.class);
         Mockito.when(eventRegistrationDao.getRegisteredUsers(Mockito.any())).thenReturn(new ArrayList<Integer>());
 
-        UserEventNotificationDao userEventNotificationDao = Mockito.mock(UserEventNotificationDao.class);
+        UserEventNotificationDAO userEventNotificationDao = Mockito.mock(UserEventNotificationDAO.class);
 
         Integer user = 2;
         UserEventNotification nu = new UserEventNotification(EventNotificationStatus.NEW, NotificationTypeEnum.EMAIL, event, user);

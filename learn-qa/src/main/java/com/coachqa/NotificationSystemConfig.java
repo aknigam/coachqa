@@ -21,9 +21,11 @@ import notification.impl.EventNotificationConsumer;
 import notification.impl.NotificationServiceImpl;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
-import notification.repository.EventDao;
+import notification.repository.EventDAO;
+
 import notification.repository.EventRegistrationDao;
-import notification.repository.UserEventNotificationDao;
+import notification.repository.UserEventNotificationDAO;
+
 import notification.repository.UserNotificationPreferenceDao;
 import notification.repository.impl.DBEventDao;
 import notification.repository.impl.EventRegistrationDaoImpl;
@@ -67,13 +69,13 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public EventDao eventDAO(){
+    public EventDAO eventDAO(){
         DataSource ds = notificationDataSource();
         return new DBEventDao(jdbcTemplate(ds), ds);
     }
 
     @Bean
-    public UserEventNotificationDao userEventNotificationDao(JdbcTemplate jdbcTemplate, DataSource dataSource){
+    public UserEventNotificationDAO userEventNotificationDao(JdbcTemplate jdbcTemplate, DataSource dataSource){
         return new UserEventNotificationDaoImpl(jdbcTemplate, dataSource);
     }
 
@@ -93,7 +95,7 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public SendEventNotificationProcessor eventNotificationProcessor(EventDao eventDAO, UserEventNotificationDao userEventNotificationDao, NotifierFactory notifierFactory){
+    public SendEventNotificationProcessor eventNotificationProcessor(EventDAO eventDAO, UserEventNotificationDAO userEventNotificationDao, NotifierFactory notifierFactory){
         return new EventNotificationConsumer(eventDAO, userEventNotificationDao, notifierFactory);
     }
 
@@ -140,11 +142,11 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public NotificationService notificationService(NotificationPublisher notificationPublisher, EventDao eventDao,
+    public NotificationService notificationService(NotificationPublisher notificationPublisher, EventDAO eventDao,
                                                    SendEventNotificationProcessor eventNotificationProcessor,
                                                    DefaultRegsitrationProviderFactory eventRegistrationFactory,
                                                    EventRegistrationDao eventRegistrationDao,
-                                                   UserEventNotificationDao userEventNotificationDao,
+                                                   UserEventNotificationDAO userEventNotificationDao,
                                                    UserNotificationPreferenceDao userNotificationPreferenceDao){
         return new NotificationServiceImpl( eventDao, eventNotificationProcessor, eventRegistrationFactory, eventRegistrationDao,
                 userEventNotificationDao, userNotificationPreferenceDao);

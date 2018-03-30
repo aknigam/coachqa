@@ -15,9 +15,11 @@ import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
-import notification.repository.EventDao;
+import notification.repository.EventDAO;
+
 import notification.repository.EventRegistrationDao;
-import notification.repository.UserEventNotificationDao;
+import notification.repository.UserEventNotificationDAO;
+
 import notification.repository.UserNotificationPreferenceDao;
 import notification.repository.impl.DBEventDao;
 import notification.repository.impl.EventRegistrationDaoImpl;
@@ -58,12 +60,12 @@ public class TestConfig {
     }
 
     @Bean
-    public EventDao eventDAO(JdbcTemplate jdbcTemplate, DataSource dataSource){
+    public EventDAO eventDAO(JdbcTemplate jdbcTemplate, DataSource dataSource){
         return new DBEventDao(jdbcTemplate, dataSource);
     }
 
     @Bean
-    public UserEventNotificationDao userEventNotificationDao(JdbcTemplate jdbcTemplate, DataSource dataSource){
+    public UserEventNotificationDAO userEventNotificationDao(JdbcTemplate jdbcTemplate, DataSource dataSource){
         return new UserEventNotificationDaoImpl(jdbcTemplate, dataSource);
     }
 
@@ -78,7 +80,7 @@ public class TestConfig {
     }
 
     @Bean
-    public SendEventNotificationProcessor eventNotificationProcessor(EventDao eventDAO, UserEventNotificationDao userEventNotificationDao){
+    public SendEventNotificationProcessor eventNotificationProcessor(EventDAO eventDAO, UserEventNotificationDAO userEventNotificationDao){
         return new EventNotificationConsumer(eventDAO, userEventNotificationDao, null);
     }
 
@@ -120,10 +122,10 @@ public class TestConfig {
 
 
     @Bean
-    public NotificationService notificationService(NotificationPublisher notificationPublisher, EventDao eventDao,
+    public NotificationService notificationService(NotificationPublisher notificationPublisher, EventDAO eventDao,
                                                    SendEventNotificationProcessor eventNotificationProcessor, DefaultRegsitrationProviderFactory eventRegistrationFactory,
                                                    EventRegistrationDao eventRegistrationDao,
-                                                   UserEventNotificationDao userEventNotificationDao,
+                                                   UserEventNotificationDAO userEventNotificationDao,
                                                    UserNotificationPreferenceDao userNotificationPreferenceDao){
         return new NotificationServiceImpl(eventDao, eventNotificationProcessor, eventRegistrationFactory, eventRegistrationDao,
                 userEventNotificationDao, userNotificationPreferenceDao);
