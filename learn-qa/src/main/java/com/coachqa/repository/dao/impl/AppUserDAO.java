@@ -29,11 +29,11 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	private AppUserAddSproc userAddOrUpdateSproc;
 
-	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from AppUser where appUserId = ?";
+	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from appuser where appUserId = ?";
 
-	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from AppUser where Email = ?";
+	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from appuser where Email = ?";
 
-	private static String m_adminUserQuery = "select AppUserId from AppUser where UserTypeId = 2";
+	private static String m_adminUserQuery = "select AppUserId from appuser where UserTypeId = 2";
 
 	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
 
@@ -73,6 +73,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 			}
 				
 		} catch (DataAccessException e) {
+			LOGGER.error("Error fetching user from db.", e);
 			return null;
 		}
 		
