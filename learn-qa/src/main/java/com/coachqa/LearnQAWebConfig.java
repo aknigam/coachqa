@@ -147,7 +147,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     public DataSource learnqadataSource(){
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/learn-qa");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/learn-qa2");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         return dataSource;

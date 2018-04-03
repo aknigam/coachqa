@@ -4,7 +4,10 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Tag;
 import com.coachqa.service.TagService;
 import com.coachqa.service.UserService;
+import com.coachqa.service.impl.QuestionServiceImpl;
 import com.coachqa.ws.util.WSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,6 +29,9 @@ import java.util.List;
 public class TagControllor {
 
     private static final Integer PAGE_SIZE = 10;
+
+    private static Logger LOGGER = LoggerFactory.getLogger(TagControllor.class);
+
     @Autowired
     TagService tagService;
 
@@ -43,6 +50,7 @@ public class TagControllor {
         String username = principal.getName();
 
         AppUser appUser =  WSUtil.getUser( userService);
+        LOGGER.info("Tagservice {} ", tagService);
         tag =  tagService.addTag(appUser.getAppUserId(), tag);
         WSUtil.setLocationHeader(request, response, tag.getTagId());
 
