@@ -24,12 +24,12 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 	@Autowired
 	private PostMapper postMapper;
 
-	private static String updatePostApprovalQuery =  "Update Post set ApprovalStatus =  ? , " +
-			" ApprovalComment = ? " +
+	private static String updatePostApprovalQuery =  "Update post set approvalstatus =  ? , " +
+			" approvalcomment = ? " +
 			" where postId = ? ";
 
-	private static String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
-			"from PostVote where VotedByUserId = ? order by VoteDate desc limit 1";
+	private static String votesQuery = "select votedbyuserid, postId  ,UpOrDown, VoteDate " +
+			"from postVote where votedbyuserid = ? order by VoteDate desc limit 1";
 
 
 

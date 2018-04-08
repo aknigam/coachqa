@@ -29,15 +29,15 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	private AppUserAddSproc userAddOrUpdateSproc;
 
-	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from appuser where appUserId = ?";
+	private static String m_userByIdQuery = "select appuserid, firstname, middlename, lastname,  email  from appuser where appUserId = ?";
 
-	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from appuser where Email = ?";
+	private static String m_userByEmailQuery = "select appuserid, firstname, email, lastname  from appuser where email = ?";
 
-	private static String m_adminUserQuery = "select AppUserId from appuser where UserTypeId = 2";
+	private static String m_adminUserQuery = "select appuserid from appuser where usertypeid = 2";
 
-	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
+	private static String addAndroidToken = "Insert into appuserdetail (appuserid, androidtoken) values (?, ?)";
 
-	private static String getAddAndroidTokenQuery = "select AndroidToken from AppUser where UserTypeId = 2";
+	private static String getAddAndroidTokenQuery = "select androidtoken from appuser where usertypeid = 2";
 
 
 	@Override
@@ -58,7 +58,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 						throws SQLException {
 					
 					AppUser user = new AppUser();
-					user.setAppUserId(rs.getInt("AppUserId"));
+					user.setAppUserId(rs.getInt("appuserid"));
 					user.setEmail(rs.getString("email"));
 					user.setFirstName(rs.getString("firstname"));
 					user.setLastName(rs.getString("lastname"));
@@ -104,11 +104,11 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					throws SQLException {
 
 				AppUser user = new AppUser();
-				user.setAppUserId(rs.getInt("AppUserId"));
+				user.setAppUserId(rs.getInt("appuserid"));
 				user.setEmail(rs.getString("email"));
 				user.setFirstName(rs.getString("firstname"));
-				user.setMiddleName(rs.getString("MiddleName"));
-				user.setLastName(rs.getString("LastName"));
+				user.setMiddleName(rs.getString("middlename"));
+				user.setLastName(rs.getString("lastname"));
 				return user;
 			}
 		});
@@ -132,7 +132,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					throws SQLException {
 
 
-				return rs.getInt("AppUserId");
+				return rs.getInt("appuserid");
 
 			}
 		});
@@ -155,7 +155,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 			public String mapRow(ResultSet rs, int i)
 					throws SQLException {
 
-				return rs.getString("AndroidToken");
+				return rs.getString("androidtoken");
 			}
 		});
 

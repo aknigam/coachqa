@@ -15,9 +15,9 @@ import java.sql.Statement;
 @Repository
 public class FileUploadDao extends BaseDao {
 
-    private static String fileInsertQuery = "INSERT INTO PostMedia (ImageContent) VALUES (?)";
+    private static String fileInsertQuery = "INSERT INTO postmedia (imagecontent) VALUES (?)";
 
-    private static String imageReadQuery = "Select ImageContent from PostMedia where id = ?";
+    private static String imageReadQuery = "Select imagecontent from postmedia where id = ?";
 
     public int persist(byte[] bytes) throws SQLException {
 
@@ -51,7 +51,7 @@ public class FileUploadDao extends BaseDao {
         return jdbcTemplate.queryForObject(imageReadQuery, new Integer[]{imageId}, new RowMapper<byte[]>() {
             @Override
             public byte[] mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getBytes("ImageContent");
+                return rs.getBytes("imagecontent");
             }
         });
 

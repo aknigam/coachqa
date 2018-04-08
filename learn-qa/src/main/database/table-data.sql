@@ -1,4 +1,4 @@
-USE `learn-qa`;
+USE `learnqa`;
 --
 -- Dumping data for table `UserTypeMaster`
 --

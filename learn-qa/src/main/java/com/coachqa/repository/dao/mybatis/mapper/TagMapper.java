@@ -15,14 +15,14 @@ import java.util.List;
 @Mapper
 public interface TagMapper {
 
-    @Delete("Delete from questionTag where questionId = #{questionId} ")
+    @Delete("Delete from questiontag where questionid = #{questionId} ")
     void deleteTags(Integer questionId);
 
 //    @Insert("Insert into questionTag (QuestionId, TagId) values (#{questionId}, #{tagId})")
 
     @Insert({
         "<script>",
-                "Insert into questionTag (QuestionId, TagId) ",
+                "Insert into questiontag (questionid, tagid) ",
                 "VALUES" +
                         "<foreach item='tagId' collection='tagIds' open='' separator=',' close=''>" +
                         "( #{questionId} , #{tagId,jdbcType=INTEGER} )"+
@@ -31,15 +31,15 @@ public interface TagMapper {
     void addTags(@Param("questionId") int questionId, @Param("tagIds") List<Integer> tagIds);
 
 
-    @Select("select qt.QuestionId, p.Content from questiontag qt " +
-            " join question q on q.questionId = qt.questionId " +
-            " join post p on p.postId = q.questionId" +
-            " join tag t on t.TagId = qt.TagId" +
-            " WHERE t.TagId = #{tagId}" +
-            " and p.ApprovalStatus = 0 ")
+    @Select("select qt.questionid, p.content from questiontag qt " +
+            " join question q on q.questionid = qt.questionId " +
+            " join post p on p.postId = q.questionid" +
+            " join tag t on t.tagid = qt.tagid" +
+            " WHERE t.tagid = #{tagId}" +
+            " and p.approvalstatus = 0 ")
     @Results({
 
-            @Result(column = "Content", property = "content")
+            @Result(column = "content", property = "content")
     })
     List<Question> getQuestionsByTag(int tagId);
 }

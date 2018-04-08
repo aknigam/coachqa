@@ -13,15 +13,15 @@ public class AnswerAddSproc
 {
 	private SimpleJdbcCall m_AnswerAddSprocSproc;
 
-	private static String P_QUESTIONID		 = "QuestionId";
-	private static String P_ANSWEREDBYUSERID		 = "AnsweredByUserId";
-	private static String P_CONTENT		 = "Content";
+	private static String P_QUESTIONID		 = "questionid";
+	private static String P_ANSWEREDBYUSERID		 = "answeredbyuserid";
+	private static String P_CONTENT		 = "content";
 
 
 	public AnswerAddSproc(DataSource m_dataSource)
 	{
 		m_AnswerAddSprocSproc = new SimpleJdbcCall(m_dataSource)
-		.withProcedureName("AnswerAddSproc")
+		.withProcedureName("answeraddsproc")
 		.withoutProcedureColumnMetaDataAccess()
 		.useInParameterNames(
 				P_QUESTIONID,

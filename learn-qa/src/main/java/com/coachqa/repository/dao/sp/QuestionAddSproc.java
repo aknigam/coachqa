@@ -20,14 +20,14 @@ public class QuestionAddSproc
 {
 
 
-	private static final String P_ISPUBLIC = "pIsPublic";
+	private static final String P_ISPUBLIC = "pispublic";
 	private SimpleJdbcCall addOrUpdateUserSproc;
 
-	private static String P_POSTEDBY		 = "pPostedBy";
-	private static String P_TITLE		 = "pTitle";
-	private static String P_CONTENT		 = "pContent";
-	private static final String P_SUBJECT = "pRefSubjectId";
-	private static final String P_CLASSROOMID = "pClassroomId";
+	private static String P_POSTEDBY		 = "ppostedby";
+	private static String P_TITLE		 = "ptitle";
+	private static String P_CONTENT		 = "pcontent";
+	private static final String P_SUBJECT = "prefsubjectid";
+	private static final String P_CLASSROOMID = "pclassroomid";
 
 	public QuestionAddSproc(DataSource dataSource)
 	{

@@ -14,15 +14,15 @@ public class ClassRoomMapper implements RowMapper<Classroom> {
 		
 		Classroom classroom = new Classroom();
 		
-		classroom.setClassroomId(rs.getInt("ClassroomId"));
-		classroom.setClassName(rs.getString("ClassName"));
-		classroom.setIsPublic(rs.getBoolean("IsPublic"));
-		classroom.setClassName(rs.getString("ClassName"));
+		classroom.setClassroomId(rs.getInt("classroomid"));
+		classroom.setClassName(rs.getString("classname"));
+		classroom.setIsPublic(rs.getBoolean("ispublic"));
+		classroom.setClassName(rs.getString("classname"));
 		
 		AppUser owner = new AppUser();
-		owner.setAppUserId(rs.getInt("PostedBy"));
-		owner.setFirstName(rs.getString("Firstname"));
-		owner.setMiddleName(rs.getString("middleName"));
+		owner.setAppUserId(rs.getInt("postedby"));
+		owner.setFirstName(rs.getString("firstname"));
+		owner.setMiddleName(rs.getString("middlename"));
 		owner.setLastName(rs.getString("lastName"));
 		
 		classroom.setClassOwner(owner);

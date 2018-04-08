@@ -31,7 +31,7 @@ public class AppUser implements java.io.Serializable {
 	}
 
 	public AppUser(String email, String password, String firstName,
-			String lastName) {
+				   String lastName) {
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
@@ -39,7 +39,7 @@ public class AppUser implements java.io.Serializable {
 	}
 
 	public AppUser(Integer userReputationId, String email, String pasword,
-			String firstName, String middleName, String lastName) {
+				   String firstName, String middleName, String lastName) {
 		this.userReputationId = userReputationId;
 		this.email = email;
 		this.password = pasword;

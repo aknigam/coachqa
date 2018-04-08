@@ -18,12 +18,12 @@ public class ClassroomGetByIdSproc
 {
 	private SimpleJdbcCall m_classroomGetByIdSproc;
 
-	private static String P_CLASSROOMID		 = "ClassroomId";
+	private static String P_CLASSROOMID		 = "classroomid";
 
 	public ClassroomGetByIdSproc(DataSource m_dataSource)
 	{
 		m_classroomGetByIdSproc = new SimpleJdbcCall(m_dataSource)
-		.withProcedureName("classroomGetById")
+		.withProcedureName("classroomgetbyid")
 		.withoutProcedureColumnMetaDataAccess()
 		.useInParameterNames(
 			P_CLASSROOMID
@@ -42,7 +42,7 @@ public class ClassroomGetByIdSproc
 		
 		List<Classroom> classrooms = (List<Classroom>) out.get("classroom");
 		if(classrooms ==  null || classrooms.isEmpty()){
-			throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, String.format("Classroom with id %d does not exists.", classroomId));
+			throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, String.format("classroom with id %d does not exists.", classroomId));
 		}
 		return classrooms.get(0);
 	}

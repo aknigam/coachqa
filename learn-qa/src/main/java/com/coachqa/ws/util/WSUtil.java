@@ -28,7 +28,7 @@ public class WSUtil {
 		response.setStatus(201);
 	}
 
-	public static AppUser getUser( UserService userService) {
+	public static AppUser getUser(UserService userService) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		LOGGER.info("Logged-in user details, username {} ", username);

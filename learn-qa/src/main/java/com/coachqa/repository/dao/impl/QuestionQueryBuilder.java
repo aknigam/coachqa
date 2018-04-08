@@ -82,15 +82,15 @@ public class QuestionQueryBuilder {
 
     public QuestionQueryBuilder withSubject(Integer refSubjectId) {
         if(refSubjectId != null && refSubjectId != 0)
-            conditions.add(new QueryCondition<Integer>("RefSubjectId", refSubjectId));
+            conditions.add(new QueryCondition<Integer>("refsubjectid", refSubjectId));
         return this;
     }
 
     public QuestionQueryBuilder withClassroom(Integer classroomId) {
         if(classroomId!= null ) {
-            conditions.add(new QueryCondition<Integer>("ClassroomId", classroomId));
+            conditions.add(new QueryCondition<Integer>("classroomid", classroomId));
         }else{
-            LOGGER.debug("Classroom condition not added");
+            LOGGER.debug("classroom condition not added");
         }
         return this;
     }
@@ -99,7 +99,7 @@ public class QuestionQueryBuilder {
         if(CollectionUtils.isEmpty(tagId)){
             return this;
         }
-        conditions.add(new QueryCondition<Integer>("TagId", tagId.get(0)).withJoinType(JoinTypeEnum.EQUALS));
+        conditions.add(new QueryCondition<Integer>("tagid", tagId.get(0)).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
 
@@ -130,14 +130,14 @@ public class QuestionQueryBuilder {
             return this;
 
 
-        conditions.add(new QueryCondition<Integer>("PostedBy", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
+        conditions.add(new QueryCondition<Integer>("postedby", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
 
     public QuestionQueryBuilder withPublicOnly(Boolean aPublic) {
         if(aPublic == null)
             return this;
-        conditions.add(new QueryCondition<Integer>("IsPublic", aPublic? 1: 0).withJoinType(JoinTypeEnum.EQUALS));
+        conditions.add(new QueryCondition<Integer>("ispublic", aPublic? 1: 0).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
 
@@ -161,12 +161,12 @@ public class QuestionQueryBuilder {
 
     public QuestionQueryBuilder withApprovedOnly() {
         //  0 means approved questions
-        conditions.add(new QueryCondition("ApprovalStatus", 1).withJoinType(JoinTypeEnum.EQUALS));
+        conditions.add(new QueryCondition("approvalstatus", 1).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
 
     public void withTagsCondition(List<Integer> tags) {
-        StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.QuestionId from questiontag qt where TagId in (");
+        StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.questionid from questiontag qt where tagid in (");
 
         int size = tags.size();
         int i =1;
@@ -178,7 +178,7 @@ public class QuestionQueryBuilder {
         }
         tagSelectQuery.append(" ) ");
 
-        conditions.add(new QueryCondition("questionId", "( "+tagSelectQuery+" ) ").withJoinType(JoinTypeEnum.IN_SUBQUERY));
+        conditions.add(new QueryCondition("questionid", "( "+tagSelectQuery+" ) ").withJoinType(JoinTypeEnum.IN_SUBQUERY));
     }
 
     public QuestionQueryBuilder withOderBy(String alias, String column, ORDER desc) {
@@ -299,18 +299,18 @@ public class QuestionQueryBuilder {
     public static void main(String[] args) {
         QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
         String query = queryBuilder
-                .withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-                .withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate"}))
-                .withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
-                .withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
-                .withJoin("post", "p", "postId", "q", "questionId", 1)
-                .withJoin("questionTag", "qt", "questionId", "q", "questionId", 3)
+                .withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+                .withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate"}))
+                .withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
+                .withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
+                .withJoin("post", "p", "postId", "q", "questionid", 1)
+                .withJoin("questiontag", "qt", "questionid", "q", "questionid", 3)
                 .withSubject(1)
                 .withClassroom(1)
                 .withTag(Arrays.asList(new Integer[]{1, 2}))
                 .withPostedByUser(new AppUser(1, "", "", "", ""))
                 .withPublicOnly(true)
-                .withOderBy("p", "postDate", QuestionQueryBuilder.ORDER.DESC)
+                .withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
                 .withLimit(0, 5)
                 .buildQuery();
 

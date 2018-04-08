@@ -35,38 +35,38 @@ public interface PostMapper {
         p.setVotes(rs.getInt("Votes"));
 
      */
-    @Select("select postId, postType, postedBy, postDate, Votes, classroomId from post where postid = #{postId}")
+    @Select("select postId, posttype, postedby, postdate, votes, classroomid from post where postid = #{postId}")
     @Results({
 
-            @Result(column = "postedBy", property = "postedBy.appUserId")
+            @Result(column = "postedby", property = "postedBy.appUserId")
     })
 
     Post getPostById(@Param("postId") Integer postId);
 
-    @Update("Update Post set NoOfViews = NoOfViews + 1 where postId =  #{postId}")
+    @Update("Update post set noofviews = noofviews + 1 where postId =  #{postId}")
     void incrementPostViewsQuery(@Param("postId") Integer postId);
 
-    @Update("Update Post set Votes = Votes + #{votes} where postId = #{postId}")
+    @Update("Update post set votes = votes + #{votes} where postId = #{postId}")
     void adjustVotes(@Param("postId") Integer postId, @Param("votes")  int votes);
 
-    @Insert("insert into PostVote (VotedByUserId, postId  ,UpOrDown, VoteDate, postType) values (#{postedBy},#{postId},#{isUpVote},#{postDate,typeHandler=com.coachqa.repository.dao.mybatis.typehandler.DateTimeTypeHandler},#{postType.type})")
+    @Insert("insert into postVote (votedbyuserid, postId  ,UpOrDown, VoteDate, posttype) values (#{postedBy},#{postId},#{isUpVote},#{postDate,typeHandler=com.coachqa.repository.dao.mybatis.typehandler.DateTimeTypeHandler},#{postType.type})")
     @Options(useGeneratedKeys=true, keyProperty="postId")
     void postVote(PostVote postVote);
 
-    @Update("Update Post set ApprovalStatus =  #{isApproved} ,  ApprovalComment = #{comments}  where postId = #{postId} ")
+    @Update("Update post set approvalstatus =  #{isApproved} ,  approvalcomment = #{comments}  where postId = #{postId} ")
     void updatePostApproval(PostApproval postApproval);
 
-    @Select("select VotedByUserId, PostId  ,UpOrDown, VoteDate from PostVote where VotedByUserId = #{userId} order by VoteDate desc limit 1")
+    @Select("select votedbyuserid, postId  ,UpOrDown, VoteDate from postVote where votedbyuserid = #{userId} order by VoteDate desc limit 1")
     @Results({
             @Result(column = "VoteDate", property = "voteDate", javaType = DateTime.class, typeHandler = DateTimeTypeHandler.class)
     })
     List<QuestionVote> getUserVotedQuestions(Integer userId);
 
     // TODO: 24/03/18 this does not work!
-    @Update("Update Post set ClassroomId = #{classroomId} , ApprovalStatus =  #{approvalStatus} ,  Content = #{content}  where postId = #{postId} ")
+    @Update("Update post set classroomid = #{classroomId} , approvalstatus =  #{approvalStatus} ,  content = #{content}  where postId = #{postId} ")
     void updateQuestion(Question updatedQuestion);
 
-    @Insert("insert into post ( postdate, PostedBy, Content, posttype, classroomId, ApprovalStatus)  " +
+    @Insert("insert into post ( postdate, postedby, content, posttype, classroomid, approvalstatus)  " +
             " values ( now(), #{postedBy.appUserId}, #{content},  #{postTypeEnum.type}, #{classroomId}, #{approvalStatus})"
     )
     @Options(useGeneratedKeys=true, keyProperty="postId")

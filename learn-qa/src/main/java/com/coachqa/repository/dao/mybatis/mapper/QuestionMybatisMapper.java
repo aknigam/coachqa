@@ -26,115 +26,118 @@ import java.util.List;
 @Mapper
 public interface QuestionMybatisMapper {
 
-    @Update("Update question set RefSubjectId = #{refSubjectId} , Title =  #{title} ,  IsPublic = #{publicQuestion}  where questionId = #{questionId} ")
+    @Update("Update question set refsubjectid = #{refSubjectId} , title =  #{title} ,  ispublic = #{publicQuestion}  " +
+            " where questionid = #{questionId} ")
     void updateQuestion(Question updatedQuestion);
 
-    @Insert("insert into question (questionId, RefSubjectId, QuestionlevelId, refQuestionStatusId , " +
-            " lastactivedate, Title, isPublic) " +
+    @Insert("insert into question (questionid, refsubjectid, questionlevelid, refquestionstatusid , " +
+            " lastactivedate, title, isPublic) " +
             "values (#{postId},#{refSubjectId},1, #{statusId} ,  now(), #{title}, #{publicQuestion} )")
     void addQuestion(Question question);
     @Select({"select " +
-            "questionId," +
-            "RefSubjectId," +
-            "QuestionLevelId," +
-            "p.PostedBy," +
-            "p.postType," +
-            "u.Firstname," +
-            "u.middleName," +
+            "questionid," +
+            "refsubjectid," +
+            "questionlevelid," +
+            "p.postedby," +
+            "p.posttype," +
+            "u.firstname," +
+            "u.middlename," +
             "u.lastName," +
-            "RefQuestionStatusId," +
-            "Title," +
-            "p.Content," +
-            "p.NoOfViews," +
-            "p.PostDate," +
-            "LastActiveDate," +
-            "p.Votes,    " +
-            "p.ClassroomId," +
-            "q.IsPublic as publicQuestion,  " +
-            "p.ApprovalStatus" +
-            " from Question q    " +
+            "refquestionstatusid," +
+            "title," +
+            "p.content," +
+            "p.noofviews," +
+            "p.postdate," +
+            "lastactivedate," +
+            "p.votes,    " +
+            "p.classroomid," +
+            "q.ispublic as publicQuestion,  " +
+            "p.approvalstatus" +
+            " from question q    " +
             " join post p on p.postid = q.questionid" +
-            " join AppUser u on u.appuserId = p.postedby " +
-            " where questionId = #{questionId}"})
+            " join appuser u on u.appuserId = p.postedby " +
+            " where questionid = #{questionId}"})
     @Results({
             @Result(column = "questionId", property = "questionId"),
-            @Result(column = "RefSubjectId", property = "refSubjectId"),
-            @Result(column = "QuestionLevelId", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
+            @Result(column = "refsubjectid", property = "refSubjectId"),
+            @Result(column = "questionlevelid", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
                     typeHandler = QuestionLevelEnumTypeHandler.class),
-            @Result(column = "RefQuestionStatusId", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
+            @Result(column = "refquestionstatusid", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
             typeHandler = QuestionStatusEnumTypeHandler.class),
-            @Result(column = "PostDate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
-            @Result(column = "LastActiveDate", property = "lastActiveDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
+            @Result(column = "postdate", property = "postDate", javaType = Date.class, typeHandler =
+                    DateTimeTypeHandler.class),
+            @Result(column = "lastactivedate", property = "lastActiveDate", javaType = Date.class,
+                    typeHandler = DateTimeTypeHandler.class),
 
 
 
-            @Result(column = "Title", property= "title"),
-            @Result(column = "NoOfViews", property= "noOfViews"),
-            @Result(column = "IsPublic", property= "publicQuestion"),
-            @Result(column = "ApprovalStatus", property= "approvalStatus"),
+            @Result(column = "title", property= "title"),
+            @Result(column = "noofviews", property= "noOfViews"),
+            @Result(column = "ispublic", property= "publicQuestion"),
+            @Result(column = "approvalstatus", property= "approvalStatus"),
 
-            @Result(column = "PostedBy", property= "postedBy.appUserId"),
-            @Result(column = "Firstname", property= "postedBy.firstName"),
+            @Result(column = "postedby", property= "postedBy.appUserId"),
+            @Result(column = "firstname", property= "postedBy.firstName"),
             @Result(column = "lastName", property= "postedBy.lastName"),
-            @Result(column = "postType", property= "postTypeEnum", javaType = PostTypeEnum.class,
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
                     typeHandler = PostTypeEnumTypeHandler.class),
-            @Result(property="answers", column="questionId", javaType= List.class, many=@Many(select="getAnswers")),
-            @Result(property="tags", column="questionId", javaType= List.class, many=@Many(select="getQuestionTags"))
+            @Result(property="answers", column="questionid", javaType= List.class, many=@Many(select="getAnswers")),
+            @Result(property="tags", column="questionid", javaType= List.class, many=@Many(select="getQuestionTags"))
 
     })
     Question getQuestionById(Integer questionId);
 
 
-    @Select(" select TagId from questionTag where QuestionId = #{questionId}; ")
+    @Select(" select tagid from questiontag where questionid = #{questionId}; ")
     List<Integer> getQuestionTags(Integer questionId);
 
 //    https://stackoverflow.com/questions/33151873/one-to-many-relationship-in-mybatis
-    @Select({"select questionId," +
-            "RefSubjectId," +
-            "QuestionLevelId," +
-            "p.PostedBy," +
-            "p.postType," +
-            "u.Firstname," +
-            "u.middleName," +
+    @Select({"select questionid," +
+            "refsubjectid," +
+            "questionlevelid," +
+            "p.postedby," +
+            "p.posttype," +
+            "u.firstname," +
+            "u.middlename," +
             "u.lastName," +
-            "RefQuestionStatusId," +
-            "Title," +
-            "p.Content," +
-            "p.NoOfViews," +
-            "p.PostDate," +
-            "LastActiveDate," +
-            "p.Votes,    " +
-            "p.ClassroomId," +
-            "q.IsPublic,  " +
-            "p.ApprovalStatus" +
-            " from Question q    " +
+            "refquestionstatusid," +
+            "title," +
+            "p.content," +
+            "p.noofviews," +
+            "p.postdate," +
+            "lastactivedate," +
+            "p.votes,    " +
+            "p.classroomid," +
+            "q.ispublic,  " +
+            "p.approvalstatus" +
+            " from question q    " +
             " join post p on p.postid = q.questionid" +
-            " join AppUser u on u.appuserId = p.postedby " +
-            " where p.PostedBy = #{appUserId}" +
-            " order by p.PostDate desc limit #{page}, 5 "})
+            " join appuser u on u.appuserId = p.postedby " +
+            " where p.postedby = #{appUserId}" +
+            " order by p.postdate desc limit #{page}, 5 "})
     // TODO: 27/01/18 remove hardcoded page size of 5 above
     @Results({
-            @Result(column = "questionId", property = "questionId"),
-            @Result(column = "RefSubjectId", property = "refSubjectId"),
-            @Result(column = "QuestionLevelId", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
+            @Result(column = "questionid", property = "questionId"),
+            @Result(column = "refsubjectid", property = "refSubjectId"),
+            @Result(column = "questionlevelid", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
                     typeHandler = QuestionLevelEnumTypeHandler.class),
-            @Result(column = "RefQuestionStatusId", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
+            @Result(column = "refquestionstatusid", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
                     typeHandler = QuestionStatusEnumTypeHandler.class),
-            @Result(column = "PostDate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
-            @Result(column = "LastActiveDate", property = "lastActiveDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
+            @Result(column = "postdate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
+            @Result(column = "lastactivedate", property = "lastActiveDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
 
-            @Result(column = "Title", property= "title"),
-            @Result(column = "NoOfViews", property= "noOfViews"),
-            @Result(column = "IsPublic", property= "publicQuestion"),
-            @Result(column = "ApprovalStatus", property= "approvalStatus"),
+            @Result(column = "title", property= "title"),
+            @Result(column = "noofviews", property= "noOfViews"),
+            @Result(column = "ispublic", property= "publicQuestion"),
+            @Result(column = "approvalstatus", property= "approvalStatus"),
 
-            @Result(column = "PostedBy", property= "postedBy.appUserId"),
-            @Result(column = "Firstname", property= "postedBy.firstName"),
+            @Result(column = "postedby", property= "postedBy.appUserId"),
+            @Result(column = "firstname", property= "postedBy.firstName"),
             @Result(column = "lastName", property= "postedBy.lastName"),
-            @Result(column = "postType", property= "postTypeEnum", javaType = PostTypeEnum.class,
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
                     typeHandler = PostTypeEnumTypeHandler.class),
-            @Result(property="answers", column="questionId", javaType= List.class, many=@Many(select="getAnswers")),
-            @Result(property="tags", column="questionId", javaType= List.class, many=@Many(select="getQuestionTags"))
+            @Result(property="answers", column="questionid", javaType= List.class, many=@Many(select="getAnswers")),
+            @Result(property="tags", column="questionid", javaType= List.class, many=@Many(select="getQuestionTags"))
 
 
     })
@@ -142,100 +145,100 @@ public interface QuestionMybatisMapper {
 
 
     @Select({"SELECT " +
-            " a.AnswerId," +
-            " a.questionId," +
-            " p.Votes," +
-            " p.PostedBy," +
-            " p.Content," +
-            " p.PostDate," +
-            " p.NoOfViews," +
-            " p.postType," +
-            " p.ClassroomId," +
-            " p.ApprovalStatus," +
-            " u.Firstname," +
-            " u.middleName," +
+            " a.answerid," +
+            " a.questionid," +
+            " p.votes," +
+            " p.postedby," +
+            " p.content," +
+            " p.postdate," +
+            " p.noofviews," +
+            " p.posttype," +
+            " p.classroomid," +
+            " p.approvalstatus," +
+            " u.firstname," +
+            " u.middlename," +
             " u.lastName" +
             " From answer a" +
-            " JOIN post p ON  a.AnswerId = p.postId" +
-            " JOIN AppUser u ON  p.postedby = u.appuserId" +
-            " WHERE a.QuestionId = #{questionId}"})
+            " JOIN post p ON  a.answerid = p.postId" +
+            " JOIN appuser u ON  p.postedby = u.appuserId" +
+            " WHERE a.questionid = #{questionId}"})
     @Results({
             @Result(column = "answerId", property= "answerId"),
-            @Result(column = "NoOfViews", property= "noOfViews"),
-            @Result(column = "NoOfViews", property= "noOfViews"),
-            @Result(column = "ApprovalStatus", property= "approvalStatus"),
-            @Result(column = "PostedBy", property= "postedBy.appUserId"),
-            @Result(column = "Firstname", property= "postedBy.firstName"),
+            @Result(column = "noofviews", property= "noOfViews"),
+            @Result(column = "noofviews", property= "noOfViews"),
+            @Result(column = "approvalstatus", property= "approvalStatus"),
+            @Result(column = "postedby", property= "postedBy.appUserId"),
+            @Result(column = "firstname", property= "postedBy.firstName"),
             @Result(column = "lastName", property= "postedBy.lastName"),
-            @Result(column = "postType", property= "postTypeEnum", javaType = PostTypeEnum.class,
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
                     typeHandler = PostTypeEnumTypeHandler.class),
-            @Result(column = "PostDate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class)
+            @Result(column = "postdate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class)
 
     })
     List<Answer> getAnswers(Integer questionId);
 
 
-    @Insert("insert into FavoritePost (UserId, QuestionId) values (#{appUserId}, #{questionId})")
+    @Insert("insert into favoritepost (userid, questionid) values (#{appUserId}, #{questionId})")
     void markAsFavorite(@Param("appUserId") Integer appUserId, @Param("questionId") Integer questionId);
 
-    @Delete(" delete from FavoritePost where UserId = #{appUserId} and QuestionId = #{questionId} ")
+    @Delete(" delete from favoritepost where userid = #{appUserId} and questionid = #{questionId} ")
     void removeFromFavorites(@Param("appUserId") Integer appUserId, @Param("questionId") Integer questionId);
 
-    @Select("select q.questionId," +
-            "RefSubjectId," +
-            "QuestionLevelId," +
-            "p.PostedBy," +
-            "p.postType," +
-            "u.Firstname," +
-            "u.middleName," +
+    @Select("select q.questionid," +
+            "refsubjectid," +
+            "questionlevelid," +
+            "p.postedby," +
+            "p.posttype," +
+            "u.firstname," +
+            "u.middlename," +
             "u.lastName," +
-            "RefQuestionStatusId," +
-            "Title," +
-            "p.Content," +
-            "p.NoOfViews," +
-            "p.PostDate," +
-            "LastActiveDate," +
-            "p.Votes,    " +
-            "p.ClassroomId," +
-            "q.IsPublic as publicQuestion,  " +
-            "p.ApprovalStatus" +
-            " from Question q    " +
+            "refquestionstatusid," +
+            "title," +
+            "p.content," +
+            "p.noofviews," +
+            "p.postdate," +
+            "lastactivedate," +
+            "p.votes,    " +
+            "p.classroomid," +
+            "q.ispublic as publicQuestion,  " +
+            "p.approvalstatus" +
+            " from question q    " +
             " join post p on p.postid = q.questionid" +
-            " join AppUser u on u.appuserId = p.postedby " +
-            " join FavoritePost f on f.QuestionId = q.questionId" +
-            " where f.UserId = #{appUserId} " +
-            " order by p.PostDate desc limit #{page}, 5 "
+            " join appuser u on u.appuserId = p.postedby " +
+            " join favoritepost f on f.questionid = q.questionid" +
+            " where f.userid = #{appUserId} " +
+            " order by p.postdate desc limit #{page}, 5 "
 
     )
 
     @Results({
-            @Result(column = "questionId", property = "questionId"),
-            @Result(column = "RefSubjectId", property = "refSubjectId"),
-            @Result(column = "QuestionLevelId", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
+            @Result(column = "questionid", property = "questionId"),
+            @Result(column = "refsubjectid", property = "refSubjectId"),
+            @Result(column = "questionlevelid", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
                     typeHandler = QuestionLevelEnumTypeHandler.class),
-            @Result(column = "RefQuestionStatusId", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
+            @Result(column = "refquestionstatusid", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
                     typeHandler = QuestionStatusEnumTypeHandler.class),
-            @Result(column = "PostDate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
-            @Result(column = "LastActiveDate", property = "lastActiveDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
+            @Result(column = "postdate", property = "postDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
+            @Result(column = "lastactivedate", property = "lastActiveDate", javaType = Date.class, typeHandler = DateTimeTypeHandler.class),
 
 
 
-            @Result(column = "Title", property= "title"),
-            @Result(column = "NoOfViews", property= "noOfViews"),
-            @Result(column = "IsPublic", property= "publicQuestion"),
-            @Result(column = "ApprovalStatus", property= "approvalStatus"),
+            @Result(column = "title", property= "title"),
+            @Result(column = "noofviews", property= "noOfViews"),
+            @Result(column = "ispublic", property= "publicQuestion"),
+            @Result(column = "approvalstatus", property= "approvalStatus"),
 
-            @Result(column = "PostedBy", property= "postedBy.appUserId"),
-            @Result(column = "Firstname", property= "postedBy.firstName"),
+            @Result(column = "postedby", property= "postedBy.appUserId"),
+            @Result(column = "firstname", property= "postedBy.firstName"),
             @Result(column = "lastName", property= "postedBy.lastName"),
-            @Result(column = "postType", property= "postTypeEnum", javaType = PostTypeEnum.class,
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
                     typeHandler = PostTypeEnumTypeHandler.class),
-            @Result(property="answers", column="questionId", javaType= List.class, many=@Many(select="getAnswers")),
-            @Result(property="tags", column="questionId", javaType= List.class, many=@Many(select="getQuestionTags"))
+            @Result(property="answers", column="questionid", javaType= List.class, many=@Many(select="getAnswers")),
+            @Result(property="tags", column="questionid", javaType= List.class, many=@Many(select="getQuestionTags"))
 
     })
     List<Question> getFavoriteQuestions(@Param("appUserId") Integer appUserId, @Param("page") Integer page);
 
-    @Select("SELECT count(Id) from FavoritePost where UserId = #{appUserId} and QuestionId = #{questionId}")
+    @Select("SELECT count(Id) from favoritepost where userid = #{appUserId} and questionid = #{questionId}")
     boolean isFavorite( @Param("questionId") Integer questionId, @Param("appUserId") Integer appUserId);
 }

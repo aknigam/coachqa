@@ -4,7 +4,6 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Tag;
 import com.coachqa.service.TagService;
 import com.coachqa.service.UserService;
-import com.coachqa.service.impl.QuestionServiceImpl;
 import com.coachqa.ws.util.WSUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

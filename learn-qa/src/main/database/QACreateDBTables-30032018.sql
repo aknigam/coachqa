@@ -1,4 +1,4 @@
-USE `learn-qa`;
+USE `learnqa`;
 --
 -- Table structure for table `userreputation`
 --

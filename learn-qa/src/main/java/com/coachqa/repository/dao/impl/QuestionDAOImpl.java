@@ -31,11 +31,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionDAOImpl.class);
 	
 
-	private static String incrementQuestionViewsQuery =  "Update post set NoOfViews = NoOfViews + 1 where PostId =  ?";
+	private static String incrementQuestionViewsQuery =  "Update post set noofviews = noofviews + 1 where postId =  ?";
 
-	private static String incrementQuestionVotesQuery =  "Update post set Votes = Votes + ? where postId = ?";
+	private static String incrementQuestionVotesQuery =  "Update post set votes = votes + ? where postId = ?";
 
-	private static String tagQuestionInsertQuery = "Insert into questiontag  (questionId, tagId) values (?,?)";
+	private static String tagQuestionInsertQuery = "Insert into questiontag  (questionid, tagId) values (?,?)";
 
 	private AnswerAddSproc answerAddSproc;
 
@@ -77,7 +77,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		try {
 			jdbcTemplate.update(tagQuestionInsertQuery, new Integer[]{questionId, tagId});
 		} catch(DuplicateKeyException dke){
-			LOGGER.warn("Question could not be tagged as the tag is already associated with the question. ");
+			LOGGER.warn("question could not be tagged as the tag is already associated with the question. ");
 		}
 	}
 
@@ -90,7 +90,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			return question;
 		}
 		catch (DataAccessException se){
-			LOGGER.error("Question does not exists: "+ questionId, se);
+			LOGGER.error("question does not exists: "+ questionId, se);
 			return null;
 		}
 	}
@@ -177,17 +177,17 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 		queryBuilder
 		 = queryBuilder
-				.withSelectCols("q", Arrays.asList(new String[]{"questionId","RefSubjectId","QuestionLevelId","RefQuestionStatusId","Title","LastActiveDate","IsPublic"}))
-				.withSelectCols("p", Arrays.asList(new String[]{"Votes","PostedBy","Content","PostDate", "NoOfViews", "postType", "ClassroomId", "ApprovalStatus"}))
-				.withSelectCols("u", Arrays.asList(new String[]{"Firstname","middleName","lastName"}))
-				.withJoin("AppUser", "u", "appuserId", "p", "postedby", 2)
-				.withJoin("post", "p", "postId", "q", "questionId", 1)
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
+				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
+				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
+				.withJoin("post", "p", "postId", "q", "questionid", 1)
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroomId())
 				.withPostedByUser(q.getPostedBy())
 				.withPublicOnly(true)
 				.withApprovedOnly()
-				.withOderBy("p", "postDate", QuestionQueryBuilder.ORDER.DESC)
+				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
 				.withLimit(page, noOfResults);
 
 
@@ -245,10 +245,10 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 			}
 		}catch (Exception e){
 			if(isFavorite) {
-				LOGGER.warn("Question already marked favorite", e);
+				LOGGER.warn("question already marked favorite", e);
 			}
 			else {
-				LOGGER.warn("Question not a favorite", e);
+				LOGGER.warn("question not a favorite", e);
 			}
 		}
 	}
