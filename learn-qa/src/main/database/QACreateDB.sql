@@ -1,1 +1,1 @@
-CREATE SCHEMA `learnqa` ;
+CREATE SCHEMA `crajee` ;
