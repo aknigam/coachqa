@@ -1,50 +1,50 @@
-USE `learnqa`;
+use `crajee`;
 --
--- Dumping data for table `UserTypeMaster`
---
-
-INSERT INTO `UserTypeMaster` VALUES (1,'application user'),(2,'administator');
-
-
-
---
--- Dumping data for table `questionlevel`
+-- dumping data for table `refusertype`
 --
 
-
-INSERT INTO `questionlevel` VALUES (1,'Medium',1),(2,'Hard',3),(3,'Easy',1);
-
-
---
--- Dumping data for table `refclassroommemberstatus`
---
-
-
-INSERT INTO `refclassroommemberstatus` VALUES (1,'Pending Approval','applied for membership'),(2,'Active','Request to join is approved'),(3,'Expired','Request to join is approved'),(4,'Rejected','Rejected');
-
-
---
--- Dumping data for table `refquestionstatus`
---
-
-
-INSERT INTO `refquestionstatus` VALUES (1,'new');
-
-
---
--- Dumping data for table `refsubject`
---
-
-INSERT INTO `refsubject` VALUES (1,'mathematics','mathematics');
+insert into `refusertype` values (1,'application user'),(2,'administator');
 
 
 
 --
--- Dumping data for table `appuser`
+-- dumping data for table `refquestionlevel`
 --
 
 
-INSERT INTO `appuser` VALUES (2,NULL,'anigam@expedia.com','pass','Anand','K','nigam',1),(1,NULL,'admin@learnqa.com','admin','Admin',NULL,'Admin',2);
+insert into `refquestionlevel` values (1,'medium',1),(2,'hard',3),(3,'easy',1);
+
+
+--
+-- dumping data for table `refclassroommemberstatus`
+--
+
+
+insert into `refclassroommemberstatus` values (1,'Pending Approval','Applied for membership'),(2,'Active','request to join is approved'),(3,'Expired','request to join is approved'),(4,'Rejected','rejected');
+
+
+--
+-- dumping data for table `refquestionstatus`
+--
+
+
+insert into `refquestionstatus` values (1,'new');
+
+
+--
+-- dumping data for table `refsubject`
+--
+
+insert into `refsubject` values (1,'mathematics','mathematics');
+
+
+
+--
+-- dumping data for table `appuser`
+--
+
+
+insert into `appuser` values (2,null,'anigam@expedia.com','pass','anand','k','nigam',1),(1,null,'admin@learnqa.com','admin','admin',null,'admin',2);
 
 
 

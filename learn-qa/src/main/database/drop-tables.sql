@@ -1,4 +1,5 @@
-USE `learn-qa`;
+-- ORDER needs to be reversed
+USE `crajee`;
 DROP TABLE IF EXISTS `userreputation`;
 DROP TABLE IF EXISTS `UserTypeMaster`;
 DROP TABLE IF EXISTS `appuser`;
