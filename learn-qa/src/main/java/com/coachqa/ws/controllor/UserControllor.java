@@ -30,23 +30,7 @@ public class UserControllor {
 	 * @param response
 	 * @return
 	 */
-	@ResponseBody
-	@PostMapping
-	public AppUser register(@RequestBody AppUser user, HttpServletRequest request, HttpServletResponse response)
-	{
-		/*
-		 * Steps:
-		 * 1. register the user
-		 */
-		AppUser newUser = userService.addUser(user);
-		// todo save the user's notification preference
-		NotificationPreference preference = new NotificationPreference(newUser.getAppUserId(), NotificationTypeEnum.APP);
-//		If the preference is not set then notification system will use the defualt pref type.
-//		userService.addOrUpdateUserNotificationPreference(preference);
-		WSUtil.setLocationHeader(request, response, newUser.getAppUserId());
-		
-		return newUser;
-	}
+
 
 	@ResponseBody
 	@RequestMapping(value="/{userId}/notification/preference", method = RequestMethod.POST)

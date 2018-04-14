@@ -150,7 +150,7 @@ public class LearnQAWebTestConfig extends WebMvcConfigurerAdapter {
 
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         org.apache.ibatis.mapping.Environment myBatisEnvironment =
-                new org.apache.ibatis.mapping.Environment("dev", transactionFactory, learnqadataSource());
+                new org.apache.ibatis.mapping.Environment("dev", transactionFactory, datasource());
         org.apache.ibatis.session.Configuration mybatisConfiguration = new org.apache.ibatis.session.Configuration(myBatisEnvironment);
         SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(mybatisConfiguration);
         mybatisConfiguration.addMappers("com.smartbookmark.repository.mybatis.mapper");
