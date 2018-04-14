@@ -1,0 +1,51 @@
+
+Enable firebase cloud messaging:
+
+Follow this documentation: https://firebase.google.com/docs/cloud-messaging/android/client
+
+1. For firebase messaging to work the google play service should be installed.
+Refer:http://stackoverflow.com/questions/38293727/could-not-find-com-google-firebasefirebase-core9-0-0
+
+https://console.firebase.google.com/project/leanqaandroidapp/notification
+
+
+
+2. For Firebase authentication to work
+
+https://developers.google.com/android/guides/client-auth
+
+https://firebase.google.com/docs/auth/android/google-signin
+
+We are using the following application to generate the google-services.json
+
+https://console.firebase.google.com/u/0/project/leanqaandroidapp/settings/general/android:com.crajee.learnqa
+
+
+https://developer.android.com/guide/topics/ui/dialogs.html#ProgressDialog
+
+find why this exception comes
+
+E/AndroidRuntime: FATAL EXCEPTION: main
+                  Process: com.crajee.learnqa, PID: 16865
+                  android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@9a817aa is not valid; is your activity running?
+                      at android.view.ViewRootImpl.setView(ViewRootImpl.java:679)
+                      at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:342)
+                      at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:93)
+                      at android.widget.Toast$TN.handleShow(Toast.java:459)
+                      at android.widget.Toast$TN$2.handleMessage(Toast.java:342)
+                      at android.os.Handler.dispatchMessage(Handler.java:102)
+                      at android.os.Looper.loop(Looper.java:154)
+                      at android.app.ActivityThread.main(ActivityThread.java:6119)
+                      at java.lang.reflect.Method.invoke(Native Method)
+                      at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
+                      at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
+
+
+https://stackoverflow.com/questions/9529504/unable-to-add-window-token-android-os-binderproxy-is-not-valid-is-your-activ
+
+Bottom navigationview
+https://stackoverflow.com/questions/35885974/how-to-put-toolbar-on-bottom-side-of-the-app
+
+
+https://stackoverflow.com/questions/41530788/application-crashes-when-i-try-to-debug
+- Instant run was disabled to addrress the application crash or stuck issue (Not able to initialize class for SetValues)

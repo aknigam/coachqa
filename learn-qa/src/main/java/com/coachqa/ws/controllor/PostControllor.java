@@ -64,4 +64,13 @@ public class PostControllor {
     }
 
 
+    @RequestMapping(value="/{postId}", method = RequestMethod.DELETE)
+    public void deletePost(@PathVariable(value ="{postId}")Integer postId,
+                     HttpServletRequest request , HttpServletResponse response) {
+
+        AppUser user = WSUtil.getUser( userService);
+        postService.deletePost(postId);
+    }
+
+
 }

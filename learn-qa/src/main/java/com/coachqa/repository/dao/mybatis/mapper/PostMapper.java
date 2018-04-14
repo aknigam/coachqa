@@ -62,7 +62,7 @@ public interface PostMapper {
     })
     List<QuestionVote> getUserVotedQuestions(Integer userId);
 
-    // TODO: 24/03/18 this does not work!
+
     @Update("Update post set classroomid = #{classroomId} , approvalstatus =  #{approvalStatus} ,  content = #{content}  where postId = #{postId} ")
     void updateQuestion(Question updatedQuestion);
 

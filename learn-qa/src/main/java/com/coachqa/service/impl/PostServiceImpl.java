@@ -74,4 +74,9 @@ public class PostServiceImpl implements PostService {
 		return post;
 	}
 
+	@Override
+	public void deletePost(Integer postId) {
+		// TODO: 14/04/18  
+	}
+
 }

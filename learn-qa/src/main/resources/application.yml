@@ -6,11 +6,12 @@
 # Set this system property to completely disable spring boot logging -Dorg.springframework.boot.logging.LoggingSystem=none
 # As a convention spring by default pics the logback-spring.xml file from classpath of Logback logging system is
 # configured using above property
+# if logback-spring.xml is present in the classpath then it is automatically picked
 logging:
   level:
     org.springframework.security: INFO
     root: INFO
-  config: "src/main/resources/logback-spring.xml"
+#  config: "src/main/resources/logback-spring.xml"
   file: "crajee.log"
 
 server:

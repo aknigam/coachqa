@@ -209,7 +209,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	}
 
 
-
+	@CacheEvict(value="questions", key="#result.postId")
 	@Override
 	public Question updateQuestion(Question updatedQuestion) {
 		// classroom, content, updatedate, approval status
