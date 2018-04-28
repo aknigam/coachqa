@@ -3,6 +3,7 @@ package com.coachqa.service;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
@@ -96,4 +97,6 @@ public interface QuestionService {
 	void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite);
 
 	List<Question> getMyFavorites(Integer appUserId, Integer page);
+
+	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer appUserId);
 }

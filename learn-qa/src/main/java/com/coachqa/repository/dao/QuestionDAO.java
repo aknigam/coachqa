@@ -1,6 +1,7 @@
 package com.coachqa.repository.dao;
 
 import com.coachqa.entity.Question;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface QuestionDAO {
 	List<Question> getMyFavorites(Integer appUserId, Integer page);
 
 	boolean isFavorite(Integer questionId, Integer appUserId);
+
+    List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer userId, int noOfPaginatedResults);
 }

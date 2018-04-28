@@ -43,6 +43,28 @@ E/AndroidRuntime: FATAL EXCEPTION: main
 
 https://stackoverflow.com/questions/9529504/unable-to-add-window-token-android-os-binderproxy-is-not-valid-is-your-activ
 
+
+//                MessageUtil.showToastMessage(queryString, context.get());
+                /* above line is commented becuase it was causing following error:
+                IMPORTANT: NEVER USE TOAST FROM A EVENT LISTENER METHOD.
+                // TODO: 15/04/18 Find solution for the problem mentioned below:
+
+    Process: com.crajee.learnqa, PID: 12200
+                  android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@bd1d267 is not valid; is your activity running?
+                      at android.view.ViewRootImpl.setView(ViewRootImpl.java:679)
+                      at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:342)
+                      at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:93)
+                      at android.widget.Toast$TN.handleShow(Toast.java:459)
+                      at android.widget.Toast$TN$2.handleMessage(Toast.java:342)
+                      at android.os.Handler.dispatchMessage(Handler.java:102)
+                      at android.os.Looper.loop(Looper.java:154)
+                      at android.app.ActivityThread.main(ActivityThread.java:6119)
+                      at java.lang.reflect.Method.invoke(Native Method)
+                      at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
+                      at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
+
+                 */
+
 Bottom navigationview
 https://stackoverflow.com/questions/35885974/how-to-put-toolbar-on-bottom-side-of-the-app
 

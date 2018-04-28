@@ -1,10 +1,14 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionLevelEnum;
+import com.coachqa.repository.dao.mapper.QuestionMapper;
 import com.coachqa.util.CollectionUtils;
+import com.coachqa.ws.controllor.QueryCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,7 +158,8 @@ public class QuestionQueryBuilder {
 
     public QuestionQueryBuilder withJoin(String joinTableName, String joinTableALias, String col, String targetTableAlias, String targetCol, int joinOrder) {
         joins.add(new JoinTable(joinTableName, joinTableALias, joinOrder)
-                .onJoinCondition(new QueryCondition<String>(targetTableAlias+"."+targetCol, joinTableALias+"."+col)
+                .onJoinCondition(new QueryCondition<String>(targetTableAlias+"."+targetCol, joinTableALias+"."+col,
+                        ConditionType.COLUMN )
                         .withJoinType(JoinTypeEnum.EQUALS)));
         return this;
     }
@@ -165,13 +170,45 @@ public class QuestionQueryBuilder {
         return this;
     }
 
-    public void withTagsCondition(List<Integer> tags) {
+    public void withSubjectCondition(List<Integer> tags) {
         StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.questionid from questiontag qt where tagid in (");
 
         int size = tags.size();
         int i =1;
         for (Integer tagId:tags) {
             tagSelectQuery.append(tagId);
+            if(i++ != size) {
+                tagSelectQuery.append(",");
+            }
+        }
+        tagSelectQuery.append(" ) ");
+
+        conditions.add(new QueryCondition("questionid", "( "+tagSelectQuery+" ) ").withJoinType(JoinTypeEnum.IN_SUBQUERY));
+    }
+
+    public void withTagNameCondition(List<String> tags) {
+        StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.questionid from questiontag qt " +
+                " JOIN tag t on t.TagId = qt.TagId where tagname in (");
+
+        int size = tags.size();
+        int i =1;
+        for (String tagId:tags) {
+            tagSelectQuery.append(getVal(tagId, ConditionType.VALUE));
+            if(i++ != size) {
+                tagSelectQuery.append(",");
+            }
+        }
+        tagSelectQuery.append(" ) ");
+
+        conditions.add(new QueryCondition("questionid", "( "+tagSelectQuery+" ) ").withJoinType(JoinTypeEnum.IN_SUBQUERY));
+    }
+    public void withTagsCondition(List<Integer> tags) {
+        StringBuilder tagSelectQuery = new StringBuilder(" SELECT qt.questionid from questiontag qt where tagid in (");
+
+        int size = tags.size();
+        int i =1;
+        for (Integer tagId:tags) {
+            tagSelectQuery.append(getVal(tagId, ConditionType.VALUE));
             if(i++ != size) {
                 tagSelectQuery.append(",");
             }
@@ -193,8 +230,24 @@ public class QuestionQueryBuilder {
         return this;
     }
 
+    public void withCondition(QueryCondition condition) {
+        conditions.add(condition);
+    }
 
-    static class QueryCondition<T>{
+    public static <T> String getVal(T rhs, ConditionType conditionType) {
+        if(conditionType == ConditionType.COLUMN){
+            return rhs.toString();
+        }
+        if(rhs instanceof Integer){
+            return rhs.toString();
+        }
+        else if(rhs instanceof String) {
+            return "'"+rhs+"'";
+        }
+        return rhs.toString();
+    }
+
+    public static class QueryCondition<T>{
 
 
         private static String AND = "and";
@@ -202,12 +255,23 @@ public class QuestionQueryBuilder {
 
         private final String lhs;
         private final T rhs;
+        private  ConditionType conditionType = ConditionType.VALUE;
         private Collection<T> vals;
         private JoinTypeEnum joinType = JoinTypeEnum.EQUALS;
 
         public QueryCondition(String lhs , T rhs){
             this.lhs =  lhs;
             this.rhs = rhs;
+        }
+        public QueryCondition(String lhs , Collection<T> rhs){
+            this.lhs =  lhs;
+            this.vals = rhs;
+            this.rhs = null;
+        }
+
+        public QueryCondition(String lhs, T rhs, ConditionType conditionType) {
+            this(lhs, rhs);
+            this.conditionType = conditionType;
         }
 
         public String getOrCondition(){
@@ -217,26 +281,31 @@ public class QuestionQueryBuilder {
         public String getAndCondition(){
             switch (joinType){
                 case EQUALS:
-                    return " "+ lhs +" = " + rhs;
+                    return " "+ lhs +" = " + getVal(rhs, conditionType);
                 case IN:
-                    if(CollectionUtils.isEmpty(vals)){
-                        StringBuilder q = new StringBuilder( " "+ AND + " " + lhs +" in (");
+                    if(!CollectionUtils.isEmpty(vals)){
+                        StringBuilder q = new StringBuilder(  lhs +" in (");
                         int i = 0;
                         for(T val : vals){
-                            if(i == vals.size() -1)
-                                q.append(val.toString()).append(")");
+                            if(i++ == (vals.size() -1))
+                                q.append(getVal(val, conditionType)).append(")");
                             else
-                                q.append(val.toString()).append(",");
+                                q.append(getVal(val, conditionType)).append(",");
                         }
                         return q.toString();
                     }
 
                 case IN_SUBQUERY:
                     return lhs + " in "+ rhs;
+                case LIKE:
+                    return " "+ lhs +" like '%" + rhs+"%' ";
                 default:
                     return "";
             }
         }
+
+
+
 
         public QueryCondition withJoinType(JoinTypeEnum joinType) {
             this.joinType =  joinType;
@@ -244,14 +313,17 @@ public class QuestionQueryBuilder {
         }
     }
 
-    static class QueryConditionBuilder{
+
+
+    public static enum ConditionType{
+        VALUE, COLUMN
 
     }
-
-    static enum JoinTypeEnum{
+    public static enum JoinTypeEnum{
         EQUALS,
         IN,
-        IN_SUBQUERY
+        IN_SUBQUERY,
+        LIKE
     }
 
     static class JoinTable implements Comparable<JoinTable>{
@@ -292,30 +364,10 @@ public class QuestionQueryBuilder {
         }
     }
 
-    static enum ORDER{
+    public static enum ORDER{
         ASC, DESC
     }
 
-    public static void main(String[] args) {
-        QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
-        String query = queryBuilder
-                .withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
-                .withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate"}))
-                .withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
-                .withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
-                .withJoin("post", "p", "postId", "q", "questionid", 1)
-                .withJoin("questiontag", "qt", "questionid", "q", "questionid", 3)
-                .withSubject(1)
-                .withClassroom(1)
-                .withTag(Arrays.asList(new Integer[]{1, 2}))
-                .withPostedByUser(new AppUser(1, "", "", "", ""))
-                .withPublicOnly(true)
-                .withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
-                .withLimit(0, 5)
-                .buildQuery();
-
-        System.out.println(query);
 
 
-    }
 }

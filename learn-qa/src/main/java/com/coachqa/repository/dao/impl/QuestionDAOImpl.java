@@ -7,6 +7,8 @@ import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
 import com.coachqa.repository.dao.mybatis.mapper.QuestionMybatisMapper;
 import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
+import com.coachqa.util.CollectionUtils;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -127,6 +130,61 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		// TODO: 24/01/18 pagination support?
 		return tagMapper.getQuestionsByTag(tagId);
 	}
+
+	@Override
+	public List<Question> findByQuery(QueryCriteria q, Integer page, Integer userId, int
+			noOfPaginatedResults) {
+
+		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
+
+		queryBuilder
+				= queryBuilder
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
+				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
+				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
+				.withJoin("post", "p", "postId", "q", "questionid", 1)
+				.withJoin("refsubject", "s", "refsubjectid", "q", "refsubjectid" , 3);
+
+
+		if(!CollectionUtils.isEmpty(q.getSubject())) {
+			queryBuilder.withCondition(new QuestionQueryBuilder.QueryCondition<String>("s.subjectname", q.getSubject())
+					.withJoinType(QuestionQueryBuilder.JoinTypeEnum.IN));
+		}
+
+		if(!CollectionUtils.isEmpty(q.getTag())) {
+			queryBuilder.withTagNameCondition(q.getTag());
+		}
+
+
+		if(!CollectionUtils.isEmpty(q.getPostedBy())) {
+			queryBuilder.withCondition(new QuestionQueryBuilder.QueryCondition<String>("u.firstname", q.getPostedBy()).
+					withJoinType(QuestionQueryBuilder.JoinTypeEnum.IN));
+		}
+
+		if(!q.getSimpleParam().isEmpty()) {
+			queryBuilder.withCondition(new QuestionQueryBuilder.QueryCondition<String>("title", q.getSimpleParam())
+					.withJoinType(QuestionQueryBuilder.JoinTypeEnum.LIKE));
+		}
+
+
+
+		queryBuilder.withPublicOnly(true)
+				.withApprovedOnly()
+				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
+                .withLimit(page, noOfPaginatedResults);
+
+		String query = queryBuilder.buildQuery();
+
+		LOGGER.info(query);
+
+		RowMapper<Question> qm= new QuestionMapper();
+		List<Question> qstns = jdbcTemplate.query(query, qm);
+
+		return qstns;
+	}
+
+
 	/**
 	 * Following items can be specified in the criteria:
 	 *
@@ -262,4 +320,6 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	public boolean isFavorite(Integer questionId, Integer appUserId) {
 		return  questionMapper.isFavorite(questionId, appUserId);
 	}
+
+
 }

@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -133,6 +135,46 @@ public class QuestionControllor {
 		page = page == null ? 0: page;
 		return questionService.findSimilarQuestions(criteria, page, user.getAppUserId());
 	}
+
+	/**
+	 * http://localhost:8080/api/questions/list?tagId=12&classroomId=1&ownerId=1&subjectId=1&isPublic=true
+	 *String queryStr = "question &postedby:bla&postedby:bla1&subject:bla&subject:bla subject&tag:bla&tag:bla tag &" +
+	 "classroom:bla& anser ";
+
+	 * @param query
+	 *
+	 */
+	@RequestMapping( value="/searchbyquery", method = RequestMethod.GET)
+	public List<Question> searchQuestions(
+			@RequestParam(required = false) String postedby,
+			@RequestParam(required = false) String subject,
+			@RequestParam(required = false) String tag,
+			@RequestParam(required = false) String classroom,
+			@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page)
+	{
+		AppUser user = WSUtil.getUser( userService);
+		QueryCriteria c = new QueryCriteria();
+		if(classroom != null && !classroom.trim().isEmpty())	c.setClassroom(classroom);
+		if(postedby != null && !postedby.trim().isEmpty())	c.setPostedBy(postedby);
+		if(subject != null && !subject.trim().isEmpty())	c.setSubject(subject);
+		if(tag != null && !tag.trim().isEmpty())	c.setTag(tag);
+		if(query != null && !query.trim().isEmpty())	c.addSimpleQueryParam(query);
+
+
+		page = page == null ? 0: page;
+		return questionService.findByQuery(c, page, user.getAppUserId());
+
+	}
+
+	/*
+	Query format
+
+	&postedby:"bla" &subject:"bla" &tag:"bla" &classroom:"bla"
+	 */
+
+
+
 
 	@RequestMapping(value="/{questionId}" , method = RequestMethod.GET)
 	public Question getQuestion(@PathVariable(value = "questionId") Integer questionId)

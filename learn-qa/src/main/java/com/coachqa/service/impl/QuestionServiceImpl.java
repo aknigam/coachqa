@@ -14,6 +14,7 @@ import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
@@ -284,6 +285,8 @@ public class QuestionServiceImpl implements QuestionService {
 		return questionDao.getMyFavorites(appUserId, page);
 	}
 
+
+
 	@Override
 	public void rateQuestion(Integer appUserId, Integer questionId, QuestionRatingEnum rating) {
 		// todo
@@ -324,6 +327,14 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 
 		return questionDao.findSimilarQuestions(criteria, page, userId , NO_OF_PAGINATED_RESULTS);
+	}
+
+	@Override
+	public List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer userId) {
+
+
+
+		return questionDao.findByQuery(searchQuery, page, userId , NO_OF_PAGINATED_RESULTS);
 	}
 
 	private boolean isAuthorizedToRateQuestion() {
