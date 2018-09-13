@@ -25,4 +25,6 @@ public interface ClassroomDAO {
 	List<Classroom> getUserMemberships(AppUser user);
 
 	boolean isActiveMemberOf(Integer classroomId, Integer user);
+
+    List<Classroom> searchClassrooms(int page, int loggedUserId,boolean onlyMyClasses);
 }

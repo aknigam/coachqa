@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,10 +37,38 @@ public class ClassroomControllor {
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
 		classroom.setClassOwner(WSUtil.getUser( userService));
+		if(classroom.getSubject() == null) {
+			throw new RuntimeException("Classroom must have a subject");
+		}
 		Classroom newClassroom = classroomService.createClassroom(classroom );
 
 		WSUtil.setLocationHeader(request, response, newClassroom.getClassroomId());
 		return newClassroom;
+	}
+
+	@ResponseBody
+	@PutMapping
+	public Classroom updateClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse
+			response){
+
+		if(classroom.getSubject() == null) {
+			throw new RuntimeException("Classroom must have a subject");
+		}
+		Classroom newClassroom = classroomService.createClassroom(classroom );
+
+		WSUtil.setLocationHeader(request, response, newClassroom.getClassroomId());
+		return newClassroom;
+	}
+
+
+	@ResponseBody
+	@GetMapping(path = "/search")
+	public List<Classroom> searchClassrooms(@RequestParam(required = false) Integer page, @RequestParam(required =
+			false) boolean onlyLoginUserClassrooms)
+	{
+		AppUser user = WSUtil.getUser( userService);
+		return classroomService.searchClassrooms( user.getAppUserId(),page, onlyLoginUserClassrooms);
+
 	}
 
 	@ResponseBody
@@ -74,11 +103,12 @@ public class ClassroomControllor {
 	 */
 	@RequestMapping(value="/{classroomId}/membership" , method = RequestMethod.POST)
 	@ResponseBody
-	public String requestClassroomMembership(@PathVariable Integer classroomId, @RequestParam String comments, HttpServletRequest request)
+	public void requestClassroomMembership(@PathVariable Integer classroomId, @RequestParam String comments,
+										HttpServletRequest request)
 	{
 		AppUser user = WSUtil.getUser( userService);
 		classroomService.requestClassroomMembership(user.getAppUserId(), classroomId, comments);
-		return "success";
+		return;
 	}
 
 	/**
@@ -91,7 +121,7 @@ public class ClassroomControllor {
 	 */
 	@RequestMapping(value="/{classroomId}/leave" , method = RequestMethod.POST)
 	@ResponseBody
-	public String requestMembershipTermination(@PathVariable Integer classroomId,
+	public void requestMembershipTermination(@PathVariable Integer classroomId,
 											   @RequestParam Integer requestedByUserId,
 											   @RequestParam Integer memberId,
 											   @RequestParam String comments,
@@ -99,7 +129,7 @@ public class ClassroomControllor {
 	{
 		AppUser user = WSUtil.getUser(userService);
 		classroomService.leaveClassroom(classroomId, requestedByUserId, memberId, comments);
-		return "success";
+		return;
 	}
 	/**
 	 * Input should be the list of userIds and action. Action can be approve or reject.
@@ -107,10 +137,11 @@ public class ClassroomControllor {
 	 */
 	@RequestMapping(value="/{classroomId}/processMembershipRequest" , method = RequestMethod.POST)
 	@ResponseBody
-	public String processJoinRequest(@RequestBody ClassroomMembershipRequest membershipRequests, HttpServletRequest  request ,HttpServletResponse response ){
+	public void processJoinRequest(@RequestBody ClassroomMembershipRequest membershipRequests, HttpServletRequest
+			request ,HttpServletResponse response ){
 		AppUser user = WSUtil.getUser( userService);
 		classroomService.processJoinRequest(user, membershipRequests);
-		return "success";
+		return ;
 	}
 
 	@RequestMapping(value="/{classroomId}/membershiprequests", method = RequestMethod.GET)

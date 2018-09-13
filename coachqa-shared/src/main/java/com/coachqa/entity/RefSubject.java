@@ -14,6 +14,10 @@ public class RefSubject implements java.io.Serializable {
 	public RefSubject() {
 	}
 
+	public RefSubject(int refSubjectId) {
+		this.refSubjectId = refSubjectId;
+	}
+
 	public RefSubject(int refSubjectId, String subjectName,
 			String subjectDescription) {
 		this.refSubjectId = refSubjectId;

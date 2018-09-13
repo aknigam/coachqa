@@ -3,6 +3,7 @@ package com.coachqa.entity;
 // Generated Dec 21, 2014 1:45:02 PM by Hibernate Tools 3.4.0.CR1
 
 
+import java.util.List;
 
 /**
  * Classroom
@@ -16,6 +17,8 @@ public class Classroom implements java.io.Serializable {
 	private String className;
 	public String description;
 	private boolean isPublic;
+	private RefSubject subject;
+	private boolean isLoggedInUserEnroled;
 
 	public Classroom() {
 	}
@@ -71,6 +74,22 @@ public class Classroom implements java.io.Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public RefSubject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(RefSubject subject) {
+		this.subject = subject;
+	}
+
+	public boolean isLoggedInUserEnroled() {
+		return isLoggedInUserEnroled;
+	}
+
+	public void setLoggedInUserEnroled(boolean loggedInUserEnroled) {
+		isLoggedInUserEnroled = loggedInUserEnroled;
 	}
 
 	@Override
