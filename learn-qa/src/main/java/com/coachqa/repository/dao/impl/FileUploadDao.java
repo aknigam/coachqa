@@ -1,33 +1,59 @@
 package com.coachqa.repository.dao.impl;
 
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+@Repository
 public class FileUploadDao extends BaseDao {
 
-    private static String fileInsertQuery = "INSERT INTO POST_MEDIA (MEDIA_CONTENT) VALUES (?)";
+    private static String fileInsertQuery = "INSERT INTO postmedia (imagecontent) VALUES (?)";
 
-    public int persist(byte[] bytes) {
+    private static String imageReadQuery = "Select imagecontent from postmedia where id = ?";
+
+    public int persist(byte[] bytes) throws SQLException {
 
         jdbcTemplate = getJdbcTemplate();
-        KeyHolder holder = new GeneratedKeyHolder();
-        jdbcTemplate.update(new PreparedStatementCreator() {
+        final PreparedStatement[] ps = {null};
+        try {
+            KeyHolder holder = new GeneratedKeyHolder();
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    ps[0] = connection.prepareStatement(fileInsertQuery, Statement.RETURN_GENERATED_KEYS);
+                    ps[0].setBytes(1, bytes);
+                    return ps[0];
+
+                }
+            }, holder);
+
+
+            return holder.getKey().intValue();
+        }
+        finally {
+            ps[0].close();
+        }
+
+    }
+
+
+
+    public byte[] readImage(Integer imageId) {
+
+        return jdbcTemplate.queryForObject(imageReadQuery, new Integer[]{imageId}, new RowMapper<byte[]>() {
             @Override
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(fileInsertQuery, Statement.RETURN_GENERATED_KEYS);
-                ps.setBytes(1, bytes);
-                return ps;
+            public byte[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return rs.getBytes("imagecontent");
             }
-        }, holder);
-
-
-        return holder.getKey().intValue();
+        });
 
     }
 }

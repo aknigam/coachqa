@@ -1,6 +1,5 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Post;
 import com.coachqa.entity.PostVote;
 import com.coachqa.entity.QuestionVote;
@@ -11,13 +10,8 @@ import com.coachqa.ws.model.PostApproval;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +23,16 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 	@Autowired
 	private PostMapper postMapper;
+
+	private static String updatePostApprovalQuery =  "Update post set approvalstatus =  ? , " +
+			" approvalcomment = ? " +
+			" where postId = ? ";
+
+	private static String votesQuery = "select votedbyuserid, postId  ,UpOrDown, VoteDate " +
+			"from postVote where votedbyuserid = ? order by VoteDate desc limit 1";
+
+
+
 
 	@Override
 	public Map<Integer, Boolean> getVotedPosts(Integer userId) {
@@ -69,9 +73,6 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 	}
 
 
-	private String updatePostApprovalQuery =  "Update Post set ApprovalStatus =  ? , " +
-			" ApprovalComment = ? " +
-			" where postId = ? ";
 
 	@Override
 	public void updatePostApproval(PostApproval postApproval) {
@@ -80,8 +81,6 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 	}
 
-	private String votesQuery = "select VotedByUserId, PostId  ,UpOrDown, VoteDate " +
-			"from PostVote where VotedByUserId = ? order by VoteDate desc limit 1";
 
 	private Map<Integer,Boolean> getUserVotedQuestions(Integer userId) {
 

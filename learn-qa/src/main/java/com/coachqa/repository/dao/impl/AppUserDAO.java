@@ -28,13 +28,24 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 	private static Logger LOGGER = LoggerFactory.getLogger(AppUserDAO.class);
 
 	private AppUserAddSproc userAddOrUpdateSproc;
-	
+
+	private static String m_userByIdQuery = "select appuserid, firstname, middlename, lastname,  email  from appuser where appUserId = ?";
+
+	private static String m_userByEmailQuery = "select appuserid, firstname, email, lastname  from appuser where email = ?";
+
+	private static String m_adminUserQuery = "select appuserid from appuser where usertypeid = 2";
+
+	private static String addAndroidToken = "Insert into appuserdetail (appuserid, androidtoken) values (?, ?)";
+
+	private static String getAddAndroidTokenQuery = "select androidtoken from appuser where usertypeid = 2";
+
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		userAddOrUpdateSproc = new AppUserAddSproc(getDataSource());
 	}
 
-	private static String m_userByEmailQuery = "select AppUserId, firstname, email, lastname  from AppUser where Email = ?";
+
 	
 	@Override
 	public AppUser getUserByEmail(String userEmail) {
@@ -47,7 +58,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 						throws SQLException {
 					
 					AppUser user = new AppUser();
-					user.setAppUserId(rs.getInt("AppUserId"));
+					user.setAppUserId(rs.getInt("appuserid"));
 					user.setEmail(rs.getString("email"));
 					user.setFirstName(rs.getString("firstname"));
 					user.setLastName(rs.getString("lastname"));
@@ -62,6 +73,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 			}
 				
 		} catch (DataAccessException e) {
+			LOGGER.error("Error fetching user from db.", e);
 			return null;
 		}
 		
@@ -74,12 +86,12 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 		try {
 			return userAddOrUpdateSproc.addUser(user);
 		}catch (DuplicateKeyException dke){
-			LOGGER.error(String.format( "User with email %s already exists"), dke);
-			throw new UserAlreadyExistsException(ApplicationErrorCode.USER_ALREADY_EXISTS, String.format( "User with email %s already exists"));
+			LOGGER.error(String.format( "User with email %s already exists", user.getEmail()), dke);
+			throw new UserAlreadyExistsException(ApplicationErrorCode.USER_ALREADY_EXISTS, String.format( "User with email %s already exists", user.getEmail()));
 		}
 	}
 
-	private static String m_userByIdQuery = "select AppUserId, firstname, MiddleName, LastName,  email  from AppUser where appUserId = ?";
+
 
 	@Cacheable(value="usersByIdCache", key="#userId")
 	@Override
@@ -92,11 +104,11 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					throws SQLException {
 
 				AppUser user = new AppUser();
-				user.setAppUserId(rs.getInt("AppUserId"));
+				user.setAppUserId(rs.getInt("appuserid"));
 				user.setEmail(rs.getString("email"));
 				user.setFirstName(rs.getString("firstname"));
-				user.setMiddleName(rs.getString("MiddleName"));
-				user.setLastName(rs.getString("LastName"));
+				user.setMiddleName(rs.getString("middlename"));
+				user.setLastName(rs.getString("lastname"));
 				return user;
 			}
 		});
@@ -109,7 +121,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	}
 
-	private static String m_adminUserQuery = "select AppUserId from AppUser where UserTypeId = 2";
+
 
 	@Override
 	public List<Integer> getPostContentApprovers() {
@@ -120,14 +132,14 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					throws SQLException {
 
 
-				return rs.getInt("AppUserId");
+				return rs.getInt("appuserid");
 
 			}
 		});
 
 	}
 
-	private static String addAndroidToken = "Insert into AppUserDetail (AppUserId, AndroidToken) values (?, ?)";
+
 
 	@Override
 	public void addAndroidUserToken(AndroidToken androidToken) {
@@ -135,7 +147,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 				, androidToken.getAndroidToken()});
 	}
 
-	private static String getAddAndroidTokenQuery = "select AndroidToken from AppUser where UserTypeId = 2";
+
 	public List<String> getAndroidTokens(Integer userId){
 		return jdbcTemplate.query(m_userByIdQuery, new Integer[]{userId}, new RowMapper<String>() {
 
@@ -143,7 +155,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 			public String mapRow(ResultSet rs, int i)
 					throws SQLException {
 
-				return rs.getString("AndroidToken");
+				return rs.getString("androidtoken");
 			}
 		});
 

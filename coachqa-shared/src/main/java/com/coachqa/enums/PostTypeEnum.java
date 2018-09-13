@@ -8,8 +8,13 @@ public enum PostTypeEnum {
     QUESTION(1),
     ANSWER(0);
 
+
     public int getType() {
         return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     private int type;

@@ -21,6 +21,7 @@ public enum ApplicationErrorCode {
     NOT_AUTHORIZEDTO_VIEW_MEMBERSHIP_REQUESTS(3005),
     CLASSROOM_ALREADY_EXISTS(3006 ),
     NOT_AUTHORIZEDTO_UPDATE(3007),
+    NOT_AUTHORIZEDTO_APPROVE(3008,"Not authorized to approve" ),
 
     QUESTION_POST_PRIVATE(4000, "Private question can only be posted to a valid classroom"),
     QUESTION_POST_CLASSROOM(4001, "You need to be a member of the classroom for posting the question"),
@@ -29,7 +30,10 @@ public enum ApplicationErrorCode {
 
     ENTITY_NOT_FOUND(6001,"Cannot find entity" ),
 
-    NOT_AUTHORIZEDTO_APPROVE(3007,"Not authorized to approve" );
+
+
+    IN_VALID_EVENT(5001, "Invalid event type");
+
 
 
     private final int errorCode;

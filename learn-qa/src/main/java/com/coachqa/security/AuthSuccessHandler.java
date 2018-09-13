@@ -56,7 +56,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
     /*
     public AppUser getUserByEmail(String userEmail) {
-        JdbcTemplate securityJdbcTemplate = new JdbcTemplate(learnqadataSource);
+        JdbcTemplate securityJdbcTemplate = new JdbcTemplate(datasource);
         try {
             List<AppUser> users = securityJdbcTemplate.query(m_userByEmailQuery, new String[]{userEmail}, new RowMapper<AppUser>() {
 

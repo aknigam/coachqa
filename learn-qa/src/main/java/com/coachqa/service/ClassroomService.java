@@ -2,6 +2,7 @@ package com.coachqa.service;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
+import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 
 import java.util.List;
@@ -22,11 +23,15 @@ public interface ClassroomService {
 
 	ClassroomMembershipRequest getMemberShipRequests(AppUser user, Integer classroomId);
 
-	boolean isMemberOf(Integer classroomId, int user);
+	boolean isActiveMemberOf(Integer classroomId, int user);
 
 	List<Classroom> getUserMemberships(AppUser user);
 
-	static class ClassroomJoinRequest
+	void approveMembershipRequest(Integer classroomId, Integer userId);
+
+	ClassroomSettings getClassroomSettings(Integer classroomId);
+
+    static class ClassroomJoinRequest
 	{
 		private Integer appUserId;
 		private Integer classroomId;

@@ -1,12 +1,20 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
-import com.coachqa.exception.*;
+import com.coachqa.exception.AnswerPostException;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.NotAuthorisedToUpdateException;
+import com.coachqa.exception.QAEntityNotFoundException;
+import com.coachqa.exception.QuestionPostException;
+import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
@@ -22,11 +30,13 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
+	private static final int NO_OF_PAGINATED_RESULTS = 5;
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
 	@Autowired
@@ -70,14 +80,20 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(isNotMemberofProvidedClassroom(question, question.getPostedBy().getAppUserId())){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
+		if(isClassroomProvidedAndNotMember(question.getClassroomId(), question.getPostedBy().getAppUserId())){
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_CLASSROOM);
 		}
 
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
             @Override
             public Question doInTransaction(TransactionStatus transactionStatus) {
-                return  questionDao.addQuestionWithTags(question);
+				question.setApprovalStatus(true);
+            	if(isApprovalRequired(question)){
+            		question.setApprovalStatus(false);
+				}
+
+				// TODO: 06/01/18 the default approval status in the post table is 1 (false). This also needs to be set to true in case approval is not required.
+				return  questionDao.addQuestionWithTags(question);
             }
         });
 
@@ -89,7 +105,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Transactional
 	@Override
-	public void updateQuestion(Question updatedQuestion) {
+	public void updateQuestion(Question updatedQuestion, AppUser user) {
 
 		Question existingQuestion = questionDao.getQuestionById(updatedQuestion.getQuestionId());
 		if(existingQuestion == null){
@@ -108,13 +124,17 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(isNotMemberofProvidedClassroom(updatedQuestion, updatedQuestion.getPostedBy().getAppUserId())){
+		if(isClassroomProvidedAndNotMember(updatedQuestion.getClassroomId(), updatedQuestion.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 			@Override
 			public Question doInTransaction(TransactionStatus transactionStatus) {
+				updatedQuestion.setApprovalStatus(true);
+				if(isApprovalRequired(updatedQuestion)){
+					updatedQuestion.setApprovalStatus(false);
+				}
 				return  questionDao.updateQuestion(updatedQuestion);
 			}
 		});
@@ -132,12 +152,38 @@ public class QuestionServiceImpl implements QuestionService {
 	private void publishPostQuestionEvent(Question qstn) {
 
 		Integer questionId = qstn.getQuestionId();
-		// stage 1 indicates approval pending
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
+
+		/*
+		Check classroom settings whether approval is required or not
+		 */
+		if(isApprovalRequired(qstn)){
+// stage 1 indicates approval pending
+			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
+		}
+		else
+		{
+			// stage 1 indicates approval pending
+			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_TWO));
+		}
+
+
 	}
 
-	private boolean isNotMemberofProvidedClassroom(Question question, Integer postedByUserId) {
-		return !classroomService.isMemberOf(question.getClassroomId(), question.getPostedBy().getAppUserId());
+	private boolean isApprovalRequired(Question qstn) {
+		if(qstn.isPublicQuestion()){
+			// TODO: 14/01/18 change the following line to return true; to make approval necessary for public questions
+			return false;
+		}
+		ClassroomSettings cs = classroomService.getClassroomSettings(qstn.getClassroomId());
+
+		return cs.isPostApprovalRequired();
+	}
+
+	private boolean isClassroomProvidedAndNotMember(Integer classroomId , Integer postedByUserId ) {
+		if(classroomId == null){
+			return false;
+		}
+		return !classroomService.isActiveMemberOf(classroomId, postedByUserId);
 	}
 
 	private boolean isPrivateQuestionWithoutClassroom(Question question) {
@@ -157,7 +203,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(isNotMemberofProvidedClassroom(question, userId)){
+		if(isClassroomProvidedAndNotMember(question.getClassroomId(), userId)){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
 
@@ -167,7 +213,9 @@ public class QuestionServiceImpl implements QuestionService {
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId()));
+		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId(),
+				userId,new Date(System.currentTimeMillis()),
+				new Date(System.currentTimeMillis()) ));
 
 		return question;
 	}
@@ -188,10 +236,11 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	@Transactional
-	public Question getQuestionByIdAndIncrementViewCount(Integer questionId) {
+	public Question getQuestionByIdAndIncrementViewCount(Integer questionId, AppUser user) {
 
 		Question question = questionDao.getQuestionById(questionId);
 
+		question.setFavorite(questionDao.isFavorite(questionId, user.getAppUserId()));
 		/*
 		Is it right to increment the view every time the user sees it. Or should there be only one view per user?
 		 */
@@ -215,10 +264,28 @@ public class QuestionServiceImpl implements QuestionService {
 	 * @param tagId
 	 * @return
 	 */
+	@Deprecated
 	@Override
 	public List<Question> getQuestionsByTag(int tagId) {
 		return questionDao.getQuestionsByTag(tagId);
 	}
+
+	@Override
+	public List<Question> getUsersPosts(AppUser user, Integer page) {
+		return questionDao.getUsersPosts(user.getAppUserId(), page);
+	}
+
+	@Override
+	public void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite) {
+		questionDao.markAsFavorite(appUserId, questionId, isFavorite);
+	}
+
+	@Override
+	public List<Question> getMyFavorites(Integer appUserId, Integer page) {
+		return questionDao.getMyFavorites(appUserId, page);
+	}
+
+
 
 	@Override
 	public void rateQuestion(Integer appUserId, Integer questionId, QuestionRatingEnum rating) {
@@ -244,13 +311,30 @@ public class QuestionServiceImpl implements QuestionService {
 	 * 12. All public questions
 	 *
 	 * @param criteria
-	 * @param noOfResults
-     * @return
+	 * @param page
+     * @param userId
+	 * @return
      */
 	@Override
-	public List<Question> findSimilarQuestions(Question criteria, int noOfResults) {
+	public List<Question> findSimilarQuestions(Question criteria, int page, Integer userId) {
 
-		return questionDao.findSimilarQuestions(criteria);
+		criteria.setPublicQuestion(true);
+		Integer classroomId = criteria.getClassroomId();
+		if(classroomId != null){
+			if(classroomService.isActiveMemberOf(classroomId, userId)){
+				criteria.setPublicQuestion(false);
+			}
+		}
+
+		return questionDao.findSimilarQuestions(criteria, page, userId , NO_OF_PAGINATED_RESULTS);
+	}
+
+	@Override
+	public List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer userId) {
+
+
+
+		return questionDao.findByQuery(searchQuery, page, userId , NO_OF_PAGINATED_RESULTS);
 	}
 
 	private boolean isAuthorizedToRateQuestion() {

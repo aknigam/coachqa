@@ -7,6 +7,7 @@ import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +26,34 @@ public class Question extends Post implements java.io.Serializable {
 	
 	private QuestionLevelEnum questionLevelEnum;
 	
-	private QuestionStatusEnum refQuestionStatusId;
+	private QuestionStatusEnum refQuestionStatusId = QuestionStatusEnum.NEW;
+
+	public int getStatusId() {
+		return refQuestionStatusId.getId();
+	}
+
+	private int statusId;
 	
 	private String title;
-	
+
+
+
 	private Date lastActiveDate;
 
 	
 	private boolean publicQuestion;
+
+	private boolean favorite;
+
+	public boolean isFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
+	}
+
+
 	
 
 
@@ -85,13 +106,7 @@ public class Question extends Post implements java.io.Serializable {
 		this.title = title;
 	}
 
-	public Date getLastActiveDate() {
-		return lastActiveDate;
-	}
 
-	public void setLastActiveDate(Date lastActiveDate) {
-		this.lastActiveDate = lastActiveDate;
-	}
 
 	public boolean isPublicQuestion() {
 		return publicQuestion;
@@ -117,5 +132,12 @@ public class Question extends Post implements java.io.Serializable {
 		this.answers = answers;
 	}
 
+	public Date getLastActiveDate() {
+		return lastActiveDate;
+	}
+
+	public void setLastActiveDate(Date lastActiveDate) {
+		this.lastActiveDate = lastActiveDate;
+	}
 
 }

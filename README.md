@@ -35,6 +35,24 @@ Swagger yml is available at: http://localhost:8080/v2/api-docs
 It can be imported to postman by providing the contents of above url.
 Name of postman collection: Crajee-API docs
 
+
+###Swagger can generate the retrofit client interfaces
+
+Use the following command from following folder:
+
+/Users/a.nigam/Documents/workspace/coachqa/learn-qa/src/main/resources
+
+<code>
+java -jar swagger-codegen-cli-2.2.1.jar generate -i /Users/a.nigam/Documents/workspace/coachqa/learn-qa/src/main/resources/swagger-api-docs.json  -l java --library=retrofit2 -DmodelPackage=com.coachqa.entity,apiPackage=com.crajee.learnqa.repository.retrofit -o generated-retrofit
+</code>
+
+Refer:
+
+http://pscode.rs/swagger-code-gen-retrofit2-library/
+https://swagger.io/swagger-codegen/
+https://swagger.io/docs/swagger-tools/#swagger-codegen-documentation-9 
+
+
 ## Android app details
 
 Checkout android project and import it into Android studio. Setup an emulator or use an android device by debug options enabled.

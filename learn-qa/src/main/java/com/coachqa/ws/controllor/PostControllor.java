@@ -5,10 +5,12 @@ import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
-import com.coachqa.ws.model.PostApproval;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,15 +30,6 @@ public class PostControllor {
     @Autowired
     private PostService postService;
 
-    @RequestMapping(value="/{postId}/approve", method = RequestMethod.POST)
-    public void approvePostContent(@PathVariable(value ="postId")Integer postId,
-            @RequestBody PostApproval postApproval,
-                                   HttpServletRequest request , HttpServletResponse response){
-        AppUser user = WSUtil.getUser(userService);
-        postApproval.setApprovedBy(user.getAppUserId());
-        postApproval.setPostId(postId);
-        postService.updateApprovalStatus(postApproval);
-    }
 
     /**
      * No of votes for the question shows people's interest in that particular question.
@@ -68,6 +61,15 @@ public class PostControllor {
 
         AppUser user = WSUtil.getUser( userService);
         postService.ratePost(user.getAppUserId(), postId, QuestionRatingEnum.MEDUIM);
+    }
+
+
+    @RequestMapping(value="/{postId}", method = RequestMethod.DELETE)
+    public void deletePost(@PathVariable(value ="{postId}")Integer postId,
+                     HttpServletRequest request , HttpServletResponse response) {
+
+        AppUser user = WSUtil.getUser( userService);
+        postService.deletePost(postId);
     }
 
 

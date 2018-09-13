@@ -7,13 +7,14 @@ import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomAlreadyExistsException;
 import com.coachqa.exception.NotAClassroomMemberException;
 import com.coachqa.repository.dao.ClassroomDAO;
-import com.coachqa.repository.dao.sp.ClassroomGetByIdSproc;
+import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
+
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.model.MembershipRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,25 +22,53 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
-public class ClassroomDAOImpl extends BaseDao implements InitializingBean, ClassroomDAO {
+public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ClassroomDAOImpl.class);
 
-	private ClassroomGetByIdSproc classroomGetByIdSproc;
+
+	@Autowired
+	private ClassroomMyBatisMapper classroomMapper;
 
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		classroomGetByIdSproc = new ClassroomGetByIdSproc(getDataSource());
-	}
+	// TODO: 26/01/18 move these queries to mapper
 
-	private static String addMembershipQuery = "Insert into classroomMember (AppUserId, ClassroomId, Status, Comments, " +
-			"MembershipRequestDate, MembershipStartDate, MembershipExpirartionDate) values (?, ?, ?, ?, ?, ?, ?)";
+	private static String addMembershipQuery = "Insert into classroommember (appuserid, classroomid, status, comments, " +
+			"membershiprequestdate, membershipstartdate, membershipexpirartiondate) values (?, ?, ?, ?, ?, ?, ?)";
+
+	private static String addClassroomQuery = "INSERT INTO classroom(classowner,classname,ispublic,description, " +
+			"lastupdatedate)" +
+			" VALUES(?, ?, ?, ?, ?)";
+
+	private static String endMembershipQuery ="update classroommember set status = ? , comments = ? where " +
+			"classroomid = ? and appUserId = ?";
+
+	private static String approveMembershipRequestQuery =
+			"Update classroommember set status = ?, comments = ? , membershipstartdate = ? , " +
+					" membershipexpirartiondate= ? " +
+					" where classroomid = ? and appUserId = ? and status = ? ";
+	private static String denyMembershipRequestQuery =  "Update classroommember set status = ?, comments = ? " +
+			" where classroomid = ? and appUserId = ? and status = ? ";
+
+
+	private static String getMembershipRequestsQuery  = "select c.classroomid, c.className, au.email,  au.appUserId, " +
+			"au.firstname, au.middlename, au.lastName " +
+			" , cm.membershiprequestdate " +
+			" , cm.comments" +
+			" from classroommember cm " +
+			" join appUser au on au.appuserId =  cm.appuserid " +
+			" join classroom c on c.classroomid = cm.classroomid " +
+			" where cm.status = ?  and c.classroomid = ?";
+
 
 	@Override
 	public void joinClassroom(Integer appUserId, Integer classroomId, ClassroomMembershipStatusEnum pendingApproval, String comments) {
@@ -57,11 +86,12 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	@Override
 	public Classroom getClassroomByIdentifier(Integer classroomId) {
-		return classroomGetByIdSproc.getClassroomByIdentifier(classroomId);
+
+		return  classroomMapper.getClassroomByIdentifier(classroomId);
+
 	}
 
-	private static String addClassroomQuery = "INSERT INTO classroom(ClassOwner,ClassName,IsPublic,description, LastUpdateDate)" +
-			" VALUES(?, ?, ?, ?, ?)";
+
 	@Override
 	public Classroom createClassroom(final Classroom classroom) {
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -89,7 +119,7 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		return classroom;
 	}
 
-	private static String endMembershipQuery ="update classroomMember set status = ? , comments = ? where classroomId = ? and appUserId = ?";
+
 	@Override
 	public void endMembership(Integer classroomId, Integer memberId, String comments) {
 
@@ -99,15 +129,12 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 		}
 	}
 
-	private static String approveMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? , MembershipStartDate = ? " +
-			" MembershipExpirartionDate= ? " +
-			" where classroomId = ? and appUserId = ? and status = ? ";
-	private static String denyMembershipRequestQuery =  "Update classroomMember set status = ?, comments = ? where classroomId = ? and appUserId = ? and status = ? ";
+
 	@Override
 	public void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments) {
 
 		int updatedRows = 0;
-		if(approve){
+		if(!approve){
 			LOGGER.debug(String.format("Approving the join request"));
 			jdbcTemplate.update(denyMembershipRequestQuery, new Object[]{
 					ClassroomMembershipStatusEnum.REJECTED.getId()
@@ -129,21 +156,14 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 
 		if(updatedRows >0){
-			LOGGER.debug(String.format("membership approval/denial successfully completed for classroomId %d and user %d ", classroomId, userId));
+			LOGGER.debug(String.format("membership approval/denial successfully completed for classroomid %d and user %d ", classroomId, userId));
 		}
 		else{
-			LOGGER.warn(String.format("Membership approval request not found for classroomId %d and user %d ", classroomId, userId));
+			LOGGER.warn(String.format("Membership approval request not found for classroomid %d and user %d ", classroomId, userId));
 		}
 
 	}
 
-	private static String getMembershipRequestsQuery  = "select c.classroomId, c.className, au.email,  au.appUserId, au.FirstName, au.MiddleName, au.lastName " +
-			" , cm.MembershipRequestDate " +
-			" , cm.comments" +
-			" from classroomMember cm " +
-			" join appUser au on au.appuserId =  cm.AppUserId " +
-			" join Classroom c on c.classroomId = cm.classroomId " +
-			" where cm.status = ?  and c.classroomId = ?";
 
 	@Override
 	public ClassroomMembershipRequest getMembershipRequests(Integer classroomId) {
@@ -153,13 +173,13 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 			@Override
 			public MembershipRequest mapRow(ResultSet rs, int i) throws SQLException {
 				int appUserId = rs.getInt("appUserId");
-				int classroomId = rs.getInt("classroomId");
+				int classroomId = rs.getInt("classroomid");
 				String classname = rs.getString("className");
 				String email = rs.getString("email");
-				String firstName = rs.getString("FirstName");
-				String middleName = rs.getString("MiddleName");
+				String firstName = rs.getString("firstname");
+				String middleName = rs.getString("middlename");
 				String lastName = rs.getString("lastName");
-				DateTime requestDate = new DateTime(rs.getDate("MembershipRequestDate"));
+				DateTime requestDate = new DateTime(rs.getDate("membershiprequestdate"));
 				String comments = rs.getString("comments");
 
 				AppUser user = new AppUser(appUserId, email, firstName, middleName, lastName);
@@ -174,7 +194,14 @@ public class ClassroomDAOImpl extends BaseDao implements InitializingBean, Class
 
 	@Override
 	public List<Classroom> getUserMemberships(AppUser user) {
-		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
+		return  classroomMapper.getUserClassrooms(user.getAppUserId());
+//		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
+	}
+
+	@Override
+	public boolean isActiveMemberOf(Integer classroomId, Integer user) {
+		Integer ClassroomMemberId = classroomMapper.getMembership(classroomId, user);
+		return ClassroomMemberId != null;
 	}
 
 }

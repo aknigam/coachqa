@@ -11,7 +11,11 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,13 +28,13 @@ public class DBTagDao extends BaseDao implements TagDao{
     private Map<Integer, Tag> tags = new HashMap<>();
     private Map<String, Tag> tagNameMap = new HashMap<>();
 
-    private static String m_addTagQuery = "INSERT INTO Tag (TagName,TagDescription) VALUES (?,?);";
+    private static String m_addTagQuery = "INSERT INTO tag (tagname,tagdescription) VALUES (?,?);";
 
-    private static String tagGetByIdQuery = "Select * from Tag where tagId = ?";
+    private static String tagGetByIdQuery = "Select * from tag where tagId = ?";
 
-    private static String tagGetByNameQuery = "Select * from Tag where TagName = ?";
+    private static String tagGetByNameQuery = "Select * from tag where tagname = ?";
 
-    private static String similarTagQuery = "Select * from Tag where TagName like ?";
+    private static String similarTagQuery = "Select * from tag where tagname like ?";
 
 
     @Override

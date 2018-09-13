@@ -70,7 +70,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
             Classroom classroom = classroomService.getClassroom(classroomId);
             if(classroom != null)
             {
-                ApplicationEvent<Integer> classroomEvent = new ApplicationEvent<Integer>(event.getEventType(), classroomId);
+                ApplicationEvent<Integer> classroomEvent = new ApplicationEvent<Integer>(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
                 registeredUsers.addAll(eventRegistrationDao.getRegisteredUsers(classroomEvent));
                 registeredUsers.add(classroom.getClassOwner().getAppUserId());
 

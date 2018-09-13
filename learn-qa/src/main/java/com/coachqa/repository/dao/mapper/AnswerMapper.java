@@ -13,10 +13,11 @@ public class AnswerMapper implements RowMapper<Answer> {
 	{
 		Answer a = new Answer();
 		a.setContent(rs.getString("content"));
-		a.setAnsweredByUserId(rs.getInt("AnsweredByUserId"));
-		a.setAnswerId(rs.getInt("AnswerId"));
-		a.setQuestionId(rs.getInt("QuestionId"));
-		a.setVotes(rs.getInt("Votes"));
+		a.setAnsweredByUserId(rs.getInt("answeredbyuserId"));
+		a.setAnswerId(rs.getInt("answerid"));
+		a.setQuestionId(rs.getInt("questionid"));
+		a.setVotes(rs.getInt("votes"));
+		a.setApprovalStatus(rs.getBoolean("approvalstatus"));
 		return a;
 	}
 

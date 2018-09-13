@@ -15,4 +15,6 @@ public interface PostService {
 
 
 	Post getPostById(Integer postId);
+
+    void deletePost(Integer postId);
 }

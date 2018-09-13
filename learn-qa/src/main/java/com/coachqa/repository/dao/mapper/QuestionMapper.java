@@ -15,21 +15,22 @@ public class QuestionMapper implements RowMapper<Question> {
 	public Question mapRow(ResultSet rs, int rowNum) throws SQLException 
 	{
 		Question q= new Question();
-		q.setQuestionId(rs.getInt("QuestionId"));
-		q.setPostTypeEnum(PostTypeEnum.getPostType(rs.getInt("postType")));
-		q.setTitle(rs.getString("Title"));
-		q.setContent(rs.getString("Content"));
-		q.setPublicQuestion(rs.getBoolean("IsPublic"));
-		q.setLastActiveDate(rs.getDate("LastActiveDate"));
-		q.setPostDate(rs.getDate("PostDate"));
-		q.setNoOfViews(rs.getInt("NoOfViews"));
-		q.setRefQuestionStatusId(QuestionStatusEnum.from(rs.getInt("RefQuestionStatusId")) );
-		q.setVotes(rs.getInt("Votes"));
+		q.setQuestionId(rs.getInt("questionid"));
+		q.setPostTypeEnum(PostTypeEnum.getPostType(rs.getInt("posttype")));
+		q.setTitle(rs.getString("title"));
+		q.setContent(rs.getString("content"));
+		q.setPublicQuestion(rs.getBoolean("ispublic"));
+		q.setLastActiveDate(rs.getDate("lastactivedate"));
+		q.setPostDate(rs.getDate("postdate"));
+		q.setNoOfViews(rs.getInt("noofviews"));
+		q.setRefQuestionStatusId(QuestionStatusEnum.from(rs.getInt("refquestionstatusid")) );
+		q.setVotes(rs.getInt("votes"));
+		q.setClassroomId(rs.getInt("classroomid"));
 		
 		AppUser postedBy = new AppUser();
-		postedBy.setAppUserId(rs.getInt("PostedBy"));
-		postedBy.setFirstName(rs.getString("Firstname"));
-		postedBy.setMiddleName(rs.getString("middleName"));
+		postedBy.setAppUserId(rs.getInt("postedby"));
+		postedBy.setFirstName(rs.getString("firstname"));
+		postedBy.setMiddleName(rs.getString("middlename"));
 		postedBy.setLastName(rs.getString("lastName"));
 		
 		q.setPostedBy(postedBy);

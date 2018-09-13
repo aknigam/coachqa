@@ -2,16 +2,12 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.service.ApprovalProcessor;
-import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
-import com.coachqa.service.impl.PostApprovalProcessor;
-import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.util.WSUtil;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,12 +23,14 @@ public class ApprovalControllor {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PostService postService;
 
 
     @Autowired
     private NotificationService notificationService;
+
+
+    @Autowired
+    private ApprovalProcessorFactory approvalProcessorFactory;
 
     /*
                 String content = post.getContent();
@@ -46,6 +44,8 @@ public class ApprovalControllor {
                                 @PathVariable(value = "isApproved") int isApproved){
         boolean isRequestApproved = isApproved == 0 ? true : false;
         AppUser approver = WSUtil.getUser(userService);
+
+
 
         /*
         Steps:
@@ -65,7 +65,7 @@ public class ApprovalControllor {
 
         ApplicationEvent<Integer> event = notificationService.fetchEventDetails(eventId);
         EventType eventType = event.getEventType();
-        ApprovalProcessor processor = getApprovalProcessor(eventType);
+        ApprovalProcessor processor = approvalProcessorFactory.getApprovalProcessor(eventType);
 
 
 
@@ -74,13 +74,6 @@ public class ApprovalControllor {
         return;
 
 
-    }
-
-    private ApprovalProcessor getApprovalProcessor(EventType eventType) {
-        if(eventType ==  EventType.QUESTION_POSTED || eventType == EventType.QUESTION_ANSWERED){
-            return new PostApprovalProcessor();
-        }
-        return null;
     }
 
 

@@ -2,7 +2,6 @@ package com.coachqa;
 
 
 import com.coachqa.config.DBConfig;
-import com.coachqa.service.impl.ContentApprovalListener;
 import com.coachqa.service.impl.UsersNotificationListener;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
@@ -11,21 +10,19 @@ import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.transaction.TransactionFactory;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -62,22 +59,32 @@ import java.util.Arrays;
 Look for annotation @AutoConfigureAfter(value = {MetricsConfiguration.class, DatabaseConfiguration.class})
 Using this we can define the order in which the configurations files are loaded and used to configure beans.
 
-The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration and @ComponentScan with their default attributes:
+The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration and
+@ComponentScan with their default attributes:
+
+To work with @ConfigurationProperties beans you can just inject them in the same way as any other bean.
+
+
+todo : This service should only return the error code to the clients and not the exact error message.
+todo: This way we can hide the system specific error and still give the ability to the client to debug if somethign doesn't
+todo: works as expected.
 
  */
 @EnableWebMvc
 @EnableCaching
 @EnableTransactionManagement()
 // @Import(SecurityConfig.class)
+@Import({ResourceOAuthSecurityConfiguration.class})
+@EnableConfigurationProperties(DBConfig.class)
 @Order(1)
+//@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class})
 @SpringBootApplication
 @EnableSwagger2
 @EnableAuthorizationServer
-@EnableResourceServer
+@MapperScan("com.coachqa.repository.dao.mybatis.mapper")
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private YamlMapFactoryBean yamlMapFactoryBean;
+
     /**
      * http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#mvc-default-servlet-handler
      */
@@ -107,9 +114,9 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
      */
     @Bean
     @Primary
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager(DBConfig dbConfig) throws Exception {
         JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder> c = new JdbcUserDetailsManagerConfigurer<>();
-        c.dataSource(learnqadataSource())
+        c.dataSource(learnqadataSource(dbConfig))
                 .usersByUsernameQuery("select email , pasword, true as enabled from appuser where email =?")
                 .authoritiesByUsernameQuery("select email, 'ROLE_USER' from appuser where email = ?");
 
@@ -141,17 +148,16 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     http://stackoverflow.com/questions/27843788/resource-annotation-no-qualifying-bean-of-type-javax-sql-datasource-is-define
      */
 
-    @Autowired
-    private DBConfig dbConfig;
+
 
     @Bean
     @Primary
-    public DataSource learnqadataSource(){
+    public DataSource learnqadataSource(DBConfig dbConfig){
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/learn-qa");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        dataSource.setDriverClassName(dbConfig.getDriver());
+        dataSource.setUrl(dbConfig.getUrl());
+        dataSource.setUsername(dbConfig.getUsername());
+        dataSource.setPassword(dbConfig.getPassword());
         return dataSource;
     }
 
@@ -161,7 +167,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         org.apache.ibatis.mapping.Environment myBatisEnvironment =
-                new org.apache.ibatis.mapping.Environment("dev", transactionFactory, learnqadataSource());
+                new org.apache.ibatis.mapping.Environment("dev", transactionFactory, datasource());
         org.apache.ibatis.session.Configuration mybatisConfiguration = new org.apache.ibatis.session.Configuration(myBatisEnvironment);
         SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(mybatisConfiguration);
         mybatisConfiguration.addMappers("com.smartbookmark.repository.mybatis.mapper");
@@ -170,9 +176,9 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     */
 
     @Bean
-    public PlatformTransactionManager txManager(){
+    public PlatformTransactionManager txManager(DBConfig dbConfig){
         DataSourceTransactionManager txnManager = new DataSourceTransactionManager();
-        txnManager.setDataSource(learnqadataSource());
+        txnManager.setDataSource(learnqadataSource(dbConfig));
         return txnManager;
     }
 
@@ -182,8 +188,8 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public JdbcTemplate learnqajdbcTemplate(){
-        return new JdbcTemplate(learnqadataSource());
+    public JdbcTemplate learnqajdbcTemplate(DBConfig dbConfig){
+        return new JdbcTemplate(learnqadataSource(dbConfig));
     }
     @Bean
     public CommonsMultipartResolver multipartResolver(){
@@ -208,7 +214,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
         eventPublisher.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
 
-        ApplicationEventListener<Integer> contentApprovalListener = new ContentApprovalListener();
+//        ApplicationEventListener<Integer> contentApprovalListener = new ContentApprovalListener();
         eventPublisher.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
         eventPublisher.attachListener(EventType.ANSWER_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
 
@@ -226,6 +232,10 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(LearnQAWebConfig.class, args);
+        SpringApplication app = new SpringApplication(LearnQAWebConfig.class);
+        app.run(args);
+
     }
+
+
 }

@@ -1,7 +1,9 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
+import com.coachqa.ws.controllor.QueryCriteria;
 import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
@@ -49,7 +51,7 @@ public interface QuestionService {
 	 * when can the question be updated and who can update
 	 * Only the user who 
 	 */
-	void updateQuestion(Question updatedQuestion);
+	void updateQuestion(Question updatedQuestion, AppUser user);
 	
 	/**
 	 * Ability to do the rating of difficulty level - EASY, MEDIUM , TOUGH
@@ -82,12 +84,19 @@ public interface QuestionService {
 
 	Question getQuestionById(Integer questionId);
 
-	Question getQuestionByIdAndIncrementViewCount(Integer questionId);
+	Question getQuestionByIdAndIncrementViewCount(Integer questionId, AppUser user);
 
 
-	List<Question> findSimilarQuestions(Question questionId, int noOfResults);
+	List<Question> findSimilarQuestions(Question questionId, int noOfResults, Integer userId);
 
 	List<Question> getQuestionsByTag(int tagId);
 
 
+	List<Question> getUsersPosts(AppUser user, Integer page);
+
+	void markAsFavorite(Integer appUserId, Integer questionId, boolean isFavorite);
+
+	List<Question> getMyFavorites(Integer appUserId, Integer page);
+
+	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer appUserId);
 }

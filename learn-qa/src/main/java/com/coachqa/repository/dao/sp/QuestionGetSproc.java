@@ -13,6 +13,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class QuestionGetSproc
 {
 	private SimpleJdbcCall m_QuestionGetSproc;
@@ -44,6 +45,10 @@ public class QuestionGetSproc
 		Map<String, Object> out = m_QuestionGetSproc.execute(in);
 		
 		List<Question> result = (List<Question>) out.get("question");
+		if(result.isEmpty())
+		{
+			return null;
+		}
 		Question question = result.get(0);
 		
 		List<Answer> answers =   (List<Answer>) out.get("answers");

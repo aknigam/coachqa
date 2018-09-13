@@ -7,7 +7,15 @@ import com.coachqa.service.UserService;
 import com.coachqa.ws.model.ClassroomMembershipRequest;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +50,12 @@ public class ClassroomControllor {
 
 	}
 
+	/**
+	 * shall be required in case some wants to search classroom by name.
+	 * LOW PRIORITY
+	 * @param classname
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/name/{name}" , method = RequestMethod.GET)
 	public Classroom showClassroomByName(@PathVariable(value = "name") String classname)

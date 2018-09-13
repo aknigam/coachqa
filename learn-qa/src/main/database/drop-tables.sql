@@ -1,0 +1,24 @@
+-- ORDER needs to be reversed
+USE `crajee`;
+DROP TABLE IF EXISTS `userreputation`;
+DROP TABLE IF EXISTS `UserTypeMaster`;
+DROP TABLE IF EXISTS `appuser`;
+DROP TABLE IF EXISTS `AppUserDetail`;
+DROP TABLE IF EXISTS `classroom`;
+DROP TABLE IF EXISTS `post`;
+DROP TABLE IF EXISTS `questionlevel`;
+DROP TABLE IF EXISTS `refsubject`;
+DROP TABLE IF EXISTS `question`;
+DROP TABLE IF EXISTS `FavoritePost`;
+DROP TABLE IF EXISTS `PostMedia`;
+DROP TABLE IF EXISTS `answer`;
+DROP TABLE IF EXISTS `answercomment`;
+DROP TABLE IF EXISTS `refclassroommemberstatus`;
+DROP TABLE IF EXISTS `classroommember`;
+DROP TABLE IF EXISTS `postvote`;
+DROP TABLE IF EXISTS `questionclassroom`;
+DROP TABLE IF EXISTS `questionrating`;
+DROP TABLE IF EXISTS `questionratingsummary`;
+DROP TABLE IF EXISTS `refquestionstatus`;
+DROP TABLE IF EXISTS `tag`;
+DROP TABLE IF EXISTS `questiontag`;

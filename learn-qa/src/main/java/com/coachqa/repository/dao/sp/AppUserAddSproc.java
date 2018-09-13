@@ -18,18 +18,18 @@ public class AppUserAddSproc
 {
 	private SimpleJdbcCall addOrUpdateUserSproc;
 
-	private static String P_MAIL		 = "pEmail";
-	private static String P_ASWORD		 = "pPasword";
-	private static String P_IRSTNAME		 = "pFirstName";
-	private static String P_MIDDLENAME		 = "pMiddleName";
-	private static String P_ASTNAME		 = "pLastName";
+	private static String P_MAIL		 = "pemail";
+	private static String P_ASWORD		 = "ppasword";
+	private static String P_IRSTNAME		 = "pfirstname";
+	private static String P_MIDDLENAME		 = "pmiddlename";
+	private static String P_ASTNAME		 = "plastname";
 	
 
 
 	public AppUserAddSproc(DataSource dataSource)
 	{
 		addOrUpdateUserSproc = new SimpleJdbcCall(dataSource)
-		.withProcedureName("userAddSproc")
+		.withProcedureName("useraddsproc")
 		.withoutProcedureColumnMetaDataAccess()
 		.useInParameterNames(
 			P_MAIL,

@@ -2,6 +2,7 @@ package com.coachqa.service.impl;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
+import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
 import com.coachqa.exception.NotAuthorizedToApprovemembershipRequest;
@@ -83,11 +84,11 @@ public class ClassroomsServiceImpl implements ClassroomService{
 			throw e;
 		}
 
-		notifyAdministrator(classroomId);
+		notifyAdministrator(classroomId, appUserId);
 	}
 
-	private void notifyAdministrator(Integer classroomId) {
-		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
+	private void notifyAdministrator(Integer classroomId, Integer userId) {
+		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, userId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
 		publisher.publishEvent(event);
 	}
 
@@ -148,14 +149,28 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classroomDAO.getMembershipRequests(classroomId);
 	}
 
-	@Override // TODO: 08/04/17 add implementation
-	public boolean isMemberOf(Integer classroomId, int user) {
-		return true;
+	@Override
+	public boolean isActiveMemberOf(Integer classroomId, int user) {
+		return  classroomDAO.isActiveMemberOf(classroomId, user);
+
 	}
 
 	@Override
 	public List<Classroom> getUserMemberships(AppUser user) {
-		return classroomDAO.getUserMemberships(user);
+		List<Classroom> classrooms = classroomDAO.getUserMemberships(user);
+		return classrooms;
+	}
+
+	@Override
+	public void approveMembershipRequest(Integer classroomId, Integer userId) {
+
+		classroomDAO.findRequestAndApprove(true, classroomId, userId,"Appoved");
+
+	}
+
+	@Override
+	public ClassroomSettings getClassroomSettings(Integer classroomId) {
+		return new ClassroomSettings();
 	}
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
