@@ -31,6 +31,8 @@ public interface ClassroomService {
 
 	ClassroomSettings getClassroomSettings(Integer classroomId);
 
+    List<Classroom> searchClassrooms(Integer integer, Integer page, boolean onlyLoginUserClassrooms);
+
     static class ClassroomJoinRequest
 	{
 		private Integer appUserId;

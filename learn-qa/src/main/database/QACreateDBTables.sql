@@ -138,6 +138,10 @@ create table `refsubject` (
 -- table structure for table `question`
 --
 
+ALTER TABLE classroom ADD subjectId INT(10) UNSIGNED not NULL;
+ALTER TABLE classroom
+ADD CONSTRAINT classroom_refsubject_RefSubjectId_fk
+FOREIGN KEY (subjectId) REFERENCES refsubject (RefSubjectId);
 
 create table `question` (
   `questionid` int(10) unsigned not null,

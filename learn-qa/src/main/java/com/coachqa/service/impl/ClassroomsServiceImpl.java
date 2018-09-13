@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
@@ -72,7 +73,8 @@ public class ClassroomsServiceImpl implements ClassroomService{
 			transactionTemplate.execute(new TransactionCallback<String>() {
 				@Override
 				public String doInTransaction(TransactionStatus transactionStatus) {
-					classroomDAO.joinClassroom(appUserId, classroomId, ClassroomMembershipStatusEnum.PENDING_APPROVAL, comments);
+					classroomDAO.joinClassroom(appUserId, classroomId, ClassroomMembershipStatusEnum
+							.PENDING_APPROVAL, comments);
 					return "success";
 
 				}
@@ -88,10 +90,12 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	}
 
 	private void notifyAdministrator(Integer classroomId, Integer userId) {
-		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, userId, new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
+		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, userId,
+				new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
 		publisher.publishEvent(event);
 	}
 
+	@Transactional
 	@Override
 	public Classroom createClassroom(Classroom classroom) {
 
@@ -122,12 +126,14 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 		Classroom classroom = classroomDAO.getClassroomByIdentifier(membershipRequests.getClassroomId());
 		if(!classroom.getClassOwner().getAppUserId().equals(approver.getAppUserId())){
-			LOGGER.error(String.format("%s is not authorized to approved membership requests for classroom %s", approver.getEmail(), classroom.getClassName()));
+			LOGGER.error(String.format("%s is not authorized to approved membership requests for classroom %s",
+					approver.getEmail(), classroom.getClassName()));
 			throw new NotAuthorizedToApprovemembershipRequest(approver, classroom);
 		}
 		boolean isApproved= membershipRequests.isApprove();
 		for (MembershipRequest request: membershipRequests.getRequests()) {
-			classroomDAO.findRequestAndApprove(isApproved, classroom.getClassroomId(), request.getUser().getAppUserId(), membershipRequests.getComments());
+			classroomDAO.findRequestAndApprove(isApproved, classroom.getClassroomId(), request.getUser().getAppUserId
+					(), membershipRequests.getComments());
 
 			notifyUser(request.getUser(), isApproved, classroom);
 		}
@@ -171,6 +177,11 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Override
 	public ClassroomSettings getClassroomSettings(Integer classroomId) {
 		return new ClassroomSettings();
+	}
+
+	@Override
+	public List<Classroom> searchClassrooms(Integer userId, Integer page, boolean onlyLoginUserClassrooms) {
+		return classroomDAO.searchClassrooms(page, userId, onlyLoginUserClassrooms);
 	}
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {

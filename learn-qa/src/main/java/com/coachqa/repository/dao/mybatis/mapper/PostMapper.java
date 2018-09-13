@@ -42,7 +42,6 @@ public interface PostMapper {
     })
 
     Post getPostById(@Param("postId") Integer postId);
-
     @Update("Update post set noofviews = noofviews + 1 where postId =  #{postId}")
     void incrementPostViewsQuery(@Param("postId") Integer postId);
 

@@ -36,6 +36,8 @@ insert into `refquestionstatus` values (1,'new');
 --
 
 insert into `refsubject` values (1,'mathematics','mathematics');
+insert into `refsubject` values (2,'chemistry','chemistry');
+insert into `refsubject` values (3,'physics','physics');
 
 
 
