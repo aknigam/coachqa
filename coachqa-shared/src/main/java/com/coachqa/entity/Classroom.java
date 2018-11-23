@@ -3,6 +3,8 @@ package com.coachqa.entity;
 // Generated Dec 21, 2014 1:45:02 PM by Hibernate Tools 3.4.0.CR1
 
 
+import com.coachqa.enums.ClassroomMembershipStatusEnum;
+
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public class Classroom implements java.io.Serializable {
 	public String description;
 	private boolean isPublic;
 	private RefSubject subject;
-	private boolean isLoggedInUserEnroled;
+	private ClassroomMembershipStatusEnum loggedInUserStatus;
 
 	public Classroom() {
 	}
@@ -84,12 +86,12 @@ public class Classroom implements java.io.Serializable {
 		this.subject = subject;
 	}
 
-	public boolean isLoggedInUserEnroled() {
-		return isLoggedInUserEnroled;
+	public ClassroomMembershipStatusEnum getLoggedInUserStatus() {
+		return loggedInUserStatus;
 	}
 
-	public void setLoggedInUserEnroled(boolean loggedInUserEnroled) {
-		isLoggedInUserEnroled = loggedInUserEnroled;
+	public void setLoggedInUserStatus(ClassroomMembershipStatusEnum loggedInUserStatus) {
+		this.loggedInUserStatus = loggedInUserStatus;
 	}
 
 	@Override

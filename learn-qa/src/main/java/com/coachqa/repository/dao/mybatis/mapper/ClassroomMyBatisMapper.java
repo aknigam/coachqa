@@ -5,6 +5,7 @@ import com.coachqa.entity.RefSubject;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
+import com.coachqa.repository.dao.mybatis.typehandler.ClassroomStatusTypeHandler;
 import com.coachqa.repository.dao.mybatis.typehandler.DateTimeTypeHandler;
 import com.coachqa.repository.dao.mybatis.typehandler.PostTypeEnumTypeHandler;
 import com.coachqa.repository.dao.mybatis.typehandler.QuestionLevelEnumTypeHandler;
@@ -35,22 +36,21 @@ public interface ClassroomMyBatisMapper {
     Integer getMembership(Integer classroomId, Integer user);
 
     @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
-            " classname,ispublic from classroom c" +
+            " classname,ispublic, subjectId  from classroom c" +
             " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
     @Results({
             @Result(column = "classroomid", property = "classroomId"),
             @Result(column = "minreputationtojoinid", property = "minReputationToJoinId"),
-            @Result(column = "classowner", property= "classOwner.appUserId"),
-            @Result(column = "firstname", property= "classOwner.firstName"),
+            @Result(column = "classowner", property = "classOwner.appUserId"),
+            @Result(column = "firstname", property = "classOwner.firstName"),
             @Result(column = "middlename", property = "classOwner.middleName"),
             @Result(column = "lastName", property = "classOwner.lastName"),
 
-            @Result(column = "classname", property= "className"),
-            @Result(column = "ispublic", property= "isPublic"),
-            @Result(property="subjects", column="classroomid", javaType= List.class, many=@Many
-                    (select="getClassroomSubjects"))
-
+            @Result(column = "classname", property = "className"),
+            @Result(column = "ispublic", property = "isPublic"),
+            @Result(column = "subjectId", property = "subject.refSubjectId")
     })
+
     Classroom getClassroomByIdentifier(Integer classroomId);
 
     @Select("select s.refsubjectid as refSubjectId, s.subjectname as subjectName, s.subjectdescription as " +
@@ -85,7 +85,9 @@ public interface ClassroomMyBatisMapper {
             @Result(column = "middlename", property = "classOwner.middleName"),
             @Result(column = "lastName", property = "classOwner.lastName"),
             @Result(column = "subjectId", property = "subject.refSubjectId"),
-            @Result(column = "subjectname", property = "subject.subjectName")
+            @Result(column = "subjectname", property = "subject.subjectName"),
+            @Result(column = "loggedInUserStatus", property = "loggedInUserStatus", typeHandler =
+                    ClassroomStatusTypeHandler.class)
     })
     List<Classroom> searchClassrooms(@Param("page") Integer page, @Param("loginuserid") int loginUserId, @Param
             ("myclassonly") boolean myClassesOnly);

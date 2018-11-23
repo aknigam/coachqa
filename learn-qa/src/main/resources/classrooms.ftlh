@@ -5,17 +5,23 @@ c.classowner,
 u.firstname,
 u.middlename,
 u.lastname,
-description,
+c.description,
 subjectId,
 s.subjectname,
-case when cm.membershipstartdate is null then false else TRUE end as isLoggedInUserEnroled
+CASE WHEN cm.membershipstartdate IS NULL
+THEN 0
+ELSE
+cs.refclassroommemberstatusid
+END AS loggedInUserStatus
 FROM classroom c
 JOIN appuser u ON u.appuserid = c.classowner
 JOIN refsubject s ON s.refsubjectid = c.subjectId
 <#if myclassonly>
 JOIN classroommember cm on cm.classroomid = c.classroomid and cm.appuserid = ${loginuserid}
+JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status
 <#else>
 LEFT JOIN classroommember cm on cm.classroomid = c.classroomid and cm.appuserid = ${loginuserid}
+LEFT JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status
 </#if>
 ORDER BY c.classroomid
 LIMIT ${page}, 10

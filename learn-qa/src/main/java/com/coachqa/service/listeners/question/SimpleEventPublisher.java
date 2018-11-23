@@ -38,23 +38,31 @@ public class SimpleEventPublisher<E> implements EventPublisher<E> {
     private void startInvokingListeners()  {
 
         while(true){
-            ApplicationEvent event;
-            try {
-                event = questionUpdatesQueue.take();
-            } catch (InterruptedException e) {
-                LOGGER.warn("Queue interrupted", e);
-                continue;
+            try{
+
+                ApplicationEvent event;
+                try {
+                    event = questionUpdatesQueue.take();
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Queue interrupted", e);
+                    continue;
+                }
+
+                List<ApplicationEventListener<E>> listeners = eventListeners.get(event.getEventType());
+
+                for (ApplicationEventListener l : listeners) {
+                    LOGGER.debug("Invoked listener: ["+l.getClass().getName()+"]");
+                    invokeUpdateListener(l, event);
+                }
+
             }
-
-            List<ApplicationEventListener<E>> listeners = eventListeners.get(event.getEventType());
-
-            for (ApplicationEventListener l : listeners) {
-                LOGGER.debug("Invoked listener: ["+l.getClass().getName()+"]");
-                invokeUpdateListener(l, event);
+            catch (Throwable t) {
+                t.printStackTrace();
             }
 
 
         }
+
     }
 
 

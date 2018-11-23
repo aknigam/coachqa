@@ -4,7 +4,7 @@ package com.coachqa.enums;
  * Created by Anand on 9/27/2015.
  */
 public enum ClassroomMembershipStatusEnum {
-
+    NOT_MEMBER(0, "Not a member", "Not a member"),
     PENDING_APPROVAL(1, "Pending Approval", "applied for membership"),
     ACTIVE(2, "Active", "Request to join is approved"),
     EXPIRED(3, "Expired", "Request to join is approved"),
@@ -25,4 +25,8 @@ public enum ClassroomMembershipStatusEnum {
         this.id = id;
         this.description = description;
     }
+
+
+
+
 }

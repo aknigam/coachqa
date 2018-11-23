@@ -72,7 +72,7 @@ public class QuestionControllor {
 	public void updateQuestion(@PathVariable(value = "questionId") Integer questionId,
 							   @RequestBody Question question, HttpServletRequest request, HttpServletResponse response) {
 		AppUser user = WSUtil.getUser(userService);
-
+		question.setPostedBy(user);
 		questionService.updateQuestion(question, user);
 
 	}
