@@ -18,7 +18,7 @@ JOIN appuser u ON u.appuserid = c.classowner
 JOIN refsubject s ON s.refsubjectid = c.subjectId
 <#if myclassonly>
 JOIN classroommember cm on cm.classroomid = c.classroomid and cm.appuserid = ${loginuserid}
-JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status
+JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status and cs.refclassroommemberstatusid = 2
 <#else>
 LEFT JOIN classroommember cm on cm.classroomid = c.classroomid and cm.appuserid = ${loginuserid}
 LEFT JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status

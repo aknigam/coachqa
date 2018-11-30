@@ -38,25 +38,7 @@ public class QuestionGetSproc
 	}
 
 
-	public Question getQuestionById(Integer questionId) {
-		MapSqlParameterSource in = new MapSqlParameterSource();
-		in.addValue(P_QUESTIONID, questionId);
-		
-		Map<String, Object> out = m_QuestionGetSproc.execute(in);
-		
-		List<Question> result = (List<Question>) out.get("question");
-		if(result.isEmpty())
-		{
-			return null;
-		}
-		Question question = result.get(0);
-		
-		List<Answer> answers =   (List<Answer>) out.get("answers");
-		question.setAnswers(answers);
 
-		question.setTags((List<Integer>) out.get("tags"));
-		return question;
-	}
 	
 	
 }

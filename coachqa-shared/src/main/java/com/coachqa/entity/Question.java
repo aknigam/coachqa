@@ -6,8 +6,7 @@ import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 
-
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +57,7 @@ public class Question extends Post implements java.io.Serializable {
 
 
 	
-	private List<Integer> tags = Collections.emptyList();
+	private List<Tag> tags = Collections.emptyList();
 	
 	private List<Answer> answers = Collections.emptyList();
 
@@ -116,11 +115,19 @@ public class Question extends Post implements java.io.Serializable {
 		this.publicQuestion = publicQuestion;
 	}
 
-	public List<Integer> getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<Integer> tags) {
+	public List<Integer> getTagIds() {
+		List<Integer> tagIds = new ArrayList<>();
+		for(Tag t : tags ) {
+			tagIds.add(t.getTagId());
+		}
+		return tagIds;
+	}
+
+	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
 

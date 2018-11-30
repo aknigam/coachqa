@@ -4,6 +4,7 @@ import com.coachqa.entity.Classroom;
 import com.coachqa.service.ClassroomService;
 import notification.EventRegisteredUsersProvider;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventType;
 import notification.repository.EventRegistrationDao;
 import org.springframework.util.Assert;
 
@@ -21,9 +22,16 @@ public class ClassroomEventRegistrationProvider implements EventRegisteredUsersP
 
     @Override
     public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
-        int classroomId = event.getEventSource();
-        Classroom classroom = classroomService.getClassroom(classroomId);
-        return Collections.singletonList(classroom.getClassOwner().getAppUserId());
+        if(event.getEventType() == EventType.MEMBERSHIP_REQUEST) {
+            int classroomId = event.getEventSource();
+            Classroom classroom = classroomService.getClassroom(classroomId);
+            return Collections.singletonList(classroom.getClassOwner().getAppUserId());
+        }
+        else if(event.getEventType() == EventType.MEMBERSHIP_APPROVED) {
+            // return the name of the person who requested approval
+            return Collections.singletonList(event.getEventRaisedByEntityId());
+        }
+        return Collections.emptyList();
     }
 
 

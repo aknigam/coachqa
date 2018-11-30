@@ -44,7 +44,7 @@ public class ClassroomEventApprovalProcessor extends ApprovalService {
                 new Date(System.currentTimeMillis()),
                 new Date(System.currentTimeMillis()));
         // TODO: 04/09/18 should raise stage_two event
-        approvedEvent.setStage(EventStage.STAGE_ONE);
+        approvedEvent.setStage(EventStage.STAGE_TWO);
         return approvedEvent;
     }
 

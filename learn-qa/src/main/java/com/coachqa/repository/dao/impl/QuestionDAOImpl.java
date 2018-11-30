@@ -26,6 +26,7 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
@@ -68,7 +69,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		postMapper.addPost(question);
 		questionMapper.addQuestion(question);
 
-		tagMapper.addTags(question.getPostId(), question.getTags());
+		tagMapper.addTags(question.getPostId(), question.getTagIds());
 
 		question.setQuestionId(question.getPostId());
 
@@ -250,7 +251,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 		if(tagCriteriaExists(q)) {
-			queryBuilder.withTagsCondition(q.getTags());
+			queryBuilder.withTagsCondition(q.getTagIds());
 		}
 		
 		String query = queryBuilder.buildQuery();
@@ -276,7 +277,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		questionMapper.updateQuestion(updatedQuestion);
 
 		tagMapper.deleteTags(updatedQuestion.getQuestionId());
-		tagMapper.addTags(updatedQuestion.getQuestionId(), updatedQuestion.getTags());
+		tagMapper.addTags(updatedQuestion.getQuestionId(), updatedQuestion.getTagIds());
 
 		return updatedQuestion;
 	}

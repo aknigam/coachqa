@@ -120,6 +120,7 @@ public class NotificationSystemConfig  {
         Map<EventType, EventRegisteredUsersProvider> defaultRegistrationProviderMap = new HashMap<>();
 
         defaultRegistrationProviderMap.put(EventType.MEMBERSHIP_REQUEST, new ClassroomEventRegistrationProvider(classroomService));
+        defaultRegistrationProviderMap.put(EventType.MEMBERSHIP_APPROVED, new ClassroomEventRegistrationProvider(classroomService));
 
 //        EventRegisteredUsersProvider contentApprover = new ContentApproverProvider(UserService);
 

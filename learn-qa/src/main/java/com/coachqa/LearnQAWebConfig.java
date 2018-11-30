@@ -218,6 +218,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         eventPublisher.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
         eventPublisher.attachListener(EventType.ANSWER_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
 
+        eventPublisher.setDefaultListener(new SimpleRetryingEventListener( userNotificationListener ));
         return  eventPublisher;
     }
     /*

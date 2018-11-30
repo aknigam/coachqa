@@ -17,6 +17,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.mapstruct.Mapper;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
 
@@ -29,15 +30,20 @@ public interface ClassroomMyBatisMapper {
 
     @Select("select cm.classroomid, c.classname from classroommember cm join " +
             " classroom c on c.classroomid = cm.classroomid " +
-            " where cm.appuserid = #{userId}")
+            " where cm.appuserid = #{userId} and cm.status = 2" )
     List<Classroom> getUserClassrooms(Integer userId);
 
     @Select("select classroommemberid from classroommember where classroomid = #{param1} and appuserid = #{param2}")
     Integer getMembership(Integer classroomId, Integer user);
 
-    @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
-            " classname,ispublic, subjectId  from classroom c" +
-            " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
+    // https://stackoverflow.com/questions/9185452/how-to-apply-a-method-to-a-parameter-in-mybatis
+    // https://stackoverflow.com/questions/8912510/how-does-the-mybatis-parameter-replacement-work-in-selectprovider
+
+
+    @SelectProvider(type=ClassSqlProvider.class, method="getClassroomSql")
+//    @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
+//            " classname,ispublic, subjectId  from classroom c" +
+//            " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
     @Results({
             @Result(column = "classroomid", property = "classroomId"),
             @Result(column = "minreputationtojoinid", property = "minReputationToJoinId"),

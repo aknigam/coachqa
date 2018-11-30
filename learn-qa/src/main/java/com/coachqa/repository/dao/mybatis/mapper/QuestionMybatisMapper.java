@@ -2,6 +2,7 @@ package com.coachqa.repository.dao.mybatis.mapper;
 
 import com.coachqa.entity.Answer;
 import com.coachqa.entity.Question;
+import com.coachqa.entity.Tag;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
@@ -88,8 +89,14 @@ public interface QuestionMybatisMapper {
     Question getQuestionById(Integer questionId);
 
 
-    @Select(" select tagid from questiontag where questionid = #{questionId}; ")
-    List<Integer> getQuestionTags(Integer questionId);
+    @Select(" select qt.tagid as tagId , t.tagname as tagName , t.tagdescription as tagDescription " +
+            "from questiontag " +
+            "qt JOIN tag t on" +
+            " t.tagid = " +
+            "qt.tagid" +
+            " where questionid = #{questionId} ")
+    List<Tag> getQuestionTags(Integer questionId);
+
 
 //    https://stackoverflow.com/questions/33151873/one-to-many-relationship-in-mybatis
     @Select({"select questionid," +

@@ -3,6 +3,7 @@ package com.coachqa.service.impl;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.entity.Question;
+import com.coachqa.entity.Tag;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.AnswerPostException;
 import com.coachqa.exception.ApplicationErrorCode;
@@ -190,7 +191,7 @@ public class QuestionServiceImpl implements QuestionService {
 		return !question.isPublicQuestion() && ( question.getClassroomId() == null );
 	}
 
-	private void validateTags(List<Integer> tags) {
+	private void validateTags(List<Tag> tags) {
 		if(tags ==  null || tags.isEmpty()){
 			// should we relax this rule ?
 			throw new TagsRequiredForQuestionException(ApplicationErrorCode.TAGS_REQUIRED_FOR_QUESTION);

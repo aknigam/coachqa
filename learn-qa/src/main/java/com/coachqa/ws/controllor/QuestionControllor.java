@@ -2,6 +2,7 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
+import com.coachqa.entity.Tag;
 import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
@@ -120,7 +121,7 @@ public class QuestionControllor {
 		if(classroomId != null)
 			criteria.setClassroomId(classroomId);
 		if(tagId != null)
-			criteria.setTags(Arrays.asList(new Integer[]{tagId}));
+			criteria.setTags(Arrays.asList(new Tag[]{new Tag(tagId)}));
 		if(isPublic != null)
 			criteria.setPublicQuestion(isPublic);
 		if(ownerId != null){
