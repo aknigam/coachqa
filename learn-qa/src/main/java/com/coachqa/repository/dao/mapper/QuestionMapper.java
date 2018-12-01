@@ -20,8 +20,8 @@ public class QuestionMapper implements RowMapper<Question> {
 		q.setTitle(rs.getString("title"));
 		q.setContent(rs.getString("content"));
 		q.setPublicQuestion(rs.getBoolean("ispublic"));
-		q.setLastActiveDate(rs.getDate("lastactivedate"));
-		q.setPostDate(rs.getDate("postdate"));
+		q.setLastActiveDate(rs.getTimestamp("lastactivedate"));
+		q.setPostDate(rs.getTimestamp("postdate"));
 		q.setNoOfViews(rs.getInt("noofviews"));
 		q.setRefQuestionStatusId(QuestionStatusEnum.from(rs.getInt("refquestionstatusid")) );
 		q.setVotes(rs.getInt("votes"));

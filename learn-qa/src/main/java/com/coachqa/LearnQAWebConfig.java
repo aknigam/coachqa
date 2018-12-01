@@ -14,6 +14,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -231,6 +233,14 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 //                .paths(regex("/api*"))
                 .build();
     }
+
+// https://docs.spring.io/spring-boot/docs/current/reference/html/howto-spring-mvc.html#howto-customize-the-jackson-objectmapper
+//    @Bean
+//    @Order(100)
+//    public Jackson2ObjectMapperBuilderCustomizer configureCustomDateFormat(){
+//        return  new ObjectMapperCustomiser();
+//    }
+
 
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(LearnQAWebConfig.class);

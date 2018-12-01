@@ -7,6 +7,9 @@ import com.coachqa.ws.util.WSUtil;
 import notification.NotificationService;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
+import notification.impl.NotificationServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApprovalControllor {
 
 
+    private static Logger LOGGER = LoggerFactory.getLogger(ApprovalControllor.class);
 
     @Autowired
     private UserService userService;
@@ -71,6 +75,9 @@ public class ApprovalControllor {
 
         processor.processApprovalRequest(event,approver, isRequestApproved);
 
+        // possibly event can be deleted here
+
+        notificationService.deleteEvent(eventId);
         return;
 
 

@@ -5,6 +5,7 @@ package com.coachqa.entity;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.enums.QuestionStatusEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class Question extends Post implements java.io.Serializable {
 	private String title;
 
 
-
+	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private Date lastActiveDate;
 
 	

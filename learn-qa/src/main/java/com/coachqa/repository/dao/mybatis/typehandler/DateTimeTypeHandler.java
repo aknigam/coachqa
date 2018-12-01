@@ -24,13 +24,13 @@ public class DateTimeTypeHandler implements TypeHandler<Date> {
     @Override
     public Date getResult(ResultSet rs, String columnName) throws SQLException {
         // https://stackoverflow.com/questions/44883432/long-timestamp-to-localdatetime/44883570
-        return rs.getDate(columnName);
+        return rs.getTimestamp(columnName);
 
     }
 
     @Override
     public Date getResult(ResultSet rs, int columnIndex) throws SQLException {
-        return rs.getDate(columnIndex);
+        return rs.getTimestamp(columnIndex);
 
     }
 

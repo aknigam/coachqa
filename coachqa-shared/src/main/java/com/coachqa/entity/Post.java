@@ -1,6 +1,7 @@
 package com.coachqa.entity;
 
 import com.coachqa.enums.PostTypeEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 
 import java.util.Date;
@@ -18,7 +19,8 @@ public class Post {
     private Integer noOfViews= 0;
     
     private AppUser postedBy;
-    
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date postDate;
     
     private Integer votes;

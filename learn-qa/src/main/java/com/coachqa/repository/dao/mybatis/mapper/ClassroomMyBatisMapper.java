@@ -40,10 +40,10 @@ public interface ClassroomMyBatisMapper {
     // https://stackoverflow.com/questions/8912510/how-does-the-mybatis-parameter-replacement-work-in-selectprovider
 
 
-    @SelectProvider(type=ClassSqlProvider.class, method="getClassroomSql")
-//    @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
-//            " classname,ispublic, subjectId  from classroom c" +
-//            " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
+//    @SelectProvider(type=ClassSqlProvider.class, method="getClassroomSql")
+    @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
+            " classname,ispublic, subjectId  from classroom c" +
+            " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
     @Results({
             @Result(column = "classroomid", property = "classroomId"),
             @Result(column = "minreputationtojoinid", property = "minReputationToJoinId"),

@@ -66,7 +66,8 @@ public interface PostMapper {
     void updateQuestion(Question updatedQuestion);
 
     @Insert("insert into post ( postdate, postedby, content, posttype, classroomid, approvalstatus)  " +
-            " values ( now(), #{postedBy.appUserId}, #{content},  #{postTypeEnum.type}, #{classroomId}, #{approvalStatus})"
+            " values ( #{postDate}, #{postedBy.appUserId}, #{content},  #{postTypeEnum.type}, #{classroomId}, " +
+            "#{approvalStatus})"
     )
     @Options(useGeneratedKeys=true, keyProperty="postId")
     int addPost(Post post);

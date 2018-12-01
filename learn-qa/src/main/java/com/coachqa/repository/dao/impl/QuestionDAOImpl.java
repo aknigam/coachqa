@@ -62,7 +62,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		answerAddSproc = new AnswerAddSproc(dataSource);
 	}
 
-    @CachePut(value="questions", key="#result.postId")
+//    @CachePut(value="questions", key="#result.postId")
 	@Override
 	public Question addQuestionWithTags(Question question) {
 

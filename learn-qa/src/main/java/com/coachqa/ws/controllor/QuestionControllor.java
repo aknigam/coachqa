@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +46,10 @@ public class QuestionControllor {
 
 		question.setPostedBy(user);
 		question.setRefQuestionStatusId(QuestionStatusEnum.NEW);
+		question.setPostDate(new Date());
 
 		Question addedQuestion = questionService.postQuestion(user.getAppUserId(), question);
+		addedQuestion = questionService.getQuestionById(addedQuestion.getQuestionId());
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
 

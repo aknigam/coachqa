@@ -31,7 +31,10 @@ import notification.repository.impl.DBEventDao;
 import notification.repository.impl.EventRegistrationDaoImpl;
 import notification.repository.impl.UserEventNotificationDaoImpl;
 import notification.repository.impl.UserNotificationPreferenceDaoImpl;
+import notification.repository.mapper.EventMapper;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -51,7 +54,9 @@ The @SpringBootApplication annotation is equivalent to using @Configuration, @En
 
 
 @Configuration
+@MapperScan("notification.repository.mapper")
 public class NotificationSystemConfig  {
+
 
     @Bean
     public DataSource notificationDataSource(){
