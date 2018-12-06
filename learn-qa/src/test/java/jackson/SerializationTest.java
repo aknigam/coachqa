@@ -1,6 +1,6 @@
 package jackson;
 
-import com.coachqa.ws.model.ClassroomMembershipRequest;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -23,14 +23,14 @@ public class SerializationTest {
             e.printStackTrace();
         }
     }
+//
+//    public static void desrialize(String json) throws IOException {
+//        ObjectMapper om = new ObjectMapper();
+//        ClassroomMembershipRequest request  = om.readValue(json.getBytes(), ClassroomMembershipRequest.class);
+//        System.out.printf("De-serialization successful "+request);
+//    }
 
-    public static void desrialize(String json) throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        ClassroomMembershipRequest request  = om.readValue(json.getBytes(), ClassroomMembershipRequest.class);
-        System.out.printf("De-serialization successful "+request);
-    }
-
-    public static void main(String[] args) throws IOException {
-        desrialize("{\"classroomId\":1,\"approve\":true,\"requests\":[{\"user\":{\"appUserId\":1}},{\"user\":{\"appUserId\":7}}]}");
-    }
+//    public static void main(String[] args) throws IOException {
+//        desrialize("{\"classroomId\":1,\"approve\":true,\"requests\":[{\"user\":{\"appUserId\":1}},{\"user\":{\"appUserId\":7}}]}");
+//    }
 }

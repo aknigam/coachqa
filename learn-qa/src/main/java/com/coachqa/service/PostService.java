@@ -13,7 +13,6 @@ public interface PostService {
 
 	void updateApprovalStatus(PostApproval postApproval);
 
-
 	Post getPostById(Integer postId);
 
     void deletePost(Integer postId);

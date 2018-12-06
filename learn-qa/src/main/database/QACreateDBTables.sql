@@ -245,7 +245,7 @@ create table `classroommember` (
   `membershipstartdate` datetime not null,
   `membershipexpirartiondate` datetime not null,
   `membershiprequestdate` datetime not null,
-  `comments` varchar(150) not null,
+  `approverComments` varchar(150) not null,
   primary key (`classroommemberid`),
   unique key `classroommmebrukey` (`classroomid`,`appuserid`),
   key `classroommember_fkindex1` (`classroomid`),

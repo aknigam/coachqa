@@ -22,7 +22,7 @@ public class ClassroomEventApprovalProcessor extends ApprovalService {
     private ClassroomService classroomService;
 
 
-    protected void validateApprover(ApplicationEvent<Integer> event, AppUser approver) throws NotAuthorisedToApproveException{
+    protected void validateApprover(ApplicationEvent event, AppUser approver) throws NotAuthorisedToApproveException{
 
         Integer classroomId = event.getEventSource();
         Classroom classroom = classroomService.getClassroom(classroomId);
@@ -34,12 +34,12 @@ public class ClassroomEventApprovalProcessor extends ApprovalService {
 
     }
 
-    protected ApplicationEvent<Integer> processApproval(ApplicationEvent<Integer> event, boolean isRequestApproved, AppUser approver) {
+    protected ApplicationEvent processApproval(ApplicationEvent event, boolean isRequestApproved, AppUser approver) {
 
-        classroomService.approveMembershipRequest(event.getEventSource(), event.getEventRaisedByEntityId());
+//        classroomService.approveMembershipRequest(event.getEventSource(), event.getEventRaisedByEntityId());
 
         // the new event should be a notification to the person who requested membership
-        ApplicationEvent<Integer> approvedEvent = new ApplicationEvent<Integer>(EventType.MEMBERSHIP_APPROVED,
+        ApplicationEvent approvedEvent = new ApplicationEvent(EventType.MEMBERSHIP_APPROVED,
                 event.getEventSource(), event.getEventRaisedByEntityId(),
                 new Date(System.currentTimeMillis()),
                 new Date(System.currentTimeMillis()));

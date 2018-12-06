@@ -26,12 +26,17 @@ public class QuestionOwnerRegistrationProvider implements EventRegisteredUsersPr
 
 
     @Override
-    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
+    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent event, EventRegistrationDao eventRegistrationDao) {
         Integer questionId = event.getEventSource();
         Question question = questionService.getQuestionById(questionId);
         if(question != null){
             return Arrays.asList(question.getPostedBy().getAppUserId());
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<Integer> getUserSubscribedEntitiesByDefault(int i) {
+        return null;
     }
 }

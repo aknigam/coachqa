@@ -21,12 +21,17 @@ public class ContentApproverProvider implements EventRegisteredUsersProvider {
     }
 
     @Override
-    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
-        if(event.getEventType() == EventType.ANSWER_POSTED
+    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent event, EventRegistrationDao eventRegistrationDao) {
+        if(event.getEventType() == EventType.QUESTION_ANSWERED
                 || event.getEventType() == EventType.QUESTION_POSTED) {
 
             return userService.getPostContentApprovers();
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<Integer> getUserSubscribedEntitiesByDefault(int i) {
+        return null;
     }
 }

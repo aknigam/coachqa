@@ -7,20 +7,20 @@ import org.slf4j.LoggerFactory;
 /**
  * Retries 5 times and then exists
  */
-public class SimpleRetryingEventListener implements  ApplicationEventListener<Integer> {
+public class SimpleRetryingEventListener implements  ApplicationEventListener {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SimpleRetryingEventListener.class);
 
     private static final int MAX_RETY_COUNT = 5;
 
-    private  ApplicationEventListener<Integer> listener;
+    private  ApplicationEventListener listener;
 
-    public SimpleRetryingEventListener(ApplicationEventListener<Integer> listener) {
+    public SimpleRetryingEventListener(ApplicationEventListener listener) {
         this.listener = listener;
     }
 
     @Override
-    public void onEvent(ApplicationEvent<Integer> event) {
+    public void onEvent(ApplicationEvent event) {
         boolean success= false;
         for (int i = 0; i < MAX_RETY_COUNT; i++) {
             try{

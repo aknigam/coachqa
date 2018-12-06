@@ -5,9 +5,12 @@ import com.coachqa.config.DBConfig;
 import com.coachqa.service.impl.UsersNotificationListener;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
+import com.coachqa.service.listeners.question.EventConsumer;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.SimpleEventConsumer;
 import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
+import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.annotation.MapperScan;
@@ -55,6 +58,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 /*
@@ -205,23 +211,36 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         return freeMarkerConfigurer;
     }
 
+    /**
+     * Better approach: instead of injecting the queue through spring DI. Publisher and consumer can also take it
+     * from a factory.
+     * @return
+     */
     @Bean
-    public EventPublisher getEventPublisher(NotificationService notificationService){
-        ApplicationEventListener<Integer> userNotificationListener = new UsersNotificationListener(notificationService);
+    public BlockingQueue queue(){
+        return new LinkedBlockingQueue<>();
+    }
 
-        SimpleEventPublisher<Object> eventPublisher = new SimpleEventPublisher<>();
-//        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new ImageToTextQuestionConverterQuestionListener()));
-//        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( new IndexQuestionListener()));
-//        eventPublisher.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( userNotificationListener ));
+    @Bean
+    public EventPublisher getEventPublisher(BlockingQueue queue) {
+        return new SimpleEventPublisher(queue);
+    }
 
-        eventPublisher.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
-        eventPublisher.attachListener(EventType.MEMBERSHIP_REQUEST, new SimpleRetryingEventListener(userNotificationListener));
-//        ApplicationEventListener<Integer> contentApprovalListener = new ContentApprovalListener();
-        eventPublisher.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
-        eventPublisher.attachListener(EventType.ANSWER_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
+    @Bean
+    public EventConsumer getEventConsumer(NotificationService notificationService, BlockingQueue queue) {
+        BlockingQueue<ApplicationEvent> questionUpdatesQueue = new LinkedBlockingQueue<>();
+        ApplicationEventListener userNotificationListener = new UsersNotificationListener(notificationService);
 
-        eventPublisher.setDefaultListener(new SimpleRetryingEventListener( userNotificationListener ));
-        return  eventPublisher;
+        EventConsumer eventConsumer = new SimpleEventConsumer(queue);
+
+        eventConsumer.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.MEMBERSHIP_REQUEST, new SimpleRetryingEventListener(userNotificationListener));
+
+        eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( userNotificationListener ));
+
+        eventConsumer.setDefaultListener(new SimpleRetryingEventListener( userNotificationListener ));
+        return  eventConsumer;
     }
     /*
     Added to make swagger ui work with spring boot oauth-2

@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class QuestionPostListener implements  ApplicationEventListener<Integer> {
+public abstract class QuestionPostListener implements  ApplicationEventListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionPostListener.class);
 
     @Override
-    public void onEvent(ApplicationEvent<Integer> event) {
+    public void onEvent(ApplicationEvent event) {
         if(event.getStage() == EventStage.STAGE_ONE){
             System.out.println("Post not yet approved");
             return;
@@ -23,7 +23,7 @@ public abstract class QuestionPostListener implements  ApplicationEventListener<
         if(eventType == EventType.QUESTION_POSTED){
             questionPosted(event.getEventSource());
         }
-        else if(eventType == EventType.QUESTION_UPDATED){
+        else if(eventType == EventType.POST_UPDATED){
             questionUpdated(event.getEventSource());
         } else if(eventType == EventType.QUESTION_ANSWERED){
             questionAnswered(event.getEventSource());

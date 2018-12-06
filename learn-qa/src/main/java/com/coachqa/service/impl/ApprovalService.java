@@ -26,7 +26,7 @@ public abstract class ApprovalService implements ApprovalProcessor {
      * @throws NotAuthorisedToApproveException
      */
     @Override
-    public void processApprovalRequest(ApplicationEvent<Integer> event, AppUser approver, boolean isRequestApproved) throws NotAuthorisedToApproveException {
+    public void processApprovalRequest(ApplicationEvent event, AppUser approver, boolean isRequestApproved) throws NotAuthorisedToApproveException {
 
         validateApprover(event, approver);
 
@@ -35,10 +35,10 @@ public abstract class ApprovalService implements ApprovalProcessor {
 
     }
 
-    protected abstract void validateApprover(ApplicationEvent<Integer> event, AppUser approver) throws NotAuthorisedToApproveException;
+    protected abstract void validateApprover(ApplicationEvent event, AppUser approver) throws NotAuthorisedToApproveException;
 
 
-    protected abstract ApplicationEvent<Integer> processApproval(ApplicationEvent<Integer> event, boolean isRequestApproved, AppUser approver) ;
+    protected abstract ApplicationEvent processApproval(ApplicationEvent event, boolean isRequestApproved, AppUser approver) ;
 
 
     private void raiseApplicationEvent(ApplicationEvent applicationEvent) {

@@ -21,7 +21,7 @@ public class ClassroomEventRegistrationProvider implements EventRegisteredUsersP
     }
 
     @Override
-    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
+    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent event, EventRegistrationDao eventRegistrationDao) {
         if(event.getEventType() == EventType.MEMBERSHIP_REQUEST) {
             int classroomId = event.getEventSource();
             Classroom classroom = classroomService.getClassroom(classroomId);
@@ -32,6 +32,11 @@ public class ClassroomEventRegistrationProvider implements EventRegisteredUsersP
             return Collections.singletonList(event.getEventRaisedByEntityId());
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<Integer> getUserSubscribedEntitiesByDefault(int i) {
+        return null;
     }
 
 

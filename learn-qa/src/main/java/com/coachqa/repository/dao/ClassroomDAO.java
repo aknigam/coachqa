@@ -3,7 +3,7 @@ package com.coachqa.repository.dao;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
-import com.coachqa.ws.model.ClassroomMembershipRequest;
+import com.coachqa.ws.model.ClassroomMembership;
 
 import java.util.List;
 
@@ -13,18 +13,19 @@ public interface ClassroomDAO {
 
 	Classroom getClassroomByIdentifier(Integer classroomId);
 
-
 	Classroom createClassroom(Classroom classroom);
 
-	void endMembership(Integer classroomId, Integer memberId, String comments);
+	void endMembership(Integer membershipId);
 
-	void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments);
+	void findRequestAndApprove(ClassroomMembershipStatusEnum status, Integer membershipId);
 
-	ClassroomMembershipRequest getMembershipRequests(Integer classroomId);
+	List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId);
 
 	List<Classroom> getUserMemberships(AppUser user);
 
 	boolean isActiveMemberOf(Integer classroomId, Integer user);
 
     List<Classroom> searchClassrooms(int page, int loggedUserId,boolean onlyMyClasses);
+
+	ClassroomMembership getMembership(Integer memberId);
 }

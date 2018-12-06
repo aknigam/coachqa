@@ -6,6 +6,7 @@ import notification.entity.EventType;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class ApprovalProcessorFactory {
 
     private Map<EventType, ApprovalProcessor> processorMap = new HashMap();

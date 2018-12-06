@@ -33,6 +33,9 @@ public class ContentApprovalListener implements ApplicationEventListener {
         processEvent(event);
 
     }
+
+
+
     private void processEvent(ApplicationEvent event) {
 //        postService.updateApprovalStatus();
     }

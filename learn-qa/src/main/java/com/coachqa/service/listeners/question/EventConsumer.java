@@ -1,5 +1,9 @@
-package com.publish;
+package com.coachqa.service.listeners.question;
 
+import com.coachqa.service.listeners.ApplicationEventListener;
+import com.coachqa.service.listeners.SimpleRetryingEventListener;
+import notification.entity.ApplicationEvent;
+import notification.entity.EventType;
 
 
 /**
@@ -18,10 +22,9 @@ package com.publish;
  *
  * @param <E>
  */
-@Deprecated
-public interface EventPublisher<E> {
+public interface EventConsumer<E> {
 
-    void publishEvent(ApplicationEvent<E> event);
+    void attachListener(EventType eventType, ApplicationEventListener listener);
 
-    void subscribe(EventTypeD eventType, ApplicationEventListener listener);
+    void setDefaultListener(ApplicationEventListener defaultListener);
 }

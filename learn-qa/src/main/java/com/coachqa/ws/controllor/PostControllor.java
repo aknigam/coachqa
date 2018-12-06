@@ -5,6 +5,7 @@ import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
+import com.coachqa.ws.model.PostApproval;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,6 +71,27 @@ public class PostControllor {
 
         AppUser user = WSUtil.getUser( userService);
         postService.deletePost(postId);
+    }
+
+
+    /**
+     * No of votes for the question shows people's interest in that particular question.
+     * type - can have two values - 1 for question 2 for answer
+     */
+    @RequestMapping(value="/approval/{postId}/{isApproved}", method = RequestMethod.POST)
+    public void processApprovalRequest(
+                     @PathVariable(value ="postId")Integer postId,
+                     @PathVariable(value ="isApproved")Integer approve) {
+
+        AppUser user = WSUtil.getUser(userService);
+        boolean isApproved = approve > 0 ? true: false;
+
+        PostApproval postApproval = new PostApproval();
+        postApproval.setApproved(isApproved);
+        postApproval.setApprovedBy(user.getAppUserId());
+        postApproval.setPostId(postId);
+
+        postService.updateApprovalStatus(postApproval);
     }
 
 

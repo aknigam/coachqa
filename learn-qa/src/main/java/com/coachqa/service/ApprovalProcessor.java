@@ -10,6 +10,6 @@ import notification.entity.ApplicationEvent;
 public interface ApprovalProcessor {
 
 
-    void processApprovalRequest(ApplicationEvent<Integer> event, AppUser approver, boolean isRequestApproved) throws NotAuthorisedToApproveException;
+    void processApprovalRequest(ApplicationEvent event, AppUser approver, boolean isRequestApproved) throws NotAuthorisedToApproveException;
 
 }

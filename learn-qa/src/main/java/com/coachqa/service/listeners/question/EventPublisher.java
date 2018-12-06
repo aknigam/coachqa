@@ -19,11 +19,11 @@ import notification.entity.EventType;
  * STAGE-1 content approval
  * STAGE-2 all the other consumers
  *
- * @param <E>
+ *
  */
-public interface EventPublisher<E> {
+public interface EventPublisher {
 
-    void publishEvent(ApplicationEvent<E> event);
+    void publishEvent(ApplicationEvent event);
 
-    void attachListener(EventType eventType, ApplicationEventListener listener);
+
 }

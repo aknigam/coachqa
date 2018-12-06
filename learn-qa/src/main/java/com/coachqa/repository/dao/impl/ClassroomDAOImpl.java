@@ -3,21 +3,16 @@ package com.coachqa.repository.dao.impl;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
-import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomAlreadyExistsException;
-import com.coachqa.exception.NotAClassroomMemberException;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
-
-import com.coachqa.ws.model.ClassroomMembershipRequest;
-import com.coachqa.ws.model.MembershipRequest;
+import com.coachqa.ws.model.ClassroomMembership;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -25,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -123,82 +117,35 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 
 
 	@Override
-	public void endMembership(Integer classroomId, Integer memberId, String comments) {
+	public void endMembership(Integer membershipId) {
 
-		int rowsDeletedOrUpdated = jdbcTemplate.update(endMembershipQuery, new Object[]{ClassroomMembershipStatusEnum.EXPIRED.getId(), comments, classroomId, memberId});
-		if(rowsDeletedOrUpdated == 0){
-			throw new NotAClassroomMemberException(ApplicationErrorCode.INVALID_MEMBERSHIP, String.format( "%d is not a meber of classroom with id %d", memberId, classroomId));
-		}
-	}
-
-
-	@Override
-	public void findRequestAndApprove(boolean approve, Integer classroomId, Integer userId, String comments) {
-
-		int updatedRows = 0;
-		if(!approve){
-			LOGGER.debug(String.format("Approving the join request"));
-			jdbcTemplate.update(denyMembershipRequestQuery, new Object[]{
-					ClassroomMembershipStatusEnum.REJECTED.getId()
-					, comments
-					, classroomId
-					, userId
-					, ClassroomMembershipStatusEnum.PENDING_APPROVAL.getId()});
-		}
-		else{
-			LOGGER.debug(String.format("Rejecting the join request"));
-			jdbcTemplate.update(approveMembershipRequestQuery, new Object[]{
-					ClassroomMembershipStatusEnum.ACTIVE.getId()
-					,comments, new Date(DateTime.now().getMillis())
-					, new Date(DateTime.now().plusYears(20).getMillis())
-					, classroomId
-					, userId
-					, ClassroomMembershipStatusEnum.PENDING_APPROVAL.getId()});
-		}
-
-
-		if(updatedRows >0){
-			LOGGER.debug(String.format("membership approval/denial successfully completed for classroomid %d and user %d ", classroomId, userId));
-		}
-		else{
-			LOGGER.warn(String.format("Membership approval request not found for classroomid %d and user %d ", classroomId, userId));
-		}
+		classroomMapper.changeMembershipStatus(membershipId, ClassroomMembershipStatusEnum.NOT_MEMBER.getId());
 
 	}
 
 
 	@Override
-	public ClassroomMembershipRequest getMembershipRequests(Integer classroomId) {
-		
-		ClassroomMembershipRequest classroomMembershipRequest = new ClassroomMembershipRequest(classroomId);
-		List<MembershipRequest> requests  =  jdbcTemplate.query(getMembershipRequestsQuery, new Integer[]{ClassroomMembershipStatusEnum.PENDING_APPROVAL.getId(), classroomId}, new RowMapper<MembershipRequest>() {
-			@Override
-			public MembershipRequest mapRow(ResultSet rs, int i) throws SQLException {
-				int appUserId = rs.getInt("appUserId");
-				int classroomId = rs.getInt("classroomid");
-				String classname = rs.getString("className");
-				String email = rs.getString("email");
-				String firstName = rs.getString("firstname");
-				String middleName = rs.getString("middlename");
-				String lastName = rs.getString("lastName");
-				DateTime requestDate = new DateTime(rs.getDate("membershiprequestdate"));
-				String comments = rs.getString("comments");
+	public void findRequestAndApprove(ClassroomMembershipStatusEnum status, Integer membershipId) {
 
-				AppUser user = new AppUser(appUserId, email, firstName, middleName, lastName);
+		classroomMapper.changeMembershipStatus( membershipId , status.getId());
 
-				return new MembershipRequest(user, requestDate, comments);
-			}
-		});
-		
-		classroomMembershipRequest.setRequests( requests );
-		return classroomMembershipRequest;
+
+	}
+
+
+	// TODO: 06/12/18 this method needs to be modified
+	@Override
+	public List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId) {
+
+		return  classroomMapper.getMembershipRequests(classroomId, appUserId, ClassroomMembershipStatusEnum
+				.PENDING_APPROVAL.getId());
 	}
 
 	@Override
 	public List<Classroom> getUserMemberships(AppUser user) {
 		return  classroomMapper.getUserClassrooms(user.getAppUserId());
-//		return Arrays.asList(new Classroom[]{new Classroom(6, "Physics class")});
 	}
+
 
 	@Override
 	public boolean isActiveMemberOf(Integer classroomId, Integer user) {
@@ -212,5 +159,11 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 		List<Classroom> classrooms = classroomMapper.searchClassrooms(page, loggedUserId, onlyMyClasses);
 		return classrooms;
 	}
+
+	@Override
+	public ClassroomMembership getMembership(Integer membershipId) {
+		return classroomMapper.getMembershipDetails(membershipId);
+	}
+
 
 }

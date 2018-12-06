@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
  * etc) and send the notification accordingly.
  *
  */
-public class UsersNotificationListener implements ApplicationEventListener<Integer> {
+public class UsersNotificationListener implements ApplicationEventListener {
 
 
     private NotificationService notificationService;
@@ -28,7 +28,7 @@ public class UsersNotificationListener implements ApplicationEventListener<Integ
     }
 
     @Override
-    public void onEvent(ApplicationEvent<Integer> event) {
+    public void onEvent(ApplicationEvent event) {
         notificationService.notifyUsers(event);
     }
 }

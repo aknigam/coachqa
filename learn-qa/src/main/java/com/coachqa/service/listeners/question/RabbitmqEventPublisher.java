@@ -6,17 +6,13 @@ import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RabbitmqEventPublisher<E> implements EventPublisher<E> {
+public class RabbitmqEventPublisher implements EventPublisher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitmqEventPublisher.class);
 
     @Override
-    public void publishEvent(ApplicationEvent<E> event) {
+    public void publishEvent(ApplicationEvent event) {
 
     }
 
-    @Override
-    public void attachListener(EventType eventType, ApplicationEventListener listener) {
-
-    }
 }

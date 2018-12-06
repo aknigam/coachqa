@@ -21,10 +21,10 @@ public class PostApprovalProcessor extends ApprovalService {
     private PostService postService;
 
 
-    protected void validateApprover(ApplicationEvent<Integer> event, AppUser approver) throws NotAuthorisedToApproveException{
+    protected void validateApprover(ApplicationEvent event, AppUser approver) throws NotAuthorisedToApproveException{
         EventType eventType = event.getEventType();
         if(eventType == EventType.QUESTION_ANSWERED || eventType == EventType.QUESTION_POSTED
-                || eventType == EventType.QUESTION_UPDATED ){
+                || eventType == EventType.POST_UPDATED ){
             // Content approval required - approver has to be admin
             // todo remove hard coding
             if(approver.getAppUserId() != 8){
@@ -32,13 +32,12 @@ public class PostApprovalProcessor extends ApprovalService {
             }
             return;
 
-
         }
         throw new InvalidEventForApprovalException(ApplicationErrorCode.IN_VALID_EVENT, "Invalid event type");
 
     }
 
-    protected ApplicationEvent<Integer> processApproval(ApplicationEvent<Integer> event, boolean isRequestApproved, AppUser approver) {
+    protected ApplicationEvent processApproval(ApplicationEvent event, boolean isRequestApproved, AppUser approver) {
         PostApproval postApproval = new PostApproval();
         postApproval.setApproved(true);
         postApproval.setApprovedBy(approver.getAppUserId());

@@ -2,26 +2,17 @@ package com.coachqa.repository.dao.mybatis.mapper;
 
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.RefSubject;
-import com.coachqa.enums.PostTypeEnum;
-import com.coachqa.enums.QuestionLevelEnum;
-import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.repository.dao.mybatis.typehandler.ClassroomStatusTypeHandler;
-import com.coachqa.repository.dao.mybatis.typehandler.DateTimeTypeHandler;
-import com.coachqa.repository.dao.mybatis.typehandler.PostTypeEnumTypeHandler;
-import com.coachqa.repository.dao.mybatis.typehandler.QuestionLevelEnumTypeHandler;
-import com.coachqa.repository.dao.mybatis.typehandler.QuestionStatusEnumTypeHandler;
-import org.apache.ibatis.annotations.Insert;
+import com.coachqa.ws.model.ClassroomMembership;
 import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.Update;
 import org.mapstruct.Mapper;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -97,5 +88,35 @@ public interface ClassroomMyBatisMapper {
     })
     List<Classroom> searchClassrooms(@Param("page") Integer page, @Param("loginuserid") int loginUserId, @Param
             ("myclassonly") boolean myClassesOnly);
+
+    @Select("SELECT" +
+            "  classroommemberid as membershipId," +
+            "  appuserid as memberId," +
+            "  classroomid as classroomId," +
+            "  status  as membershipStatus," +
+            "  membershipstartdate  as startDate," +
+            "  membershipexpirartiondate as expirationDate," +
+            "  membershiprequestdate  as membershipRequestDate," +
+            "  comments as requestComments " +
+            "FROM classroommember cm " +
+            "WHERE classroommemberid = #{membershipId}")
+    @Results({
+            @Result(column = "membershipStatus", property = "membershipStatus", typeHandler =
+                    ClassroomStatusTypeHandler.class)
+    })
+    ClassroomMembership getMembershipDetails(Integer membershipId);
+
+
+    @Update("UPDATE classroommember set status = #{status} where classroommemberid = #{membershipId}")
+    void changeMembershipStatus( @Param("membershipId") Integer membershipId, @Param("status") Integer status);
+
+    @Lang(FreeMarkerLanguageDriver.class)
+    @Select("classroomMemberships.ftlh")
+    @Results({
+            @Result(column = "membershipStatus", property = "membershipStatus", typeHandler =
+                    ClassroomStatusTypeHandler.class)
+    })
+    List<ClassroomMembership> getMembershipRequests(@Param("classroomid") Integer classroomId, @Param("ownerid")
+            Integer appUserId, @Param("status") int status);
 
 }

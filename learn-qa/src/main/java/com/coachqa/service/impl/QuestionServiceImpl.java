@@ -159,12 +159,12 @@ public class QuestionServiceImpl implements QuestionService {
 		 */
 		if(isApprovalRequired(qstn)){
 // stage 1 indicates approval pending
-			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
+			eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
 		}
 		else
 		{
 			// stage 1 indicates approval pending
-			eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_TWO));
+			eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_TWO));
 		}
 
 
@@ -214,7 +214,7 @@ public class QuestionServiceImpl implements QuestionService {
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
-		eventPublisher.publishEvent(new ApplicationEvent<Integer>(EventType.ANSWER_POSTED, answer.getQuestionId(),
+		eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId(),
 				userId,new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis()) ));
 

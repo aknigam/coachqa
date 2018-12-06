@@ -1,19 +1,26 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.InvalidEventForApprovalException;
+import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
+import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
+import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.Map;
 
 @Component
@@ -59,9 +66,14 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void updateApprovalStatus(PostApproval postApproval) {
+		Post post = postDao.getPostById(postApproval.getPostId());
 		postDao.updatePostApproval(postApproval);
-//		ApplicationEvent event= new ApplicationEvent(postApproval.isApproved() ? EventType.ANSWER_POSTED : EventType.POST_REJECTED, postApproval.getPostId());
-//		postPublisher.publishEvent(event);
+
+		ApplicationEvent event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, postApproval.getPostId(), post
+				.getPostedBy().getAppUserId(),
+				new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
+
+		postPublisher.publishEvent(event);
 	}
 
 	@Override

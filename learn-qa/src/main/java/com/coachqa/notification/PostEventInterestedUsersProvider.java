@@ -47,7 +47,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
 
 
     @Override
-    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent<Integer> event, EventRegistrationDao eventRegistrationDao) {
+    public List<Integer> getUsersRegisteredByDefault(ApplicationEvent event, EventRegistrationDao eventRegistrationDao) {
 
         List<Integer> registeredUsers =  new ArrayList<>();
         Integer postId = event.getEventSource();
@@ -70,7 +70,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
             Classroom classroom = classroomService.getClassroom(classroomId);
             if(classroom != null)
             {
-                ApplicationEvent<Integer> classroomEvent = new ApplicationEvent<Integer>(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
+                ApplicationEvent classroomEvent = new ApplicationEvent(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
                 registeredUsers.addAll(eventRegistrationDao.getRegisteredUsers(classroomEvent));
                 registeredUsers.add(classroom.getClassOwner().getAppUserId());
 
@@ -83,6 +83,11 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
         }
 
 
+    }
+
+    @Override
+    public List<Integer> getUserSubscribedEntitiesByDefault(int i) {
+        return null;
     }
 
     private String getApprovalMessage(String content, EventType eventType, AppUser postedBy) {

@@ -40,7 +40,7 @@ public class NotificationServiceTest extends TestConfig{
         DataSource dataSource = dataSource();
         JdbcTemplate jdbcTemplate = jdbcTemplate(dataSource);
 //        EventDao eventDao = eventDAO(jdbcTemplate, dataSource);
-        ApplicationEvent event = new ApplicationEvent(EventType.ANSWER_POSTED, 1, EventStage.STAGE_ONE);
+        ApplicationEvent event = new ApplicationEvent(EventType.QUESTION_ANSWERED, 1, EventStage.STAGE_ONE);
         EventDAO eventDao = Mockito.mock(EventDAO.class);
         Mockito.doNothing().when(eventDao).createEvent(event);
         Mockito.doNothing().when(eventDao).updateEventDate(event);

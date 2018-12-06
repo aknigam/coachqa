@@ -4,15 +4,17 @@ import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.ClassroomSettings;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
+import com.coachqa.exception.ApplicationErrorCode;
+import com.coachqa.exception.ClassroomNotExistsException;
+import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
-import com.coachqa.exception.NotAuthorizedToApprovemembershipRequest;
 import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.question.EventPublisher;
-import com.coachqa.ws.model.ClassroomMembershipRequest;
-import com.coachqa.ws.model.MembershipRequest;
+import com.coachqa.ws.model.ClassroomMembership;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.slf4j.Logger;
@@ -47,7 +49,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	@Autowired
 	@Lazy
-	private EventPublisher<Integer> publisher;
+	private EventPublisher publisher;
 
 	@PostConstruct
 	public void init(){
@@ -90,7 +92,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	}
 
 	private void notifyAdministrator(Integer classroomId, Integer userId) {
-		ApplicationEvent<Integer> event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, userId,
+		ApplicationEvent event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, classroomId, userId,
 				new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
 		publisher.publishEvent(event);
 	}
@@ -110,49 +112,80 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	}
 
 	@Override
-	public void leaveClassroom(Integer classroomId, Integer requestedByUserId, Integer memberId, String comments) {
+	public void leaveClassroom(int requestedByUserId, Integer membershipId) {
 
-		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
-		if(isRequestorAuthorized(classroom.getClassOwner().getAppUserId(), requestedByUserId, memberId)){
-			classroomDAO.endMembership(classroomId, memberId, comments);
-			notifyUser(userService.getUserDetails(memberId), true, null);
+		ClassroomMembership membership =  classroomDAO.getMembership(membershipId);
+		Classroom classroom = classroomDAO.getClassroomByIdentifier(membershipId);
+		if(isRequestorAuthorized(classroom.getClassOwner().getAppUserId(), requestedByUserId, membership.getMemberId())){
+			classroomDAO.endMembership(membershipId);
+			// TODO: 04/12/18 do we need to send a notification here
+//			notifyUser(userService.getUserDetails(memberId), true, null);
 		}
 		throw new NotAuthorizedtoExistClassroomException();
 
 	}
 
 	@Override
-	public void processJoinRequest(AppUser approver, ClassroomMembershipRequest membershipRequests) {
+	public void processJoinRequest(AppUser approver, List<Integer> membershipRequests, boolean isApprove) {
 
-		Classroom classroom = classroomDAO.getClassroomByIdentifier(membershipRequests.getClassroomId());
-		if(!classroom.getClassOwner().getAppUserId().equals(approver.getAppUserId())){
-			LOGGER.error(String.format("%s is not authorized to approved membership requests for classroom %s",
-					approver.getEmail(), classroom.getClassName()));
-			throw new NotAuthorizedToApprovemembershipRequest(approver, classroom);
+
+		for(Integer mId: membershipRequests) {
+			ClassroomMembership cm = classroomDAO.getMembership(mId);
+			Classroom classroom = classroomDAO.getClassroomByIdentifier(cm.getClassroomId());
+			validateApprover(classroom.getClassroomId(), approver.getAppUserId());
+
+
+			classroomDAO.findRequestAndApprove(isApprove ? ClassroomMembershipStatusEnum.ACTIVE :
+					ClassroomMembershipStatusEnum.REJECTED, mId);
+
+			notifyUserForMembershipApproval(classroom.getClassroomId(), cm.getMemberId(), isApprove);
+
 		}
-		boolean isApproved= membershipRequests.isApprove();
-		for (MembershipRequest request: membershipRequests.getRequests()) {
-			classroomDAO.findRequestAndApprove(isApproved, classroom.getClassroomId(), request.getUser().getAppUserId
-					(), membershipRequests.getComments());
 
-			notifyUser(request.getUser(), isApproved, classroom);
-		}
-
-
-		// notification has to be sent to the requester.
 	}
 
-	private void notifyUser(AppUser user, boolean isApproved, Classroom classroom) {
-		// send email or other type of notification.
+
+
+	protected void validateApprover(Integer classroomId, Integer approverUserId) throws NotAuthorisedToApproveException {
+
+
+		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
+		if(!classroom.getClassOwner().getAppUserId().equals(approverUserId)) {
+			throw new NotAuthorisedToApproveException(ApplicationErrorCode.NOT_AUTHORIZEDTO_APPROVE, "Only admin can approve the request");
+		}
+
+//        throw new InvalidEventForApprovalException(ApplicationErrorCode.IN_VALID_EVENT, "Invalid event type");
+
 	}
+
+	protected void notifyUserForMembershipApproval(Integer requesterUserId, Integer classroomId, boolean isApproved) {
+
+		// the new event should be a notification to the person who requested membership
+		ApplicationEvent approvedEvent = new ApplicationEvent(isApproved ? EventType.MEMBERSHIP_APPROVED : EventType.MEMBERSHIP_REJECTED,
+				classroomId, requesterUserId,
+				new Date(System.currentTimeMillis()),
+				new Date(System.currentTimeMillis()));
+
+		publisher.publishEvent(approvedEvent);
+	}
+
+
 
 	@Override
-	public ClassroomMembershipRequest getMemberShipRequests(AppUser user, Integer classroomId) {
-		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
-		if(!classroom.getClassOwner().getAppUserId().equals(user.getAppUserId())){
-			throw new NotAuthorisedToViewMembershipRequestsException(user, classroom);
+	public List<ClassroomMembership> getMemberShipRequests(AppUser user, Integer classroomId) {
+		if(classroomId != null) {
+			Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
+			if(classroom == null) {
+				throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, "Invalid classroom " +
+						"identifier provided");
+			}
+			if (!classroom.getClassOwner().getAppUserId().equals(user.getAppUserId())) {
+				throw new NotAuthorisedToViewMembershipRequestsException(user, classroom);
+			}
+
 		}
-		return classroomDAO.getMembershipRequests(classroomId);
+
+		return  classroomDAO.getMembershipRequests(classroomId, user.getAppUserId());
 	}
 
 	@Override
@@ -167,12 +200,6 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classrooms;
 	}
 
-	@Override
-	public void approveMembershipRequest(Integer classroomId, Integer userId) {
-
-		classroomDAO.findRequestAndApprove(true, classroomId, userId,"Appoved");
-
-	}
 
 	@Override
 	public ClassroomSettings getClassroomSettings(Integer classroomId) {
@@ -183,6 +210,8 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	public List<Classroom> searchClassrooms(Integer userId, Integer page, boolean onlyLoginUserClassrooms) {
 		return classroomDAO.searchClassrooms(page, userId, onlyLoginUserClassrooms);
 	}
+
+
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
 

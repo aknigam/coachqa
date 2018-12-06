@@ -108,11 +108,11 @@ public class TestConfig {
         PostEventInterestedUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, userService);
 
         defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_ANSWERED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_DELETED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_UPDATED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_VIEWED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_VOTED, postEventInterestedUsersProvider);
 
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
     }

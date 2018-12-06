@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RestController
-@RequestMapping("/api/approval")
+@Deprecated
 public class ApprovalControllor {
 
 
@@ -67,7 +66,7 @@ public class ApprovalControllor {
 
          */
 
-        ApplicationEvent<Integer> event = notificationService.fetchEventDetails(eventId);
+        ApplicationEvent event = notificationService.fetchEventDetails(eventId);
         EventType eventType = event.getEventType();
         ApprovalProcessor processor = approvalProcessorFactory.getApprovalProcessor(eventType);
 

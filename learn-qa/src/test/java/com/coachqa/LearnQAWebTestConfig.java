@@ -6,6 +6,7 @@ import com.coachqa.service.impl.UsersNotificationListener;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.SimpleEventConsumer;
 import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
 import notification.entity.EventType;
@@ -47,6 +48,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedTransferQueue;
 
 
 /*
@@ -188,11 +191,13 @@ public class LearnQAWebTestConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public EventPublisher getEventPublisher(NotificationService notificationService){
-        ApplicationEventListener<Integer> userNotificationListener = new UsersNotificationListener(notificationService);
-        SimpleEventPublisher<Object> eventPublisher = new SimpleEventPublisher<>();
-        eventPublisher.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
-        eventPublisher.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
-        eventPublisher.attachListener(EventType.ANSWER_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
+        ApplicationEventListener userNotificationListener = new UsersNotificationListener(notificationService);
+        BlockingQueue questionUpdatesQueue = new LinkedTransferQueue();
+        SimpleEventPublisher eventPublisher = new SimpleEventPublisher(questionUpdatesQueue);
+        SimpleEventConsumer eventConsumer = new SimpleEventConsumer(questionUpdatesQueue);
+        eventConsumer.attachListener(EventType.POST_REJECTED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( userNotificationListener ));
 
         return  eventPublisher;
     }

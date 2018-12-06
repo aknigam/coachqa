@@ -54,7 +54,6 @@ The @SpringBootApplication annotation is equivalent to using @Configuration, @En
 
 
 @Configuration
-@MapperScan("notification.repository.mapper")
 public class NotificationSystemConfig  {
 
 
@@ -137,11 +136,11 @@ public class NotificationSystemConfig  {
         EventRegisteredUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, UserService);
 
         defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.ANSWER_POSTED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_DELETED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_UPDATED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VIEWED, postEventInterestedUsersProvider);
-        defaultRegistrationProviderMap.put(EventType.QUESTION_VOTED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.QUESTION_ANSWERED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_DELETED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_UPDATED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_VIEWED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_VOTED, postEventInterestedUsersProvider);
 
 
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);
@@ -159,7 +158,7 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public PostApprovalProcessor postApprovalProcessor(PostService postService){
+    public PostApprovalProcessor postApprovalProcessor(){
         return new PostApprovalProcessor();
     }
 
@@ -175,7 +174,7 @@ public class NotificationSystemConfig  {
 //        ApprovalProcessor postApprovalProcessor = new PostApprovalProcessor();
         factory.register(EventType.QUESTION_POSTED, postApprovalProcessor);
         factory.register(EventType.QUESTION_ANSWERED, postApprovalProcessor);
-        factory.register(EventType.ANSWER_POSTED, postApprovalProcessor);
+//        factory.register(EventType.ANSWER_POSTED, postApprovalProcessor);
 
 //        ClassroomEventApprovalProcessor classroomEventApprovalProcessor = new ClassroomEventApprovalProcessor();
         factory.register(EventType.MEMBERSHIP_REQUEST, classroomEventApprovalProcessor);
