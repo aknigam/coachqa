@@ -14,10 +14,8 @@ import notification.entity.EventType;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
 import notification.repository.EventDAO;
-
 import notification.repository.EventRegistrationDao;
 import notification.repository.UserEventNotificationDAO;
-
 import notification.repository.UserNotificationPreferenceDao;
 import notification.repository.impl.DBEventDao;
 import notification.repository.impl.EventRegistrationDaoImpl;
@@ -30,7 +28,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is more useful in learn-qa project

@@ -1,7 +1,6 @@
 package com.coachqa.service.listeners.question;
 
 import com.coachqa.service.listeners.ApplicationEventListener;
-import com.coachqa.util.CollectionUtils;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import notification.repository.EventDAO;
@@ -9,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

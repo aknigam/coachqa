@@ -3,8 +3,6 @@ package com.coachqa.entity;
 import com.coachqa.enums.PostTypeEnum;
 import org.joda.time.DateTime;
 
-import java.sql.Timestamp;
-
 /**
  * Created by a.nigam on 23/07/17.
  */

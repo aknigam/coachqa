@@ -1,8 +1,6 @@
 package com.coachqa.service.listeners.question;
 
-import com.coachqa.service.listeners.ApplicationEventListener;
 import notification.entity.ApplicationEvent;
-import notification.entity.EventType;
 
 
 /**

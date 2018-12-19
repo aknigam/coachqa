@@ -1,19 +1,15 @@
 package com.coachqa.service.impl;
 
-import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
-import com.coachqa.exception.InvalidEventForApprovalException;
-import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
 import notification.entity.ApplicationEvent;
-import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

@@ -1,7 +1,12 @@
 package com.coachqa.ws.controllor;
 
-import com.coachqa.repository.dao.impl.FileUploadDao;
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.ImageInfo;
+import com.coachqa.repository.dao.FileUploadDao;
+import com.coachqa.service.UserService;
+import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,7 +31,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadResource {
 
     @Autowired
+    @Qualifier("GCPFileUploadDao")
     private FileUploadDao fileUploadDao;
+
+    @Autowired
+    private UserService userService;
 
 
     @GetMapping(value="/{imageId}")
@@ -41,19 +50,21 @@ public class FileUploadResource {
     }
 
     @PostMapping
-    public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file){
-        String name = "tempFileName";
+    public @ResponseBody
+    ImageInfo handleFileUpload(@RequestParam("file") MultipartFile file){
+
+        AppUser user = WSUtil.getUser(userService);
+
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                Integer fileId = fileUploadDao.persist(bytes);
-                return fileId.toString();
+                return fileUploadDao.persist(bytes );
             } catch (Exception e) {
                 e.printStackTrace();
-                return "You failed to upload " + name + " => " + e.getMessage();
+                throw new RuntimeException("Unexpected error occurred while uploading file. Please try again", e);
             }
         } else {
-            return "You failed to upload " + name + " because the file was empty.";
+            throw new RuntimeException("File not provided for upload");
         }
     }
 

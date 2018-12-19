@@ -1,17 +1,12 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionLevelEnum;
-import com.coachqa.repository.dao.mapper.QuestionMapper;
 import com.coachqa.util.CollectionUtils;
-import com.coachqa.ws.controllor.QueryCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;

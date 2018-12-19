@@ -1,17 +1,12 @@
 package com.coachqa.repository.dao.sp;
 
-import com.coachqa.entity.Answer;
-import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.mapper.AnswerMapper;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
 import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import javax.sql.DataSource;
 import java.sql.Types;
-import java.util.List;
-import java.util.Map;
 
 @Deprecated
 public class QuestionGetSproc

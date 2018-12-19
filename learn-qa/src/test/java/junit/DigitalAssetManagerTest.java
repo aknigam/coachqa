@@ -1,7 +1,6 @@
 package junit;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,9 +10,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 /**
  * Created by a.nigam on 21/02/16.

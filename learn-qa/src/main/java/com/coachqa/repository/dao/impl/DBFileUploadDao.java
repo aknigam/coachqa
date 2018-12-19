@@ -1,5 +1,7 @@
 package com.coachqa.repository.dao.impl;
 
+import com.coachqa.entity.ImageInfo;
+import com.coachqa.repository.dao.FileUploadDao;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -12,14 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Repository
-public class FileUploadDao extends BaseDao {
+@Repository("DBFileUploadDao")
+public class DBFileUploadDao extends BaseDao implements FileUploadDao {
 
     private static String fileInsertQuery = "INSERT INTO postmedia (imagecontent) VALUES (?)";
 
     private static String imageReadQuery = "Select imagecontent from postmedia where id = ?";
 
-    public int persist(byte[] bytes) throws SQLException {
+    public ImageInfo persist(byte[] bytes) {
 
         jdbcTemplate = getJdbcTemplate();
         final PreparedStatement[] ps = {null};
@@ -36,10 +38,14 @@ public class FileUploadDao extends BaseDao {
             }, holder);
 
 
-            return holder.getKey().intValue();
+            return new ImageInfo( String.valueOf( holder.getKey().intValue()) );
         }
         finally {
-            ps[0].close();
+            try {
+                ps[0].close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Unexpected error occurred while saving file. Please try again");
+            }
         }
 
     }

@@ -2,26 +2,24 @@ package notification.impl;
 
 import notification.NotificationService;
 import notification.SendEventNotificationProcessor;
-import notification.entity.*;
+import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
+import notification.entity.EventType;
+import notification.entity.NotificationPreference;
+import notification.entity.UserEventNotification;
 import notification.enums.EventNotificationStatus;
 import notification.enums.NotificationTypeEnum;
 import notification.repository.EventDAO;
-
 import notification.repository.EventRegistrationDao;
 import notification.repository.UserEventNotificationDAO;
-
 import notification.repository.UserNotificationPreferenceDao;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-
 import javax.sql.DataSource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

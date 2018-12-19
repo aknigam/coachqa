@@ -3,7 +3,6 @@ package com.coachqa.entity;
 import com.coachqa.enums.PostTypeEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-
 import java.util.Date;
 
 /**

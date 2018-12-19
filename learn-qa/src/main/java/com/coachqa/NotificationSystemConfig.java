@@ -22,19 +22,14 @@ import notification.impl.NotificationServiceImpl;
 import notification.publisher.AsyncEventQueuePublisher;
 import notification.publisher.NotificationPublisher;
 import notification.repository.EventDAO;
-
 import notification.repository.EventRegistrationDao;
 import notification.repository.UserEventNotificationDAO;
-
 import notification.repository.UserNotificationPreferenceDao;
 import notification.repository.impl.DBEventDao;
 import notification.repository.impl.EventRegistrationDaoImpl;
 import notification.repository.impl.UserEventNotificationDaoImpl;
 import notification.repository.impl.UserNotificationPreferenceDaoImpl;
-import notification.repository.mapper.EventMapper;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -14,7 +14,6 @@ import com.coachqa.service.ClassroomService;
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.ClassroomMembership;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.slf4j.Logger;

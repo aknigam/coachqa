@@ -2,8 +2,6 @@ package com.coachqa.entity;
 
 import org.joda.time.DateTime;
 
-import java.sql.Time;
-
 /**
  * Created by anigam on 7/3/15.
  */
