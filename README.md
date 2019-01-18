@@ -64,3 +64,12 @@ This app connects to the learn QA service running locally. You should be able to
 ## Firebase 
 https://console.firebase.google.com/project/leanqaandroidapp/settings/general/android:com.crajee.learnqa
 
+## Environment setup
+
+The application uses GCP Storage  java client which requires the authentication to be setup by setting the following 
+environment property
+
+Provide authentication credentials to your application code by setting the 
+environment variable GOOGLE_APPLICATION_CREDENTIALS. Replace [PATH] with the file path of the JSON file that contains your service account key, and [FILE_NAME] with the filename. This variable only applies to your current shell session, so if you open a new session, set the variable again.
+
+

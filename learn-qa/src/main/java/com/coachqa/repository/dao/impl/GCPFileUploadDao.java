@@ -1,6 +1,5 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.ImageInfo;
 import com.coachqa.repository.dao.FileUploadDao;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.BlobInfo;
@@ -36,6 +35,8 @@ public class GCPFileUploadDao implements FileUploadDao {
 
     public static final String BUCKET_CRAJEE_DEV = "crajee-dev001";
 
+    public static final String GCP_STORAGE_PREFIX = "g/";
+
     private Storage storage;
 
     @PostConstruct
@@ -43,7 +44,19 @@ public class GCPFileUploadDao implements FileUploadDao {
         storage = StorageOptions.getDefaultInstance().getService();
     }
 
-    public ImageInfo persist(byte[] bytes) {
+    /**
+     *
+     * Refer: https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-java
+     *
+     *
+     * For this to work we must set the system property whose value is the file google-serviceaccounttemp_credentials
+     * .json
+     *
+     * GOOGLE_APPLICATION_CREDENTIALS=/path/google-serviceaccounttemp_credentials.json
+     * @param bytes
+     * @return
+     */
+    public String persist(byte[] bytes) {
 
         InputStream fis = null;
         try {
@@ -68,13 +81,12 @@ public class GCPFileUploadDao implements FileUploadDao {
             metadata.put( GCP_STORAGE_ETAG ,  blobInfo.getEtag());
             metadata.put( GCP_STORAGE_CRC32 ,  blobInfo.getCrc32c());
 
-            String imageId = blobInfo.getGeneratedId();
+            String imageId = GCP_STORAGE_PREFIX + blobInfo.getBlobId().getName();
 
             LOGGER.info("Uploaded image id {}", imageId);
 
-            ImageInfo imageInfo = new ImageInfo(imageId);
-            imageInfo.setMetadata(metadata);
-            return imageInfo;
+
+            return imageId;
         }
         finally {
             if(fis != null)
@@ -95,4 +107,5 @@ public class GCPFileUploadDao implements FileUploadDao {
         return null;
 
     }
+
 }

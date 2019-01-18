@@ -1,7 +1,6 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
-import com.coachqa.entity.ImageInfo;
 import com.coachqa.repository.dao.FileUploadDao;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
@@ -51,7 +50,7 @@ public class FileUploadResource {
 
     @PostMapping
     public @ResponseBody
-    ImageInfo handleFileUpload(@RequestParam("file") MultipartFile file){
+    String handleFileUpload(@RequestParam("file") MultipartFile file){
 
         AppUser user = WSUtil.getUser(userService);
 

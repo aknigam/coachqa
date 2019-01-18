@@ -1,6 +1,5 @@
 package com.coachqa.repository.dao.impl;
 
-import com.coachqa.entity.ImageInfo;
 import com.coachqa.repository.dao.FileUploadDao;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,7 +20,7 @@ public class DBFileUploadDao extends BaseDao implements FileUploadDao {
 
     private static String imageReadQuery = "Select imagecontent from postmedia where id = ?";
 
-    public ImageInfo persist(byte[] bytes) {
+    public String persist(byte[] bytes) {
 
         jdbcTemplate = getJdbcTemplate();
         final PreparedStatement[] ps = {null};
@@ -38,7 +37,7 @@ public class DBFileUploadDao extends BaseDao implements FileUploadDao {
             }, holder);
 
 
-            return new ImageInfo( String.valueOf( holder.getKey().intValue()) );
+            return String.valueOf( holder.getKey().intValue()) ;
         }
         finally {
             try {
