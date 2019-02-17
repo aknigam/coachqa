@@ -32,7 +32,6 @@ public class WSUtil {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		AppUser appUser = userService.getUserByEmail(username);
-		LOGGER.debug("Logged-in user details, username {} , id {} ", username, appUser.getAppUserId());
 		return appUser;
 	}
 }

@@ -1,0 +1,1 @@
+INSERT INTO refquestionstatus (refquestionstatusid, questionstatusname) VALUES (1, 'new');

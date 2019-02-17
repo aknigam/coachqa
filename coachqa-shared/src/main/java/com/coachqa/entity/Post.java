@@ -8,9 +8,8 @@ import java.util.Date;
 /**
  * Created by Anand on 8/25/2015.
  */
-public class Post {
+public class Post extends AccountEntity {
 
-    
     private Integer postId;
 
     private PostTypeEnum postTypeEnum;
