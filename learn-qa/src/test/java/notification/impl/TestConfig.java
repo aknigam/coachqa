@@ -104,7 +104,7 @@ public class TestConfig {
         Mockito.when(postService.getPostById(Mockito.anyInt())).thenReturn(post);
 
         UserService userService = Mockito.mock(UserService.class);
-        Mockito.when(userService.getPostContentApprovers()).thenReturn(Arrays.asList(new Integer[]{2}));
+        Mockito.when(userService.getPublicPostContentApprovers()).thenReturn(Arrays.asList(new Integer[]{2}));
         PostEventInterestedUsersProvider postEventInterestedUsersProvider = new PostEventInterestedUsersProvider(postService, classroomService, userService);
 
         defaultRegistrationProviderMap.put(EventType.QUESTION_POSTED, postEventInterestedUsersProvider);

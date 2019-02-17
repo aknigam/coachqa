@@ -4,7 +4,9 @@ import com.coachqa.entity.Post;
 import com.coachqa.entity.PostVote;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.QuestionVote;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.repository.dao.mybatis.typehandler.DateTimeTypeHandler;
+import com.coachqa.repository.dao.mybatis.typehandler.PostTypeEnumTypeHandler;
 import com.coachqa.ws.model.PostApproval;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -71,4 +73,35 @@ public interface PostMapper {
     )
     @Options(useGeneratedKeys=true, keyProperty="postId")
     int addPost(Post post);
+
+//    @Select("select postId, posttype, postedby, postdate, votes, classroomid from post where postid = #{postId}")
+    @Select("select p.postType, p.postedby, p.postdate,  u.firstname, u.middlename, u.lastname, u.email, " +
+            "  CASE " +
+            "  WHEN a.answerid IS NULL " +
+            "    THEN q.questionid " +
+            "  ELSE a.questionid " +
+            "  END AS postId " +
+            "from post p " +
+            "LEFT JOIN answer a on a.answerid =  p.postid " +
+            "LEFT JOIN question q on q.questionid =  p.postid " +
+            "LEFT JOIN classroom c on c.classroomid = q.classroomid and c.classowner = #{appUserId} " +
+            " LEFT JOIN appuser u on u.appuserid = p.postedby " +
+            " where p.approvalstatus = 0 " +
+            " order by p.postdate desc limit #{page}, 5 ")
+    @Results({
+
+            @Result(column = "postedby", property = "postedBy.appUserId"),
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
+                    typeHandler = PostTypeEnumTypeHandler.class),
+            @Result(column = "firstname", property= "postedBy.firstName"),
+            @Result(column = "lastName", property= "postedBy.lastName"),
+            @Result(column = "middlename", property= "postedBy.middleName"),
+            @Result(column = "email", property= "postedBy.email"),
+    })
+    /*
+    Potentially duplicate postId can be returned becuase a post can have multiple answers
+    waiting for apporval. Can think of clubbing posts together
+
+     */
+    List<Post> getPostsPendingApprovalByUser(@Param("appUserId") Integer appUserId, @Param("page") Integer page);
 }

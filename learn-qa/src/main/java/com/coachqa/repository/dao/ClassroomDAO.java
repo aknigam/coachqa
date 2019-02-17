@@ -19,7 +19,7 @@ public interface ClassroomDAO {
 
 	void findRequestAndApprove(ClassroomMembershipStatusEnum status, Integer membershipId);
 
-	List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId);
+	List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId, Integer page);
 
 	List<Classroom> getUserMemberships(AppUser user);
 
@@ -28,4 +28,11 @@ public interface ClassroomDAO {
     List<Classroom> searchClassrooms(int page, int loggedUserId,boolean onlyMyClasses);
 
 	ClassroomMembership getMembership(Integer memberId);
+
+    List<Integer> getMembersList(Integer classroomId);
+
+	List<Integer> getAllContirbutors(Integer postId);
+
+	List<ClassroomMembership> getPendingMembershipRequests(Integer approverId);
+
 }

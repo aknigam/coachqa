@@ -8,7 +8,7 @@ import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@Deprecated
 public abstract class QuestionPostListener implements  ApplicationEventListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionPostListener.class);

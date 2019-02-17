@@ -17,7 +17,7 @@ public interface UserService extends UserDetailService {
 
 	void addOrUpdateUserNotificationPreference(NotificationPreference preference);
 
-	List<Integer> getPostContentApprovers();
+	List<Integer> getPublicPostContentApprovers();
 
 	void addAndroidUserToken(AndroidToken androidToken);
 }

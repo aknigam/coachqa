@@ -28,7 +28,7 @@ import java.util.List;
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
 
-	public static final Integer PAGE_SIZE = 5;
+
 	private static Logger LOGGER = LoggerFactory.getLogger(QuestionDAOImpl.class);
 	
 
@@ -241,7 +241,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroomId())
 				.withPostedByUser(q.getPostedBy())
-				.withPublicOnly(true)
+				// TODO: 10/02/19 this is a bug
+//				.withPublicOnly(true)
 				.withApprovedOnly()
 				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
 				.withLimit(page, noOfResults);

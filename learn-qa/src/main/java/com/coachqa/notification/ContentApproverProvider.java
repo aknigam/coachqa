@@ -25,7 +25,7 @@ public class ContentApproverProvider implements EventRegisteredUsersProvider {
         if(event.getEventType() == EventType.QUESTION_ANSWERED
                 || event.getEventType() == EventType.QUESTION_POSTED) {
 
-            return userService.getPostContentApprovers();
+            return userService.getPublicPostContentApprovers();
         }
         return Collections.emptyList();
     }

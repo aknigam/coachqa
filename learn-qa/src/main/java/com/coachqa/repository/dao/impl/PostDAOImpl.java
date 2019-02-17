@@ -7,6 +7,7 @@ import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.repository.dao.PostDAO;
 import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
 import com.coachqa.ws.model.PostApproval;
+import org.apache.ibatis.binding.BindingException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -79,6 +80,15 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 		postMapper.updatePostApproval(postApproval);
 
+	}
+
+	@Override
+	public List<Post> getPendingApprovalPosts(Integer appUserId, Integer page) {
+		try {
+			return postMapper.getPostsPendingApprovalByUser(appUserId, page * PAGE_SIZE);
+		} catch (BindingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 

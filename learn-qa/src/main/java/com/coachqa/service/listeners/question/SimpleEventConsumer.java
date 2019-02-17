@@ -24,8 +24,8 @@ public class SimpleEventConsumer implements EventConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleEventConsumer.class);
     private static final int MAX_RETRIALS = 3;
 
-    @Autowired
-    private EventDAO eventDAO;
+//    @Autowired
+//    private EventDAO eventDAO;
 
 //    private ApplicationEventListener stageOneListener;
     private Map<EventType, List<ApplicationEventListener>> eventListeners = new HashMap<>();
@@ -81,7 +81,7 @@ public class SimpleEventConsumer implements EventConsumer {
                 }
                 // finally
                 if(listenerInvocationSuccessful) {
-                    eventDAO.deleteEvent(event.getId());
+//                    eventDAO.deleteEvent(event.getId());
                     // it can republish with incremental delay here
                     int noOfretries = event.getRetryCount();
                     if(noOfretries <= MAX_RETRIALS) {

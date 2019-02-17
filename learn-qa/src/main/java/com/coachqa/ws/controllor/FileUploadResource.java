@@ -1,9 +1,12 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.FileInfo;
 import com.coachqa.repository.dao.FileUploadDao;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.CacheControl;
@@ -18,6 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.UUID;
 
 /**
  * Refer below links:
@@ -50,14 +58,15 @@ public class FileUploadResource {
 
     @PostMapping
     public @ResponseBody
-    String handleFileUpload(@RequestParam("file") MultipartFile file){
+    FileInfo handleFileUpload(@RequestParam("file") MultipartFile file){
 
         AppUser user = WSUtil.getUser(userService);
 
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                return fileUploadDao.persist(bytes );
+                return new FileInfo(fileUploadDao.persist(bytes));
+//                return new FileInfo("g-"+ UUID.randomUUID());
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException("Unexpected error occurred while uploading file. Please try again", e);
@@ -66,6 +75,7 @@ public class FileUploadResource {
             throw new RuntimeException("File not provided for upload");
         }
     }
+
 
 
 }

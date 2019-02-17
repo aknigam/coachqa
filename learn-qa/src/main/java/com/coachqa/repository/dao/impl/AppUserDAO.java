@@ -124,7 +124,10 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 
 	@Override
-	public List<Integer> getPostContentApprovers() {
+	public List<Integer> getPublicPostContentApprovers() {
+
+
+
 		return jdbcTemplate.query(m_adminUserQuery, new RowMapper<Integer>() {
 
 			@Override

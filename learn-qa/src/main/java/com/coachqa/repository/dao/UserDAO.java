@@ -15,7 +15,7 @@ public interface UserDAO {
 	AppUser getUserByIdentifier(Integer userId);
 
 
-	List<Integer> getPostContentApprovers();
+	List<Integer> getPublicPostContentApprovers();
 
 	void addAndroidUserToken(AndroidToken androidToken);
 

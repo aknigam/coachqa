@@ -1,9 +1,12 @@
 package com.coachqa.service;
 
 import com.coachqa.entity.Post;
+import com.coachqa.entity.PostApprovalRequest;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.model.PostApproval;
+
+import java.util.List;
 
 public interface PostService {
 
@@ -16,4 +19,6 @@ public interface PostService {
 	Post getPostById(Integer postId);
 
     void deletePost(Integer postId);
+
+	List<PostApprovalRequest> getPostsPendingApproval(Integer appUserId, Integer page);
 }

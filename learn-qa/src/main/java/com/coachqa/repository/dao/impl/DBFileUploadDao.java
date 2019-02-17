@@ -37,7 +37,7 @@ public class DBFileUploadDao extends BaseDao implements FileUploadDao {
             }, holder);
 
 
-            return String.valueOf( holder.getKey().intValue()) ;
+            return "l-"+String.valueOf( holder.getKey().intValue()) ;
         }
         finally {
             try {

@@ -295,6 +295,12 @@
             <version>1.24.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vision</artifactId>
+            <version>1.59.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>learn-qa</finalName>

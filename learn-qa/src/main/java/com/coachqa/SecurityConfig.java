@@ -1,16 +1,9 @@
 package com.coachqa;
 
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-import javax.sql.DataSource;
 
 
 /**
@@ -39,56 +32,6 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        /** http://www.mkyong.com/spring-security/spring-security-form-login-using-database/ */
-        auth
-                .jdbcAuthentication()
-                .dataSource(userDataSource())
-                .usersByUsernameQuery("select email , pasword, true as enabled from appuser where email =?")
-                .authoritiesByUsernameQuery("select email, 'ROLE_USER' from appuser where email = ?");
-
-
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web
-                .ignoring()
-                .antMatchers("/resources/**", "/swagger-ui.html");
-    }
-
-//    // @Bean
-//    public AuthSuccessHandler authSuccessHandler(){
-//        return new AuthSuccessHandler();
-//    }
-
-    @Bean
-    public DataSource userDataSource(){
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/learn-qa");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        return dataSource;
-    }
-
-
-//    // @Bean
-//    public UserDetailsService userDetailsService(){
-//        return null;
-//    }
-
-//    // @Bean
-//    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(userDetailsService);
-//        //authenticationProvider.setPasswordEncoder(new ShaPasswordEncoder());
-//
-//        return authenticationProvider;
-//    }
-
     /**
      * If following method is not implemented then -
      * Spring Security will automatically render a login page and logout success page for you
@@ -101,8 +44,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-//                .antMatchers("/api/**").access("hasRole('ROLE_USER')")
-                .anyRequest().authenticated();
+
+//                .antMatchers("/swagger-ui.html").authenticated(); // this will make swagger page secured
+                .antMatchers("/swagger-ui.html").permitAll(); // this makes swagger page to be unauthenticated
+
 
 
     }

@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 public abstract class BaseDao
 {
+	public static final Integer PAGE_SIZE = 5;
+
 	@Autowired
 	@Qualifier("learnqadataSource")
 	private DataSource dataSource;

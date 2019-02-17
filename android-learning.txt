@@ -6,6 +6,9 @@ Follow this documentation: https://firebase.google.com/docs/cloud-messaging/andr
 1. For firebase messaging to work the google play service should be installed.
 Refer:http://stackoverflow.com/questions/38293727/could-not-find-com-google-firebasefirebase-core9-0-0
 
+it can lead to following errors:
+com.google.firebase.FirebaseNetworkException: A network error (such as timeout, interrupted connection or unreachable host) has occurred.
+
 https://console.firebase.google.com/project/leanqaandroidapp/notification
 
 
@@ -71,3 +74,6 @@ https://stackoverflow.com/questions/35885974/how-to-put-toolbar-on-bottom-side-o
 
 https://stackoverflow.com/questions/41530788/application-crashes-when-i-try-to-debug
 - Instant run was disabled to addrress the application crash or stuck issue (Not able to initialize class for SetValues)
+
+Google estimate calculator
+https://cloud.google.com/products/calculator/#id=bcecbb8c-3ca7-498a-b884-1cd1b524fff5

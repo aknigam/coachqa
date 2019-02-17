@@ -158,12 +158,12 @@ public class QuestionServiceImpl implements QuestionService {
 		Check classroom settings whether approval is required or not
 		 */
 		if(isApprovalRequired(qstn)){
-// stage 1 indicates approval pending
+			// stage 1 indicates approval pending
 			eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_ONE));
 		}
 		else
 		{
-			// stage 1 indicates approval pending
+			// stage 2 indicates approval not needed
 			eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_POSTED, questionId, EventStage.STAGE_TWO));
 		}
 
@@ -173,7 +173,7 @@ public class QuestionServiceImpl implements QuestionService {
 	private boolean isApprovalRequired(Question qstn) {
 		if(qstn.isPublicQuestion()){
 			// TODO: 14/01/18 change the following line to return true; to make approval necessary for public questions
-			return false;
+			return true;
 		}
 		ClassroomSettings cs = classroomService.getClassroomSettings(qstn.getClassroomId());
 

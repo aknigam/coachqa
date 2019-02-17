@@ -87,13 +87,13 @@ public class ClassroomApprovalControllor {
 	 * @param classroomId
 	 * @return
 	 */
-	@GetMapping
+	@GetMapping("/approvals")
 	public @ResponseBody
-	List<ClassroomMembership> showJoinRequests(@RequestParam (value = "classroomId") Integer classroomId){
+	List<ClassroomMembership> showJoinRequests(@RequestParam (value = "classroomId", required = false) Integer classroomId,
+											   @RequestParam (value = "page", required = true) Integer page){
 
 		AppUser user = WSUtil.getUser(userService);
-		List<ClassroomMembership> membershipRequest = classroomService.getMemberShipRequests(user, classroomId);
-
+		List<ClassroomMembership> membershipRequest = classroomService.getMemberShipRequests(user, classroomId, page);
 		return membershipRequest;
 	}
 
@@ -105,10 +105,6 @@ public class ClassroomApprovalControllor {
 		return classroomService.getUserMemberships(user);
 
 	}
-
-
-
-	
 
 	
 }

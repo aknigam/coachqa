@@ -7,7 +7,33 @@
         </encoder>
     </appender>
 
-    <logger name="com.coachqa" level="DEBUG"/>
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="org.springframework" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
+    <logger name="org.springframework.security.web" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
+    <logger name="org.springframework.security.oauth2.provider" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
+    <!--Refer: https://stackoverflow.com/questions/21718097/how-to-configure-logback-for-mybatis-to-print-my-sql -->
+    <logger name="com.coachqa.repository.dao.mybatis.mapper" level="ERROR"  additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
+
+    <logger name="org.hibernate" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
+
+
+
+    <logger name="com.coachqa" level="DEBUG" additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

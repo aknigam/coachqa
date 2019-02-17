@@ -135,10 +135,10 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 
 	// TODO: 06/12/18 this method needs to be modified
 	@Override
-	public List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId) {
+	public List<ClassroomMembership> getMembershipRequests(Integer classroomId, Integer appUserId, Integer page) {
 
 		return  classroomMapper.getMembershipRequests(classroomId, appUserId, ClassroomMembershipStatusEnum
-				.PENDING_APPROVAL.getId());
+				.PENDING_APPROVAL.getId(), page*PAGE_SIZE);
 	}
 
 	@Override
@@ -163,6 +163,22 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 	@Override
 	public ClassroomMembership getMembership(Integer membershipId) {
 		return classroomMapper.getMembershipDetails(membershipId);
+	}
+
+	@Override
+	public List<Integer> getMembersList(Integer classroomId) {
+		return classroomMapper.getMembersList(classroomId);
+	}
+
+	@Override
+	public List<Integer> getAllContirbutors(Integer postId) {
+		return classroomMapper.getAllContributors(postId);
+	}
+
+	@Override
+	@Deprecated
+	public List<ClassroomMembership> getPendingMembershipRequests(Integer approverId) {
+		return classroomMapper.getPendingMembershipRequests(approverId);
 	}
 
 

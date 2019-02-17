@@ -7,6 +7,7 @@ import com.coachqa.service.listeners.ApplicationEventListener;
 import com.coachqa.service.listeners.SimpleRetryingEventListener;
 import com.coachqa.service.listeners.question.EventConsumer;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.service.listeners.question.ImageToTextOcrListener;
 import com.coachqa.service.listeners.question.SimpleEventConsumer;
 import com.coachqa.service.listeners.question.SimpleEventPublisher;
 import notification.NotificationService;
@@ -225,6 +226,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     public EventConsumer getEventConsumer(NotificationService notificationService, BlockingQueue queue) {
         BlockingQueue<ApplicationEvent> questionUpdatesQueue = new LinkedBlockingQueue<>();
         ApplicationEventListener userNotificationListener = new UsersNotificationListener(notificationService);
+        ImageToTextOcrListener ocrListener = new ImageToTextOcrListener();
 
         EventConsumer eventConsumer = new SimpleEventConsumer(queue);
 
@@ -232,7 +234,9 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         eventConsumer.attachListener(EventType.MEMBERSHIP_REQUEST, new SimpleRetryingEventListener(userNotificationListener));
 
         eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( ocrListener));
         eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( userNotificationListener ));
+        eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( ocrListener));
 
         eventConsumer.setDefaultListener(new SimpleRetryingEventListener( userNotificationListener ));
         return  eventConsumer;

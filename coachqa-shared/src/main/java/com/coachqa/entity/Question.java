@@ -45,6 +45,11 @@ public class Question extends Post implements java.io.Serializable {
 
 	private boolean favorite;
 
+	private List<Tag> tags = Collections.emptyList();
+
+	private List<Answer> answers = Collections.emptyList();
+
+
 	public boolean isFavorite() {
 		return favorite;
 	}
@@ -52,15 +57,6 @@ public class Question extends Post implements java.io.Serializable {
 	public void setFavorite(boolean favorite) {
 		this.favorite = favorite;
 	}
-
-
-	
-
-
-	
-	private List<Tag> tags = Collections.emptyList();
-	
-	private List<Answer> answers = Collections.emptyList();
 
 	public Question() {
 		setPostTypeEnum(PostTypeEnum.QUESTION);

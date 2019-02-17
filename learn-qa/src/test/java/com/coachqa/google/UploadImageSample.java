@@ -90,7 +90,7 @@ public class UploadImageSample {
             BlobInfo blobInfo =
                     storage.create(
                             BlobInfo
-                                    .newBuilder("crajee-dev001", "images/anand/image9_readertoallusers.jpg")
+                                    .newBuilder("crajee-dev001", "images/anand/image10_readertoallusers.jpg")
                                     // Modify access list to allow all users with link to read file
                                     .setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role
                                             .READER))))

@@ -35,7 +35,7 @@ public class GCPFileUploadDao implements FileUploadDao {
 
     public static final String BUCKET_CRAJEE_DEV = "crajee-dev001";
 
-    public static final String GCP_STORAGE_PREFIX = "g/";
+    public static final String GCP_STORAGE_PREFIX = "g-";
 
     private Storage storage;
 
@@ -89,12 +89,13 @@ public class GCPFileUploadDao implements FileUploadDao {
             return imageId;
         }
         finally {
-            if(fis != null)
+            if(fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
                     throw new RuntimeException("Unexpected error occurred while uploading file. Please try again");
                 }
+            }
         }
 
     }

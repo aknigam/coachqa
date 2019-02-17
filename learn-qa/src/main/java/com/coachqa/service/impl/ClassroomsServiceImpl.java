@@ -171,7 +171,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 
 	@Override
-	public List<ClassroomMembership> getMemberShipRequests(AppUser user, Integer classroomId) {
+	public List<ClassroomMembership> getMemberShipRequests(AppUser user, Integer classroomId, Integer page) {
 		if(classroomId != null) {
 			Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
 			if(classroom == null) {
@@ -184,7 +184,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 		}
 
-		return  classroomDAO.getMembershipRequests(classroomId, user.getAppUserId());
+		return  classroomDAO.getMembershipRequests(classroomId, user.getAppUserId(), page);
 	}
 
 	@Override
@@ -210,6 +210,23 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classroomDAO.searchClassrooms(page, userId, onlyLoginUserClassrooms);
 	}
 
+	@Override
+	public List<Integer> getMembersList(Integer classroomId) {
+		return classroomDAO.getMembersList(classroomId);
+	}
+
+	@Override
+	public List<Integer> getAllContributors(Integer postId) {
+		return classroomDAO.getAllContirbutors(postId);
+	}
+
+	@Override
+	@Deprecated
+	public List<ClassroomMembership> getPendingMembershipRequests(Integer approverId) {
+
+		return null;
+
+	}
 
 
 	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {

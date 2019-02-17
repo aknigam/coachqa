@@ -1,6 +1,9 @@
 package com.coachqa.ws.model;
 
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
@@ -13,11 +16,20 @@ public class ClassroomMembership {
 
     private int membershipId;
     private int classroomId;
+    private Classroom classroom;
     private int memberId;
+    private AppUser member;
     private ClassroomMembershipStatusEnum membershipStatus;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date startDate;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date expirationDate;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date membershipRequestDate;
+
     private String requestComments;
 
 
@@ -83,5 +95,21 @@ public class ClassroomMembership {
 
     public void setRequestComments(String requestComments) {
         this.requestComments = requestComments;
+    }
+
+    public AppUser getMember() {
+        return member;
+    }
+
+    public void setMember(AppUser member) {
+        this.member = member;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 }

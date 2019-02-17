@@ -12,6 +12,8 @@ import com.google.cloud.storage.StorageOptions;
  *
  * https://github.com/GoogleCloudPlatform/java-docs-samples/blob/master/storage/cloud-client/src/main/java/com/example/storage/QuickstartSample.java
  *
+ * https://cloud.google.com/docs/authentication/getting-started
+ *
  *
  */
 public class QuickstartSample {

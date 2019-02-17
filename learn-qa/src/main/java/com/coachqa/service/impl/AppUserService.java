@@ -52,8 +52,9 @@ public class AppUserService implements UserService {
 	}
 
 	@Override
-	public List<Integer> getPostContentApprovers() {
-		return userDAO.getPostContentApprovers();
+	public List<Integer> getPublicPostContentApprovers() {
+
+		return userDAO.getPublicPostContentApprovers();
 	}
 
 	@Override

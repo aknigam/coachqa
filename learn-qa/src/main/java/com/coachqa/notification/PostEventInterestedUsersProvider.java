@@ -3,18 +3,23 @@ package com.coachqa.notification;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Post;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.UserService;
+import com.coachqa.service.impl.ClassroomsServiceImpl;
 import notification.EventRegisteredUsersProvider;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
 import notification.repository.EventRegistrationDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +33,8 @@ import java.util.List;
  * Created by a.nigam on 28/12/16.
  */
 public class PostEventInterestedUsersProvider implements EventRegisteredUsersProvider {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(PostEventInterestedUsersProvider.class);
 
     private PostService postService;
 
@@ -49,29 +56,39 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
     @Override
     public List<Integer> getUsersRegisteredByDefault(ApplicationEvent event, EventRegistrationDao eventRegistrationDao) {
 
-        List<Integer> registeredUsers =  new ArrayList<>();
+        List<Integer> registeredUsers =  new ArrayList<Integer>();
         Integer postId = event.getEventSource();
         try{
             Post post = postService.getPostById(postId);
-            EventType type = event.getEventType();
 
             if(event.getStage() == EventStage.STAGE_ONE){
                 // this is approval flow
                 String content = post.getContent();
                 EventType eventType = event.getEventType();
                 AppUser postedBy = post.getPostedBy();
+                registeredUsers.add(postedBy.getAppUserId());
+                if(post.getPostTypeEnum() == PostTypeEnum.ANSWER) {
+                    // all the people who have either asked the question or answered the question should be alerted
+                    registeredUsers.addAll(classroomService.getAllContributors(postId));
+                }
 
-                return userService.getPostContentApprovers();
+                if(post.getClassroomId() != null) {
+                    Classroom clasroom = classroomService.getClassroom(post.getClassroomId());
+                    return Arrays.asList(clasroom.getClassOwner().getAppUserId());
+
+                }
+                return userService.getPublicPostContentApprovers();
             }
 
             // if not approved - return the list of approver. we can use stage to identify if it is approved
 
             Integer classroomId = post.getClassroomId();
+            ApplicationEvent classroomEvent = new ApplicationEvent(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
+            registeredUsers.addAll(eventRegistrationDao.getRegisteredUsers(classroomEvent));
             Classroom classroom = classroomService.getClassroom(classroomId);
             if(classroom != null)
             {
-                ApplicationEvent classroomEvent = new ApplicationEvent(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
-                registeredUsers.addAll(eventRegistrationDao.getRegisteredUsers(classroomEvent));
+                registeredUsers.addAll(classroomService.getMembersList(classroomId));
                 registeredUsers.add(classroom.getClassOwner().getAppUserId());
 
             }
@@ -79,6 +96,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
             return registeredUsers;
         }
         catch (QAEntityNotFoundException e){
+            LOGGER.error("Error ",e);
             return Collections.emptyList();
         }
 

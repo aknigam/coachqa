@@ -1,11 +1,13 @@
 package com.coachqa.ws.controllor;
 
 import com.coachqa.LearnQAWebTestConfig;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -23,19 +25,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by a.nigam on 14/12/16.
  */
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = LearnQAWebTestConfig.class, loader=AnnotationConfigContextLoader.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class QuestionResourceTest {
 
-//    @Autowired
+    @Autowired
     private WebApplicationContext wac;
-
-
 
     private MockMvc mockMvc;
 
-//    @Before
+    @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }

@@ -1,6 +1,7 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.Post;
+import com.coachqa.entity.PostApprovalRequest;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
@@ -10,6 +11,7 @@ import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -65,10 +69,10 @@ public class PostServiceImpl implements PostService {
 		Post post = postDao.getPostById(postApproval.getPostId());
 		postDao.updatePostApproval(postApproval);
 
-		ApplicationEvent event = new ApplicationEvent(EventType.MEMBERSHIP_REQUEST, postApproval.getPostId(), post
+		ApplicationEvent event = new ApplicationEvent(EventType.POST_APPROVED, postApproval.getPostId(), post
 				.getPostedBy().getAppUserId(),
 				new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
-
+		event.setStage(EventStage.STAGE_TWO);
 		postPublisher.publishEvent(event);
 	}
 
@@ -85,6 +89,26 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deletePost(Integer postId) {
 		// TODO: 14/04/18  
+	}
+
+	@Override
+	public List<PostApprovalRequest> getPostsPendingApproval(Integer appUserId, Integer page) {
+		// each element in the list should also have the questionId of the post.
+		// postid is the questionId
+		// posttype indicates whether the question itself or one of its answers is pending approval
+		List<Post> posts =  postDao.getPendingApprovalPosts(appUserId, page);
+
+		List<PostApprovalRequest> pers= new ArrayList<>();
+
+		for (Post p : posts) {
+			PostApprovalRequest request = new PostApprovalRequest();
+			request.setRequestedBy(p.getPostedBy());
+			request.setPost(p);
+			request.setPostType(p.getPostTypeEnum());
+			pers.add(request);
+		}
+		return pers;
+
 	}
 
 }

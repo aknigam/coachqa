@@ -4,6 +4,7 @@ import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.ws.model.PostApproval;
 
+import java.util.List;
 import java.util.Map;
 
 public interface PostDAO {
@@ -20,4 +21,6 @@ public interface PostDAO {
 	Post getPostById(Integer postId);
 
 	void updatePostApproval(PostApproval postApproval);
+
+    List<Post> getPendingApprovalPosts(Integer appUserId, Integer page);
 }

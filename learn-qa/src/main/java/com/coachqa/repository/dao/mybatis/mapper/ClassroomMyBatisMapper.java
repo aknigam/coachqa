@@ -114,9 +114,33 @@ public interface ClassroomMyBatisMapper {
     @Select("classroomMemberships.ftlh")
     @Results({
             @Result(column = "membershipStatus", property = "membershipStatus", typeHandler =
-                    ClassroomStatusTypeHandler.class)
+                    ClassroomStatusTypeHandler.class),
+
+            @Result(column = "classname", property= "classroom.className"),
+            @Result(column = "classroomId", property= "classroom.classroomId"),
+            @Result(column = "firstname", property= "member.firstName"),
+            @Result(column = "lastName", property= "member.lastName"),
+            @Result(column = "middlename", property= "member.middleName"),
+            @Result(column = "email", property= "member.email"),
+            @Result(column = "memberId", property= "member.appUserId")
     })
     List<ClassroomMembership> getMembershipRequests(@Param("classroomid") Integer classroomId, @Param("ownerid")
-            Integer appUserId, @Param("status") int status);
+            Integer appUserId, @Param("status") int status, @Param("page") Integer page);
 
+    @Select("select cm.appuserid from classroommember cm where cm.status =  2 and cm.classroomid = #{classroomId};")
+    List<Integer> getMembersList(@Param("classroomId") Integer classroomId);
+
+    @Select("select p.postedby " +
+            "from crajee.answer a " +
+            "JOIN question q on q.questionid = a.questionid " +
+            "RIGHT JOIN answer oa on oa.questionid = a.questionid " +
+            "RIGHT JOIN crajee.post p on p.postid = oa.answerid " +
+            "where a.answerid = #{postId};")
+    List<Integer> getAllContributors(Integer postId);
+
+    @Select("SELECT cm.appuserid as appuserId, cm.classroomid as classroomId " +
+            "from classroommember cm " +
+            "  JOIN classroom c on c.classroomid = cm.classroomid and c.classowner = #{approverId} " +
+            "where status = 1")
+    List<ClassroomMembership> getPendingMembershipRequests(Integer approverId);
 }

@@ -16,7 +16,8 @@ import java.util.concurrent.BlockingQueue;
 
 public class SimpleEventPublisher implements EventPublisher {
 
-    private boolean persistent = true;
+    // TODO: 09/02/19 why is this needed
+    private boolean persistent = false;
     @Autowired
     private EventDAO eventDAO;
 
@@ -35,7 +36,6 @@ public class SimpleEventPublisher implements EventPublisher {
 
     }
 
-
     public void publishEvent(ApplicationEvent event) {
         try {
             Queue<ApplicationEvent> queue = questionUpdatesQueue;
@@ -43,9 +43,20 @@ public class SimpleEventPublisher implements EventPublisher {
                 eventDAO.createEvent(event);
             }
             queue.offer(event);
+            // sleeping to give main thread the chance to continue processing.
+            // TODO: 09/02/19
+            sleep(10l);
         }
         catch (Throwable t) {
             LOGGER.error("Error queuing the event "+ event);
+        }
+    }
+
+    private void sleep(long duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

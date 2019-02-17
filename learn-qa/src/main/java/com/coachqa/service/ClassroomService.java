@@ -21,7 +21,7 @@ public interface ClassroomService {
 
 	void processJoinRequest(AppUser approver, List<Integer> membershipRequests, boolean isApprove);
 
-	List<ClassroomMembership> getMemberShipRequests(AppUser user, Integer classroomId);
+	List<ClassroomMembership> getMemberShipRequests(AppUser user, Integer classroomId, Integer page);
 
 	boolean isActiveMemberOf(Integer classroomId, int user);
 
@@ -32,6 +32,12 @@ public interface ClassroomService {
 	ClassroomSettings getClassroomSettings(Integer classroomId);
 
     List<Classroom> searchClassrooms(Integer integer, Integer page, boolean onlyLoginUserClassrooms);
+
+    List<Integer> getMembersList(Integer classroomId);
+
+	List<Integer> getAllContributors(Integer postId);
+
+	List<ClassroomMembership> getPendingMembershipRequests(Integer appUserId);
 
 //	void processClassroomJoinRequest(int classroomId, boolean isApproved, int requesterId, Integer approverUserId);
 
