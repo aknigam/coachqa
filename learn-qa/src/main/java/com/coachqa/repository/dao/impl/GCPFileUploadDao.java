@@ -1,6 +1,8 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.repository.dao.FileUploadDao;
+import com.coachqa.ws.ImageData;
+import com.coachqa.ws.controllor.ImageProcessor;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -39,6 +41,8 @@ public class GCPFileUploadDao implements FileUploadDao {
 
     private Storage storage;
 
+    private ImageProcessor imageProcessor = new ImageProcessor();
+
     @PostConstruct
     public void init(){
         storage = StorageOptions.getDefaultInstance().getService();
@@ -54,10 +58,19 @@ public class GCPFileUploadDao implements FileUploadDao {
      *
      * GOOGLE_APPLICATION_CREDENTIALS=/path/google-serviceaccounttemp_credentials.json
      * @param bytes
+     * @param accountId
      * @return
      */
-    public String persist(byte[] bytes) {
+    public String persist(byte[] bytes, int accountId) {
+        // TODO: 18/02/19 use the accountId to segregate this accounts files
+        ImageData id = ImageProcessor.resizeToStandardSize(bytes);
+        String imageName = UUID.randomUUID().toString();
+        persistsToGCPAndGetImageId(id.standardImage, imageName+"_t");
+        return persistsToGCPAndGetImageId(id.standardImage, imageName);
 
+    }
+
+    private String persistsToGCPAndGetImageId(byte[] bytes, String imageName) {
         InputStream fis = null;
         try {
             fis = new ByteArrayInputStream(bytes);
@@ -65,7 +78,7 @@ public class GCPFileUploadDao implements FileUploadDao {
             BlobInfo blobInfo =
                     storage.create(
                             BlobInfo
-                                    .newBuilder(BUCKET_CRAJEE_DEV, UUID.randomUUID().toString())
+                                    .newBuilder(BUCKET_CRAJEE_DEV, imageName)
                                     // Modify access list to allow all users with link to read file
                                     .setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
                                     .build(),
@@ -97,9 +110,7 @@ public class GCPFileUploadDao implements FileUploadDao {
                 }
             }
         }
-
     }
-
 
 
     public byte[] readImage(Integer imageId) {

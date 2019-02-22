@@ -40,9 +40,6 @@ public class Question extends Post implements java.io.Serializable {
 	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private Date lastActiveDate;
 
-	
-	private boolean publicQuestion;
-
 	private boolean favorite;
 
 	private List<Tag> tags = Collections.emptyList();
@@ -100,16 +97,6 @@ public class Question extends Post implements java.io.Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-
-
-	public boolean isPublicQuestion() {
-		return publicQuestion;
-	}
-
-	public void setPublicQuestion(boolean publicQuestion) {
-		this.publicQuestion = publicQuestion;
 	}
 
 	public List<Tag> getTags() {

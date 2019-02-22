@@ -86,8 +86,10 @@ public interface ClassroomMyBatisMapper {
             @Result(column = "loggedInUserStatus", property = "loggedInUserStatus", typeHandler =
                     ClassroomStatusTypeHandler.class)
     })
-    List<Classroom> searchClassrooms(@Param("page") Integer page, @Param("loginuserid") int loginUserId, @Param
-            ("myclassonly") boolean myClassesOnly);
+    List<Classroom> searchClassrooms(@Param("page") Integer page,
+                                     @Param("loginuserid") int loginUserId,
+                                     @Param("myclassonly") boolean myClassesOnly,
+                                     @Param("accountId") int accountId);
 
     @Select("SELECT" +
             "  classroommemberid as membershipId," +

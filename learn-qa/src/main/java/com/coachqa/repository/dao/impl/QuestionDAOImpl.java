@@ -1,5 +1,6 @@
 package com.coachqa.repository.dao.impl;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
@@ -130,14 +131,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	}
 
 	@Override
-	public List<Question> findByQuery(QueryCriteria q, Integer page, Integer userId, int
+	public List<Question> findByQuery(QueryCriteria q, Integer page, AppUser loggedInUser, int
 			noOfPaginatedResults) {
 
 		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
 
 		queryBuilder
 				= queryBuilder
-				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
 				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
@@ -167,7 +168,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 
-		queryBuilder.withPublicOnly(true)
+		queryBuilder
+				.withAccountId(loggedInUser.getAccount().getAccountId())
 				.withApprovedOnly()
 				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
                 .withLimit(page, noOfPaginatedResults);
@@ -214,7 +216,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	 * @return
 	 */
 	@Override
-	public List<Question> findSimilarQuestions(Question q, int page, int userId, int noOfResults) {
+	public List<Question> findSimilarQuestions(Question q, int page, AppUser user, int noOfResults) {
 
 		// todo: access check should also be added here. i.e the logged in user should be the member of the classroom
 		// todo: if the question is private.
@@ -233,7 +235,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 		queryBuilder
 		 = queryBuilder
-				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
 				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
@@ -243,6 +245,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withPostedByUser(q.getPostedBy())
 				// TODO: 10/02/19 this is a bug
 //				.withPublicOnly(true)
+				.withAccountId(user.getAccount().getAccountId())
 				.withApprovedOnly()
 				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
 				.withLimit(page, noOfResults);

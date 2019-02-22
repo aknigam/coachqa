@@ -27,13 +27,13 @@ import java.util.List;
 @Mapper
 public interface QuestionMybatisMapper {
 
-    @Update("Update question set refsubjectid = #{refSubjectId} , title =  #{title} ,  ispublic = #{publicQuestion}  " +
+    @Update("Update question set refsubjectid = #{refSubjectId} , title =  #{title}   " +
             " where questionid = #{questionId} ")
     void updateQuestion(Question updatedQuestion);
 
     @Insert("insert into question (questionid, refsubjectid, questionlevelid, refquestionstatusid , " +
-            " lastactivedate, title, isPublic) " +
-            "values (#{postId},#{refSubjectId},1, #{statusId} ,  now(), #{title}, #{publicQuestion} )")
+            " lastactivedate, title) " +
+            "values (#{postId},#{refSubjectId},1, #{statusId} ,  now(), #{title})")
     void addQuestion(Question question);
     @Select({"select " +
             "questionid," +
@@ -52,7 +52,6 @@ public interface QuestionMybatisMapper {
             "lastactivedate," +
             "p.votes,    " +
             "p.classroomid," +
-            "q.ispublic as publicQuestion,  " +
             "p.approvalstatus" +
             " from question q    " +
             " join post p on p.postid = q.questionid" +
@@ -74,7 +73,6 @@ public interface QuestionMybatisMapper {
 
             @Result(column = "title", property= "title"),
             @Result(column = "noofviews", property= "noOfViews"),
-            @Result(column = "ispublic", property= "publicQuestion"),
             @Result(column = "approvalstatus", property= "approvalStatus"),
 
             @Result(column = "postedby", property= "postedBy.appUserId"),
@@ -115,7 +113,6 @@ public interface QuestionMybatisMapper {
             "lastactivedate," +
             "p.votes,    " +
             "p.classroomid," +
-            "q.ispublic,  " +
             "p.approvalstatus" +
             " from question q    " +
             " join post p on p.postid = q.questionid" +
@@ -135,7 +132,6 @@ public interface QuestionMybatisMapper {
 
             @Result(column = "title", property= "title"),
             @Result(column = "noofviews", property= "noOfViews"),
-            @Result(column = "ispublic", property= "publicQuestion"),
             @Result(column = "approvalstatus", property= "approvalStatus"),
 
             @Result(column = "postedby", property= "postedBy.appUserId"),
@@ -207,7 +203,6 @@ public interface QuestionMybatisMapper {
             "lastactivedate," +
             "p.votes,    " +
             "p.classroomid," +
-            "q.ispublic as publicQuestion,  " +
             "p.approvalstatus" +
             " from question q    " +
             " join post p on p.postid = q.questionid" +
@@ -232,7 +227,6 @@ public interface QuestionMybatisMapper {
 
             @Result(column = "title", property= "title"),
             @Result(column = "noofviews", property= "noOfViews"),
-            @Result(column = "ispublic", property= "publicQuestion"),
             @Result(column = "approvalstatus", property= "approvalStatus"),
 
             @Result(column = "postedby", property= "postedBy.appUserId"),

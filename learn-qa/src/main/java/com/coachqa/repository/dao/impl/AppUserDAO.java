@@ -1,15 +1,18 @@
 package com.coachqa.repository.dao.impl;
 
+import com.coachqa.entity.Account;
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.UserAlreadyExistsException;
 import com.coachqa.exception.UserNotFoundException;
 import com.coachqa.repository.dao.UserDAO;
+import com.coachqa.repository.dao.mybatis.mapper.AppUserMapper;
 import com.coachqa.repository.dao.sp.AppUserAddSproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
@@ -31,7 +34,9 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	private static String m_userByIdQuery = "select appuserid, firstname, middlename, lastname,  email  from appuser where appUserId = ?";
 
-	private static String m_userByEmailQuery = "select appuserid, firstname, email, lastname  from appuser where email = ?";
+	private static String m_userByEmailQuery = "select appuserid, firstname, email, lastname, accountId  from appuser" +
+			" where " +
+			"email = ?";
 
 	private static String m_adminUserQuery = "select appuserid from appuser where usertypeid = 2";
 
@@ -39,6 +44,8 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 
 	private static String getAddAndroidTokenQuery = "select androidtoken from appuser where usertypeid = 2";
 
+	@Autowired
+	private AppUserMapper appUserMapper;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -62,6 +69,8 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 					user.setEmail(rs.getString("email"));
 					user.setFirstName(rs.getString("firstname"));
 					user.setLastName(rs.getString("lastname"));
+					// TODO: 18/02/19 getByid method is used to prevent creation of account objects unnecessarily
+					user.setAccount(Account.getById(rs.getInt("accountId")));
 					return user;
 				}
 			});
@@ -84,8 +93,11 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 	@Override
 	public AppUser addUser(AppUser user) {
 		try {
-			return userAddOrUpdateSproc.addUser(user);
-		}catch (DuplicateKeyException dke){
+            appUserMapper.addUer(user);
+//            user.setAppUserId(userId);
+            return user;
+//			return userAddOrUpdateSproc.addUser(user);
+		} catch (DuplicateKeyException dke){
 			LOGGER.error(String.format( "User with email %s already exists", user.getEmail()), dke);
 			throw new UserAlreadyExistsException(ApplicationErrorCode.USER_ALREADY_EXISTS, String.format( "User with email %s already exists", user.getEmail()));
 		}

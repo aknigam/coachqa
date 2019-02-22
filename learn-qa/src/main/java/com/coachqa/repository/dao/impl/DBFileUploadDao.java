@@ -20,8 +20,9 @@ public class DBFileUploadDao extends BaseDao implements FileUploadDao {
 
     private static String imageReadQuery = "Select imagecontent from postmedia where id = ?";
 
-    public String persist(byte[] bytes) {
-
+    public String persist(byte[] bytes, int accountId) {
+        // TODO: 18/02/19 use the accountId to segregate this accounts files
+        // TODO: 18/02/19 accountId is part of postMedia
         jdbcTemplate = getJdbcTemplate();
         final PreparedStatement[] ps = {null};
         try {

@@ -41,7 +41,7 @@ public class QuestionControllor {
 
 		AppUser user = WSUtil.getUser(userService);
 
-
+		question.setAccount(user.getAccount());
 		question.setPostedBy(user);
 		question.setRefQuestionStatusId(QuestionStatusEnum.NEW);
 		question.setPostDate(new Date());
@@ -52,7 +52,7 @@ public class QuestionControllor {
 
 
 		Integer addedQuestionId = addedQuestion.getQuestionId();
-		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 0, user.getAppUserId());
+		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 0, user);
 
 		return addedQuestion;
 	}
@@ -123,8 +123,6 @@ public class QuestionControllor {
 			criteria.setClassroomId(classroomId);
 		if(tagId != null)
 			criteria.setTags(Arrays.asList(new Tag[]{new Tag(tagId)}));
-		if(isPublic != null)
-			criteria.setPublicQuestion(isPublic);
 		if(ownerId != null){
 			criteria.setPostedBy(new AppUser(ownerId, "", "", "", ""));
 		}
@@ -135,7 +133,7 @@ public class QuestionControllor {
 		If pagination is implemented then this won't happen though.
 		 */
 		page = page == null ? 0: page;
-		return questionService.findSimilarQuestions(criteria, page, user.getAppUserId());
+		return questionService.findSimilarQuestions(criteria, page, user);
 	}
 
 	/**
@@ -165,7 +163,7 @@ public class QuestionControllor {
 
 
 		page = page == null ? 0: page;
-		return questionService.findByQuery(c, page, user.getAppUserId());
+		return questionService.findByQuery(c, page, user);
 
 	}
 

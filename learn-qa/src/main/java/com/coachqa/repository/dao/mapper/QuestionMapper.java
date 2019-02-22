@@ -19,7 +19,6 @@ public class QuestionMapper implements RowMapper<Question> {
 		q.setPostTypeEnum(PostTypeEnum.getPostType(rs.getInt("posttype")));
 		q.setTitle(rs.getString("title"));
 		q.setContent(rs.getString("content"));
-		q.setPublicQuestion(rs.getBoolean("ispublic"));
 		q.setLastActiveDate(rs.getTimestamp("lastactivedate"));
 		q.setPostDate(rs.getTimestamp("postdate"));
 		q.setNoOfViews(rs.getInt("noofviews"));

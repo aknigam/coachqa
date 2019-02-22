@@ -77,7 +77,8 @@ public class ImageToTextOcrListener implements ApplicationEventListener {
     private boolean isApprovedPostTypeEvent(ApplicationEvent event) {
         EventType eventType = event.getEventType();
 
-        return (event.getStage() == EventStage.STAGE_TWO) && ( eventType == EventType.QUESTION_POSTED
+        return (event.getStage() == EventStage.STAGE_TWO) &&
+                ( eventType == EventType.QUESTION_POSTED
                 || eventType == EventType.QUESTION_ANSWERED
                 || eventType ==  EventType.POST_UPDATED);
     }

@@ -132,7 +132,7 @@ public class QuestionQueryBuilder {
         conditions.add(new QueryCondition<Integer>("postedby", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
-
+    @Deprecated
     public QuestionQueryBuilder withPublicOnly(Boolean aPublic) {
         if(aPublic == null)
             return this;
@@ -240,6 +240,11 @@ public class QuestionQueryBuilder {
             return "'"+rhs+"'";
         }
         return rhs.toString();
+    }
+
+    public QuestionQueryBuilder withAccountId(int accountId) {
+        conditions.add(new QueryCondition("u.accountId", accountId).withJoinType(JoinTypeEnum.EQUALS));
+        return this;
     }
 
     public static class QueryCondition<T>{

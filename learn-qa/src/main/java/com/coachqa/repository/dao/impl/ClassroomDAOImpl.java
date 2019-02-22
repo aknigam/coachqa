@@ -40,8 +40,8 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 			"membershiprequestdate, membershipstartdate, membershipexpirartiondate) values (?, ?, ?, ?, ?, ?, ?)";
 
 	private static String addClassroomQuery = "INSERT INTO classroom(classowner,classname,ispublic,description, " +
-			"lastupdatedate, subjectId )" +
-			" VALUES(?, ?, ?, ?, ?, ?)";
+			"lastupdatedate, subjectId , accountId)" +
+			" VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 	private static String endMembershipQuery ="update classroommember set status = ? , comments = ? where " +
 			"classroomid = ? and appUserId = ?";
@@ -101,6 +101,7 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 					Date now = new Date(System.currentTimeMillis());
 					ps.setDate(5, now);
 					ps.setInt(6, classroom.getSubject().getRefSubjectId());
+                    ps.setInt(7, classroom.getAccount().getAccountId());
 
 					return ps;
 				}
@@ -154,9 +155,10 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 	}
 
 	@Override
-	public List<Classroom> searchClassrooms(int page, int loggedUserId, boolean onlyMyClasses) {
+	public List<Classroom> searchClassrooms(int page, AppUser loggedUserId, boolean onlyMyClasses) {
 		page = page * 10;
-		List<Classroom> classrooms = classroomMapper.searchClassrooms(page, loggedUserId, onlyMyClasses);
+		List<Classroom> classrooms = classroomMapper.searchClassrooms(page, loggedUserId.getAppUserId(), onlyMyClasses,
+				loggedUserId.getAccount().getAccountId());
 		return classrooms;
 	}
 

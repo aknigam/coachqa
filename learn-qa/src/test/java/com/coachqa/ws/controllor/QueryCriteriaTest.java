@@ -26,7 +26,6 @@ public class QueryCriteriaTest {
                 .withClassroom(1)
                 .withTag(Arrays.asList(new Integer[]{1, 2}))
                 .withPostedByUser(new AppUser(1, "", "", "", ""))
-                .withPublicOnly(true)
                 .withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
                 .withLimit(0, 5)
                 .buildQuery();
@@ -73,7 +72,7 @@ public class QueryCriteriaTest {
                     .withJoinType(QuestionQueryBuilder.JoinTypeEnum.LIKE));
         }
 
-        queryBuilder.withPublicOnly(true)
+        queryBuilder
                 .withApprovedOnly()
                 .withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC);
 //                .withLimit(page, noOfPaginatedResults);

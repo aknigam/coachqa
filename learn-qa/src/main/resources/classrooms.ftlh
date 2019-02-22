@@ -23,5 +23,6 @@ JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status an
 LEFT JOIN classroommember cm on cm.classroomid = c.classroomid and cm.appuserid = ${loginuserid}
 LEFT JOIN refclassroommemberstatus cs on cs.refclassroommemberstatusid = cm.status
 </#if>
+where c.accountId = ${accountId}
 ORDER BY c.classroomid
 LIMIT ${page}, 10

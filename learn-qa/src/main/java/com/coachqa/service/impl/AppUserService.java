@@ -1,8 +1,10 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Account;
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import com.coachqa.exception.UserNotFoundException;
+import com.coachqa.repository.dao.AccountDAO;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.service.UserService;
 import notification.NotificationService;
@@ -22,6 +24,9 @@ public class AppUserService implements UserService {
 	private UserDAO userDAO;
 
 	@Autowired
+	private AccountDAO accountDao;
+
+	@Autowired
 	private NotificationService notificationService;
 
 	/**
@@ -32,6 +37,13 @@ public class AppUserService implements UserService {
 	@Override
 	@Transactional
 	public AppUser addUser(AppUser user) {
+
+		// check of the account exists
+
+		Account account = accountDao.fetchAccountByName(user.getAccount().getAccountName());
+		if(account == null) {
+			throw new RuntimeException("User registration cannot be completed as the provided account does not exist.");
+		}
 		return userDAO.addUser(user);
 	}
 

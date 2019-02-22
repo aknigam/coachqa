@@ -1,5 +1,6 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Account;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.ClassroomSettings;
@@ -9,12 +10,14 @@ import com.coachqa.exception.ClassroomNotExistsException;
 import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
 import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
+import com.coachqa.repository.dao.AccountDAO;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.ClassroomMembership;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,9 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	@Autowired
 	private UserService userService;
+
+    @Autowired
+    private AccountDAO accountDao;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -100,6 +106,11 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Override
 	public Classroom createClassroom(Classroom classroom) {
 
+        Account account = accountDao.fetchAccountByName(classroom.getAccount().getAccountName());
+        if(account == null) {
+            throw new RuntimeException("Classroom cannot be created as the provided account" +
+					" does not exist.");
+        }
 		Classroom addedClassroom =  classroomDAO.createClassroom(classroom);
 		return addedClassroom;
 	}
@@ -164,7 +175,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				classroomId, requesterUserId,
 				new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis()));
-
+		approvedEvent.setStage(EventStage.STAGE_TWO);
 		publisher.publishEvent(approvedEvent);
 	}
 
@@ -190,7 +201,6 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Override
 	public boolean isActiveMemberOf(Integer classroomId, int user) {
 		return  classroomDAO.isActiveMemberOf(classroomId, user);
-
 	}
 
 	@Override
@@ -199,14 +209,13 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classrooms;
 	}
 
-
 	@Override
 	public ClassroomSettings getClassroomSettings(Integer classroomId) {
 		return new ClassroomSettings();
 	}
 
 	@Override
-	public List<Classroom> searchClassrooms(Integer userId, Integer page, boolean onlyLoginUserClassrooms) {
+	public List<Classroom> searchClassrooms(AppUser userId, Integer page, boolean onlyLoginUserClassrooms) {
 		return classroomDAO.searchClassrooms(page, userId, onlyLoginUserClassrooms);
 	}
 
@@ -228,8 +237,14 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	}
 
+    @Override
+    public Classroom updateClassroom(Classroom classroom) {
+        // TODO: 18/02/19 provide implementation
+        return null;
+    }
 
-	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
+
+    private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
 
 		if(isRequesterClassroomOwner(classOwnerId, requestedByUserId)){
 			return true;

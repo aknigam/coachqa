@@ -20,7 +20,7 @@ public class ClassroomMyBatisMapperTest {
         sf.getConfiguration().addMapper(ClassroomMyBatisMapper.class);
 
         ClassroomMyBatisMapper m = sf.openSession().getMapper(ClassroomMyBatisMapper.class);
-        List<Classroom> c = m.searchClassrooms(0, 2, false);
+        List<Classroom> c = m.searchClassrooms(0, 2, false, 100);
 
         System.out.println(c.size());
 

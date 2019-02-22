@@ -26,6 +26,14 @@ import java.util.List;
  * https://cloud.google.com/vision/docs/quickstart-client-libraries?authuser=1
  * https://cloud.google.com/vision/docs/detecting-text?authuser=1
  * https://cloud.google.com/vision/docs/ocr?authuser=1
+ *
+ * text extractionn using cloud vision can also be done in Android APP using ML Kit for firebase
+ * Quote from documentation: https://cloud.google.com/vision/docs/ocr
+ *  "Note: Using this API in a mobile app? Try ML Kit for Firebase, which provides native Android and iOS SDKs for
+ * using Cloud Vision services, as well as on-device ML Vision APIs and on-device inference using custom ML models."
+ *
+ *
+ *
  */
 @Component
 public class GCPCloudVisionImageProcessor implements ImageProcessor {

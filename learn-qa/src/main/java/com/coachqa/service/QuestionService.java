@@ -87,7 +87,7 @@ public interface QuestionService {
 	Question getQuestionByIdAndIncrementViewCount(Integer questionId, AppUser user);
 
 
-	List<Question> findSimilarQuestions(Question questionId, int noOfResults, Integer userId);
+	List<Question> findSimilarQuestions(Question questionId, int noOfResults, AppUser user);
 
 	List<Question> getQuestionsByTag(int tagId);
 
@@ -98,5 +98,5 @@ public interface QuestionService {
 
 	List<Question> getMyFavorites(Integer appUserId, Integer page);
 
-	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer appUserId);
+	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser);
 }
