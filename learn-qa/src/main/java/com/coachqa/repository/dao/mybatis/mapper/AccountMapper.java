@@ -17,7 +17,7 @@ public interface AccountMapper {
     @Select(" Select accountId, accountName, accountDescription " +
             "from account where accountName = #{accountName}")
     @Results({
-            @Result(property="tags", column="questionid", javaType= List.class, many=@Many(select=
+            @Result(property="accountPreferences", column="accountId", javaType= List.class, many=@Many(select=
                     "getAccountPreferences"))
     })
     public Account getByName( @Param( "accountName") String accountName);
@@ -25,11 +25,12 @@ public interface AccountMapper {
     @Select(" Select accountId, accountName, accountDescription " +
             "from account where accountId = #{accountId}")
     @Results({
-            @Result(property="tags", column="questionid", javaType= List.class, many=@Many(select=
+            @Result(property="accountPreferences", column="accountId", javaType= List.class, many=@Many(select=
                     "getAccountPreferences"))
     })
     Account fetchCompleteAccountDetails( @Param("accountId") int accountId);
 
     @Select(" SELECT postsNeedApproval from account_preference where accountId = #{accountId}")
     AccountPreference getAccountPreferences(int accountId);
+
 }

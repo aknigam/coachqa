@@ -21,4 +21,6 @@ public interface PostService {
     void deletePost(Integer postId);
 
 	List<PostApprovalRequest> getPostsPendingApproval(Integer appUserId, Integer page);
+
+	void updatePostExtractedtext(Integer postId, String imageExtractedText);
 }

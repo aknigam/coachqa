@@ -12,6 +12,7 @@ import com.coachqa.repository.dao.mybatis.typehandler.QuestionLevelEnumTypeHandl
 import com.coachqa.repository.dao.mybatis.typehandler.QuestionStatusEnumTypeHandler;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,6 +20,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
 
 import java.util.Date;
 import java.util.List;
@@ -97,32 +99,44 @@ public interface QuestionMybatisMapper {
 
 
 //    https://stackoverflow.com/questions/33151873/one-to-many-relationship-in-mybatis
-    @Select({"select questionid," +
-            "refsubjectid," +
-            "questionlevelid," +
-            "p.postedby," +
-            "p.posttype," +
-            "u.firstname," +
-            "u.middlename," +
-            "u.lastName," +
-            "refquestionstatusid," +
-            "title," +
-            "p.content," +
-            "p.noofviews," +
-            "p.postdate," +
-            "lastactivedate," +
-            "p.votes,    " +
-            "p.classroomid," +
-            "p.approvalstatus" +
-            " from question q    " +
-            " join post p on p.postid = q.questionid" +
-            " join appuser u on u.appuserId = p.postedby " +
-            " where p.postedby = #{appUserId}" +
-            " order by p.postdate desc limit #{page}, 5 "})
+
+    @Lang(FreeMarkerLanguageDriver.class)
+    @Select("questions.ftlh")
+//
+//    @Select({"select questionid," +
+//            "s.refsubjectid," +
+//            "questionlevelid," +
+//            "p.postedby," +
+//            "p.posttype," +
+//            "u.firstname," +
+//            "u.middlename," +
+//            "u.lastName," +
+//            "refquestionstatusid," +
+//            "title," +
+//            "p.content," +
+//            "p.noofviews," +
+//            "p.postdate," +
+//            "lastactivedate," +
+//            "p.votes,    " +
+//            "p.classroomid," +
+//            "p.approvalstatus," +
+//            "c.ClassName, " +
+//            "s.subjectname" +
+//            " from question q    " +
+//            " join post p on p.postid = q.questionid" +
+//            " join appuser u on u.appuserId = p.postedby " +
+//            " JOIN classroom c ON  c.classroomid = p.classroomid " +
+//            " JOIN refsubject s ON  q.refsubjectid = s.refsubjectid" +
+//            " where p.postedby = #{appUserId}" +
+//            " order by p.postdate desc limit #{page}, 5 "})
     // TODO: 27/01/18 remove hardcoded page size of 5 above
     @Results({
             @Result(column = "questionid", property = "questionId"),
             @Result(column = "refsubjectid", property = "refSubjectId"),
+            @Result(column = "refsubjectid", property = "subject.refSubjectId"),
+            @Result(column = "subjectname", property = "subject.subjectName"),
+            @Result(column = "classroomid", property = "classroom.classroomId"),
+            @Result(column = "ClassName", property = "classroom.className"),
             @Result(column = "questionlevelid", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
                     typeHandler = QuestionLevelEnumTypeHandler.class),
             @Result(column = "refquestionstatusid", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,
@@ -144,8 +158,23 @@ public interface QuestionMybatisMapper {
 
 
     })
-    List<Question> getUsersQuestions(@Param("appUserId")Integer appUserId, @Param("page")Integer page);
+    List<Question> getUsersQuestions(@Param("appUserId")Integer appUserId,
+                                     @Param("questionId")Integer questionId,
+                                     @Param("requestType")Integer requestType, // 1 fav, 2 my, 3 specific
+                                     @Param("page")Integer page);
+/*
+    <#if myclassonly>
+    join favoritepost f on f.questionid = q.questionid
+    where f.userid = ${appUserId}
+</#if>
+<#if myquestions>
+    where p.postedby = ${appUserId}
+</#if>
+<#if specificQuesionOnly>
+    where questionid = ${questionId}
+</#if>
 
+    */
 
     @Select({"SELECT " +
             " a.answerid," +

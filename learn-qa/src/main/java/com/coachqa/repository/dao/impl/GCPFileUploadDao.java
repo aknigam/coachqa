@@ -65,7 +65,7 @@ public class GCPFileUploadDao implements FileUploadDao {
         // TODO: 18/02/19 use the accountId to segregate this accounts files
         ImageData id = ImageProcessor.resizeToStandardSize(bytes);
         String imageName = UUID.randomUUID().toString();
-        persistsToGCPAndGetImageId(id.standardImage, imageName+"_t");
+        persistsToGCPAndGetImageId(id.thumbnailImage, imageName+"_t");
         return persistsToGCPAndGetImageId(id.standardImage, imageName);
 
     }

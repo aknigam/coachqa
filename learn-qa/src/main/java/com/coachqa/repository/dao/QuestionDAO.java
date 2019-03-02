@@ -1,9 +1,9 @@
 package com.coachqa.repository.dao;
 
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface QuestionDAO {
 
 	Question getQuestionById(Integer questionId);
 
-	void addAnswertoQuestion(AnswerModel answer);
+	void addAnswertoQuestion(Answer answer);
 
 	void updateStats(Question question);
 

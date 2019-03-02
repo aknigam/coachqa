@@ -30,22 +30,24 @@ public class ImageProcessor {
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
             int h = img.getHeight();
             int w = img.getWidth();
-            if(h <= 1000 || w <= 1000) {
-                return new ImageData(bytes);
-            }
+//            if(h <= 1000 || w <= 1000) {
+//                return new ImageData(bytes);
+//            }
             double aspectRatio = (double) img.getWidth(null)/(double) img.getHeight(null);
+
             BufferedImage standardImage = resizeImage(img, 1000, (int) (1000 / aspectRatio));
             BufferedImage thumbnailImage = resizeImage(img, 100, (int) (100 / aspectRatio));
 
             ByteArrayOutputStream stdos = new ByteArrayOutputStream();
             ByteArrayOutputStream tnos = new ByteArrayOutputStream();
             ImageIO.write(standardImage, "jpg", stdos);
-            ImageIO.write(standardImage, "jpg", tnos);
+            ImageIO.write(thumbnailImage, "jpg", tnos);
 
             // writing the file for debugging purpose only. Should be commented in production
             ImageData imageData = new ImageData();
-            wrtiteToFile(standardImage, "sdt.jpg");
-            wrtiteToFile(standardImage, "tn.jpg");
+//            wrtiteToFile(img, "orig.jpg");
+//            wrtiteToFile(standardImage, "sdt.jpg");
+//            wrtiteToFile(thumbnailImage, "tn.jpg");
 
 
             imageData.standardImage =   stdos.toByteArray();

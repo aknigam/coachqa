@@ -23,4 +23,6 @@ public interface PostDAO {
 	void updatePostApproval(PostApproval postApproval);
 
     List<Post> getPendingApprovalPosts(Integer appUserId, Integer page);
+
+    void updatePostExtractedtext(Integer postId, String imageExtractedText);
 }

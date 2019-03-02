@@ -1,6 +1,7 @@
 package com.coachqa.service.impl;
 
 import com.coachqa.entity.Account;
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.Tag;
@@ -17,7 +18,6 @@ import com.coachqa.service.ClassroomService;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
@@ -206,8 +206,11 @@ public class QuestionServiceImpl implements QuestionService {
 
 
 	@Override
-	public Question postAnswer(Integer userId, AnswerModel answer) {
+	public Question postAnswer(Integer userId, Answer answer) {
 
+		if( answer.getQuestionId() == 0 ) {
+			throw new AnswerPostException(ApplicationErrorCode.ANSWER_WITHOUT_QUESTION);
+		}
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
 		if(isUserMemberOfClassroom(question.getClassroomId(), userId)){

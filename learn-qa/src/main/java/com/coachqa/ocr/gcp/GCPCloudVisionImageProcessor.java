@@ -40,6 +40,14 @@ public class GCPCloudVisionImageProcessor implements ImageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GCPCloudVisionImageProcessor.class);
 
+    GCPCloudVisionImageProcessor() {
+        System.out.println("GCPCloudVisionImageProcessor  created");
+    }
+    /**
+     * From the documentation
+     * "The JSON includes the entire extracted string, as well as individual words, and their bounding boxes."
+     *
+     */
     @Override
     public String extractText(byte[] data) throws ImageProcessingException {
         // TODO: 09/02/19 is this client reusable. Can I create once and use multiple times
@@ -69,6 +77,8 @@ public class GCPCloudVisionImageProcessor implements ImageProcessor {
                 // For full list of available annotations, see http://g.co/cloud/vision/docs
                 for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
                     text  = annotation.getDescription();
+                    System.out.println(text);
+                    System.out.println("--------------------------------------------------------------------------------");
                     break;
                 }
             }

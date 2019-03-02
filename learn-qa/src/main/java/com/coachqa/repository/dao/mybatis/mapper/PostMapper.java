@@ -37,9 +37,11 @@ public interface PostMapper {
         p.setVotes(rs.getInt("Votes"));
 
      */
-    @Select("select postId, posttype, postedby, postdate, votes, classroomid from post where postid = #{postId}")
+    @Select("select postId, posttype, postedby, postdate, votes, classroomid , content from post where postid = " +
+            "#{postId}")
     @Results({
-
+            @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
+                    typeHandler = PostTypeEnumTypeHandler.class),
             @Result(column = "postedby", property = "postedBy.appUserId")
     })
 
@@ -104,4 +106,13 @@ public interface PostMapper {
 
      */
     List<Post> getPostsPendingApprovalByUser(@Param("appUserId") Integer appUserId, @Param("page") Integer page);
+
+    @Update("update post_extracted_text set extracted_text=  #{imageExtractedText} where postId = #{postId}")
+    void updatePostExtractedtext(@Param("postId") Integer postId, @Param("imageExtractedText") String imageExtractedText);
+
+    @Insert("insert INTO post_extracted_text  (postId, extracted_text) value (#{postId}, #{imageExtractedText}) ")
+    void addPostExtractedtext(@Param("postId") Integer postId, @Param("imageExtractedText") String imageExtractedText);
+
+    @Select("select extracted_text from post_extracted_text where postId = #{postId}")
+    String extractedTextExists(@Param("postId") Integer postId);
 }

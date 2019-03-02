@@ -31,10 +31,19 @@ public class Post extends AccountEntity {
     private String approvalComment;
 
     private Integer classroomId;
+    private Classroom classroom;
 
 
     public Post(){
 
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     public Integer getPostId() {

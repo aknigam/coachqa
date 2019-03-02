@@ -1,12 +1,14 @@
 package com.coachqa.ws.controllor;
 
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
+import com.coachqa.entity.RefSubject;
 import com.coachqa.entity.Tag;
 import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
-import com.coachqa.ws.model.AnswerModel;
 import com.coachqa.ws.util.WSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -117,10 +119,18 @@ public class QuestionControllor {
 		subject, class, tag , postedby , isPublic
 		 */
 		Question criteria = new Question();
-		if(subjectId != null)
+		if(subjectId != null) {
 			criteria.setRefSubjectId(subjectId);
-		if(classroomId != null)
+			RefSubject s = new RefSubject();
+			s.setRefSubjectId(subjectId);
+			criteria.setSubject(s);
+		}
+		if(classroomId != null) {
 			criteria.setClassroomId(classroomId);
+			Classroom c = new Classroom();
+			c.setClassroomId(classroomId);
+			criteria.setClassroom(c);
+		}
 		if(tagId != null)
 			criteria.setTags(Arrays.asList(new Tag[]{new Tag(tagId)}));
 		if(ownerId != null){
@@ -185,15 +195,16 @@ public class QuestionControllor {
 
 
 
-	@RequestMapping(value="/{questionId}/answer" , method = RequestMethod.POST)
-	public Question submitAnswer(@PathVariable(value ="questionId")Integer questionId , @RequestBody AnswerModel model, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value="/answer" , method = RequestMethod.POST)
+	public Question submitAnswer(@RequestBody Answer answer)
 	{
 
 		AppUser user = WSUtil.getUser(userService);
-		model.setAnsweredByUserId(user.getAppUserId());
-		model.setQuestionId(questionId);
+		answer.setAnsweredByUserId(user.getAppUserId());
+		answer.setPostedBy(user);
+		answer.setAccount(user.getAccount());
 
-		return questionService.postAnswer(user.getAppUserId(), model);
+		return questionService.postAnswer(user.getAppUserId(), answer);
 
 	}
 

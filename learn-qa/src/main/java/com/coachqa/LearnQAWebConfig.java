@@ -15,6 +15,7 @@ import notification.entity.ApplicationEvent;
 import notification.entity.EventType;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -222,11 +223,14 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
         return new SimpleEventPublisher(queue);
     }
 
+//    @Autowired
+//    private ImageToTextOcrListener ocrListener;
+
     @Bean
-    public EventConsumer getEventConsumer(NotificationService notificationService, BlockingQueue queue) {
+    public EventConsumer getEventConsumer(NotificationService notificationService, BlockingQueue queue, ImageToTextOcrListener ocrListener) {
         BlockingQueue<ApplicationEvent> questionUpdatesQueue = new LinkedBlockingQueue<>();
         ApplicationEventListener userNotificationListener = new UsersNotificationListener(notificationService);
-        ImageToTextOcrListener ocrListener = new ImageToTextOcrListener();
+
 
         EventConsumer eventConsumer = new SimpleEventConsumer(queue);
 
@@ -235,6 +239,7 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
         eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( userNotificationListener ));
         eventConsumer.attachListener(EventType.QUESTION_POSTED, new SimpleRetryingEventListener( ocrListener));
+        eventConsumer.attachListener(EventType.POST_APPROVED, new SimpleRetryingEventListener( ocrListener));
         eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( userNotificationListener ));
         eventConsumer.attachListener(EventType.QUESTION_ANSWERED, new SimpleRetryingEventListener( ocrListener));
 

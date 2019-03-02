@@ -1,5 +1,6 @@
 package com.coachqa.repository.dao.impl;
 
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
@@ -10,7 +11,6 @@ import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
 import com.coachqa.util.CollectionUtils;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
@@ -99,7 +100,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	@Override
 	@CacheEvict(value="questions", key="#answer.questionId")
-	public void addAnswertoQuestion(AnswerModel answer) {
+	public void addAnswertoQuestion(Answer answer) {
 		answerAddSproc.addAnswer(answer);
 	}
 
@@ -238,8 +239,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
+				.withSelectCols("c", Arrays.asList(new String[]{"ClassName"}))
+				.withSelectCols("s", Arrays.asList(new String[]{"subjectname"}))
 				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionid", 1)
+				.withJoin("classroom", "c", "classroomid", "p", "classroomid", 3)
+				.withJoin("refsubject", "s", "refsubjectid", "q", "refsubjectid", 4)
 				.withSubject(q.getRefSubjectId())
 				.withClassroom(q.getClassroomId())
 				.withPostedByUser(q.getPostedBy())
@@ -262,6 +267,10 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		return qstns;
 
 
+	}
+
+	public static void main(String[] args) {
+		System.out.println(UUID.randomUUID());
 	}
 
 	private boolean tagCriteriaExists(Question q) {
@@ -289,7 +298,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	 */
 	@Override
 	public List<Question> getUsersPosts(Integer appUserId, Integer page) {
-		List<Question> questions =  questionMapper.getUsersQuestions(appUserId, page*PAGE_SIZE);
+		List<Question> questions =  questionMapper.getUsersQuestions(appUserId, null, 2,page*PAGE_SIZE);
 
 		return questions;
 	}
@@ -315,7 +324,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	@Override
 	public List<Question> getMyFavorites(Integer appUserId, Integer page) {
-		return questionMapper.getFavoriteQuestions(appUserId, page*PAGE_SIZE);
+		return questionMapper.getUsersQuestions(appUserId, null, 1,page*PAGE_SIZE);
 	}
 
 	@Override

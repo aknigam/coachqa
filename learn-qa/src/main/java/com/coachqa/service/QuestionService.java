@@ -1,10 +1,10 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public interface QuestionService {
 	
 
 
-	Question postAnswer(Integer userId, AnswerModel model);
+	Question postAnswer(Integer userId, Answer answer);
 
 	Question getQuestionById(Integer questionId);
 

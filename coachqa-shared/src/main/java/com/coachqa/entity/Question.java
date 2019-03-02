@@ -23,6 +23,8 @@ public class Question extends Post implements java.io.Serializable {
 	private Integer questionId;
 	
 	private Integer refSubjectId;
+
+	private RefSubject subject;
 	
 	private QuestionLevelEnum questionLevelEnum;
 	
@@ -59,8 +61,17 @@ public class Question extends Post implements java.io.Serializable {
 		setPostTypeEnum(PostTypeEnum.QUESTION);
 	}
 
+
+	public RefSubject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(RefSubject subject) {
+		this.subject = subject;
+	}
+
 	public Integer getQuestionId() {
-		return questionId;
+		return questionId == null ? getPostId() : questionId;
 	}
 
 	public void setQuestionId(Integer questionId) {

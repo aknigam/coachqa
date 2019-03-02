@@ -111,4 +111,9 @@ public class PostServiceImpl implements PostService {
 
 	}
 
+	@Override
+	public void updatePostExtractedtext(Integer postId, String imageExtractedText) {
+		postDao.updatePostExtractedtext( postId,  imageExtractedText);
+	}
+
 }
