@@ -3,6 +3,7 @@ package com.coachqa.service.impl;
 import com.coachqa.entity.Account;
 import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Post;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.Tag;
 import com.coachqa.enums.QuestionRatingEnum;
@@ -15,8 +16,11 @@ import com.coachqa.exception.TagsRequiredForQuestionException;
 import com.coachqa.repository.dao.AccountDAO;
 import com.coachqa.repository.dao.QuestionDAO;
 import com.coachqa.service.ClassroomService;
+import com.coachqa.service.IndexSearchService;
 import com.coachqa.service.QuestionService;
+import com.coachqa.service.SolrIndex;
 import com.coachqa.service.listeners.question.EventPublisher;
+import com.coachqa.util.CollectionUtils;
 import com.coachqa.ws.controllor.QueryCriteria;
 import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
@@ -24,6 +28,7 @@ import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -33,6 +38,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.Date;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -57,6 +63,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private AccountDAO accountDAO;
 
+	@Autowired()
+	@Qualifier("solrindex")
+    private IndexSearchService searchService;
+
 
 	/*
 
@@ -80,15 +90,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public Question postQuestion(Integer userId, final Question question) {
 
-		validateTags(question.getTags());
-
-		if(!isClassroomProvided(question)){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
-		}
-
-		if(isUserMemberOfClassroom(question.getClassroomId(), question.getPostedBy().getAppUserId())){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_CLASSROOM);
-		}
+		questionPostCommonValidations(question);
 
 		boolean approvalRequired = isApprovalRequired(question.getPostedBy());
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
@@ -114,27 +116,11 @@ public class QuestionServiceImpl implements QuestionService {
 	public void updateQuestion(Question updatedQuestion, AppUser user) {
 
 		Question existingQuestion = questionDao.getQuestionById(updatedQuestion.getQuestionId());
-		if(existingQuestion == null){
-			throw new QAEntityNotFoundException(ApplicationErrorCode.ENTITY_NOT_FOUND, "Question does not exists - "+ updatedQuestion.getQuestionId());
-		}
 
+		questionEditValidations(updatedQuestion, user, existingQuestion);
+		questionPostCommonValidations(updatedQuestion);
 
-		if(alreadyAnswered(existingQuestion)){
-			throw new NotAuthorisedToUpdateException(ApplicationErrorCode.NOT_AUTHORIZEDTO_UPDATE, "Question cannotbe edited after it is answered");
-		}
-
-		validateTags(updatedQuestion.getTags());
-
-
-		if(!isClassroomProvided(updatedQuestion)){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
-		}
-
-		if(isUserMemberOfClassroom(updatedQuestion.getClassroomId(), updatedQuestion.getPostedBy().getAppUserId())){
-			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
-		}
-        boolean approvalRequired =isApprovalRequired(user);
-
+		boolean approvalRequired =isApprovalRequired(user);
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 			@Override
 			public Question doInTransaction(TransactionStatus transactionStatus) {
@@ -145,9 +131,42 @@ public class QuestionServiceImpl implements QuestionService {
 				return  questionDao.updateQuestion(updatedQuestion);
 			}
 		});
-
 		publishPostQuestionEvent(qstn, approvalRequired);
 
+	}
+
+	private void questionEditValidations(Question updatedQuestion, AppUser user, Question existingQuestion) {
+		if(existingQuestion == null){
+			throw new QAEntityNotFoundException(ApplicationErrorCode.ENTITY_NOT_FOUND, "Question does not exists - "+ updatedQuestion.getQuestionId());
+		}
+
+		if(alreadyAnswered(existingQuestion)){
+			throw new NotAuthorisedToUpdateException(ApplicationErrorCode.NOT_AUTHORIZEDTO_UPDATE, "Question cannotbe edited after it is answered");
+		}
+		if(!userAuthorisedToEdit(existingQuestion , user)){
+			throw new NotAuthorisedToUpdateException(ApplicationErrorCode.NOT_AUTHORIZEDTO_UPDATE, "You cannot update" +
+					" question posted by others.");
+		}
+	}
+
+	private void questionPostCommonValidations(Question question) {
+		validateTags(question.getTags());
+
+		if(!isClassroomProvided(question)){
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
+		}
+
+		if(isUserMemberOfClassroom(question.getClassroomId(), question.getPostedBy().getAppUserId())){
+			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
+		}
+	}
+
+	private boolean userAuthorisedToEdit(Question existingQuestion, AppUser user) {
+
+		if( existingQuestion.getPostedBy().getAppUserId().equals(user.getAppUserId())){
+			return true;
+		}
+		return false;
 	}
 
 	private boolean alreadyAnswered(Question existingQuestion) {
@@ -190,6 +209,7 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	private boolean isUserMemberOfClassroom(Integer classroomId , Integer postedByUserId ) {
+		// this is also checking implicitly that account of classroom and usr is same
 		return !classroomService.isActiveMemberOf(classroomId, postedByUserId);
 	}
 
@@ -206,26 +226,39 @@ public class QuestionServiceImpl implements QuestionService {
 
 
 	@Override
-	public Question postAnswer(Integer userId, Answer answer) {
+	public Question postAnswer(AppUser user, Answer answer) {
 
 		if( answer.getQuestionId() == 0 ) {
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_WITHOUT_QUESTION);
 		}
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(isUserMemberOfClassroom(question.getClassroomId(), userId)){
+		if(isUserMemberOfClassroom(question.getClassroomId(), user.getAppUserId())){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
+
+		boolean approvalRequired =isApprovalRequired(user);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				answer.setApprovalStatus(true);
+				if(approvalRequired){
+					answer.setApprovalStatus(false);
+				}
 				questionDao.addAnswertoQuestion(answer);
 			}
 		});
-		eventPublisher.publishEvent(new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId(),
-				userId,new Date(System.currentTimeMillis()),
-				new Date(System.currentTimeMillis()) ));
+		ApplicationEvent event = new ApplicationEvent(EventType.QUESTION_ANSWERED, answer.getQuestionId(),
+				user.getAppUserId(),new Date(System.currentTimeMillis()),
+				new Date(System.currentTimeMillis()) );
+		if(approvalRequired) {
+			event.setStage(EventStage.STAGE_ONE);
+		}
+		else {
+			event.setStage(EventStage.STAGE_ONE);
+		}
+		eventPublisher.publishEvent(event);
 
 		return question;
 	}
@@ -250,6 +283,11 @@ public class QuestionServiceImpl implements QuestionService {
 
 		Question question = questionDao.getQuestionById(questionId);
 
+		if(question.getPostedBy().getAppUserId().equals(user.getAppUserId())) {
+			question.setMyPost(true);
+		}
+		setPostedByMe(user.getAppUserId(), CollectionUtils.normaliseNullList(question.getAnswers()));
+
 		question.setFavorite(questionDao.isFavorite(questionId, user.getAppUserId()));
 		/*
 		Is it right to increment the view every time the user sees it. Or should there be only one view per user?
@@ -257,6 +295,15 @@ public class QuestionServiceImpl implements QuestionService {
 		questionDao.incrementQuestionViews(questionId);
 		question.setNoOfViews(question.getNoOfViews()+1);
 		return question;
+	}
+
+	private <E extends Post> List<E> setPostedByMe(Integer user, List<E> posts) {
+		for( E p : posts ) {
+			if(p.getPostedBy().getAppUserId().equals(user)) {
+				p.setMyPost(true);
+			}
+		}
+		return posts;
 	}
 
 
@@ -292,7 +339,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 	@Override
 	public List<Question> getMyFavorites(Integer appUserId, Integer page) {
-		return questionDao.getMyFavorites(appUserId, page);
+		return setPostedByMe(appUserId,  questionDao.getMyFavorites(appUserId, page));
 	}
 
 
@@ -329,15 +376,33 @@ public class QuestionServiceImpl implements QuestionService {
 	public List<Question> findSimilarQuestions(Question criteria, int page, AppUser user) {
 
 		Integer classroomId = criteria.getClassroomId();
-		return questionDao.findSimilarQuestions(criteria, page, user, NO_OF_PAGINATED_RESULTS);
+
+		/*
+		1. get the questionIds from solr index
+		2. Then get the content of those questions from the DB and return
+		3. Above approach needs to support pagination
+
+
+		 */
+
+
+		if(searchService instanceof SolrIndex) {
+			List<Integer> questionIds = searchService.searchQuestions(criteria, page, user);
+			questionIds = questionIds == null ? Collections.emptyList() : questionIds;
+			if (!questionIds.isEmpty()) {
+				List<Question> questions = questionDao.getQuestions(questionIds);
+				// TODO: 03/03/19 return this list
+			}
+		}
+		return setPostedByMe(user.getAppUserId(), questionDao.findSimilarQuestions(criteria, page, user,
+				NO_OF_PAGINATED_RESULTS));
 	}
 
 	@Override
 	public List<Question> findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser) {
 
-
-
-		return questionDao.findByQuery(searchQuery, page, loggedInUser , NO_OF_PAGINATED_RESULTS);
+		return setPostedByMe(loggedInUser.getAppUserId(), questionDao.findByQuery(searchQuery, page, loggedInUser ,
+				NO_OF_PAGINATED_RESULTS));
 	}
 
 	private boolean isAuthorizedToRateQuestion() {

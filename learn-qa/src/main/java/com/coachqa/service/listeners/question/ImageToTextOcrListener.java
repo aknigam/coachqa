@@ -4,7 +4,7 @@ import com.coachqa.entity.Post;
 import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.ocr.ImageProcessor;
-import com.coachqa.service.IndexService;
+import com.coachqa.service.IndexSearchService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.ApplicationEventListener;
 import com.google.cloud.storage.Storage;
@@ -15,6 +15,7 @@ import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -35,8 +36,9 @@ public class ImageToTextOcrListener implements ApplicationEventListener {
     @Autowired
     private ImageProcessor imageProcessor;
 
-    @Autowired
-    private IndexService indexService;
+    @Autowired()
+    @Qualifier("solrindex")
+    private IndexSearchService indexService;
 
 
     private static final String bucket ="crajee-dev001";

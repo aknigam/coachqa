@@ -7,4 +7,6 @@ public interface AccountDAO {
     Account fetchAccountByName(String accountName);
 
     Account fetchCompleteAccountDetails(int accountId);
+
+    Account createAccount(Account account);
 }

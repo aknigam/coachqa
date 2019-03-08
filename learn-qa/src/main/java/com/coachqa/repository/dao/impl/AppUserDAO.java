@@ -57,34 +57,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 	@Override
 	public AppUser getUserByEmail(String userEmail) {
 
-		try {
-			List<AppUser> users = jdbcTemplate.query(m_userByEmailQuery, new String[]{userEmail}, new RowMapper<AppUser>() {
-
-				@Override
-				public AppUser mapRow(ResultSet rs, int i)
-						throws SQLException {
-					
-					AppUser user = new AppUser();
-					user.setAppUserId(rs.getInt("appuserid"));
-					user.setEmail(rs.getString("email"));
-					user.setFirstName(rs.getString("firstname"));
-					user.setLastName(rs.getString("lastname"));
-					// TODO: 18/02/19 getByid method is used to prevent creation of account objects unnecessarily
-					user.setAccount(Account.getById(rs.getInt("accountId")));
-					return user;
-				}
-			});
-			if(users.size() == 1)
-				return users.get(0);
-			else
-			{
-				throw new UserNotFoundException("User with email ["+userEmail+"] does not exists.");
-			}
-				
-		} catch (DataAccessException e) {
-			LOGGER.error("Error fetching user from db.", e);
-			return null;
-		}
+		return appUserMapper.getUserByEmail(userEmail);
 		
 	}
 

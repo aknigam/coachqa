@@ -80,7 +80,7 @@ public interface QuestionService {
 	
 
 
-	Question postAnswer(Integer userId, Answer answer);
+	Question postAnswer(AppUser user, Answer answer);
 
 	Question getQuestionById(Integer questionId);
 
@@ -98,5 +98,5 @@ public interface QuestionService {
 
 	List<Question> getMyFavorites(Integer appUserId, Integer page);
 
-	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser);
+	List findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser);
 }

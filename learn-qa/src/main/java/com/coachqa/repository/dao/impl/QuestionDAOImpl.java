@@ -4,7 +4,9 @@ import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
+import com.coachqa.repository.dao.mapper.AnswerSprocMapper;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
+import com.coachqa.repository.dao.mybatis.mapper.AnswerMapper;
 import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
 import com.coachqa.repository.dao.mybatis.mapper.QuestionMybatisMapper;
 import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
@@ -53,7 +55,10 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Autowired
 	private TagMapper tagMapper;
 
-	
+	@Autowired
+	private AnswerMapper answerMapper;
+
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		DataSource dataSource = getDataSource();
@@ -89,8 +94,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	public Question getQuestionById(Integer questionId) {
 		try{
 
-			Question question = questionMapper.getQuestionById(questionId);
-			return question;
+			List<Question> questions = questionMapper.getUsersQuestions(null, questionId, 3, 0);
+			if(org.springframework.util.CollectionUtils.isEmpty(questions)) {
+				throw new RuntimeException("Question not found");
+			}
+//			getQuestionById(questionId);
+			return questions.get(0);
 		}
 		catch (DataAccessException se){
 			LOGGER.error("question does not exists: "+ questionId, se);
@@ -101,7 +110,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Override
 	@CacheEvict(value="questions", key="#answer.questionId")
 	public void addAnswertoQuestion(Answer answer) {
-		answerAddSproc.addAnswer(answer);
+		postMapper.addPost(answer);
+		answerMapper.addAnswer(answer.getPostId(), answer.getQuestionId());
 	}
 
 	@Override
@@ -183,6 +193,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		List<Question> qstns = jdbcTemplate.query(query, qm);
 
 		return qstns;
+	}
+
+	@Override
+	public List<Question> getQuestions(List<Integer> questionIds) {
+		return questionMapper.getQuestions(questionIds);
 	}
 
 

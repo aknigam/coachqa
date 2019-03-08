@@ -33,6 +33,15 @@ public class Post extends AccountEntity {
     private Integer classroomId;
     private Classroom classroom;
 
+    private boolean myPost = false;
+
+    public boolean isMyPost() {
+        return myPost;
+    }
+
+    public void setMyPost(boolean myPost) {
+        this.myPost = myPost;
+    }
 
     public Post(){
 
@@ -123,7 +132,7 @@ public class Post extends AccountEntity {
 
 
     public Integer getClassroomId() {
-        return classroomId;
+        return classroom == null ? classroomId : classroom.getClassroomId();
     }
 
     public void setClassroomId(Integer classroomId) {

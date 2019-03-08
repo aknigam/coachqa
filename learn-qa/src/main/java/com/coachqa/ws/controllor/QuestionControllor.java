@@ -6,6 +6,7 @@ import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.RefSubject;
 import com.coachqa.entity.Tag;
+import com.coachqa.enums.PostTypeEnum;
 import com.coachqa.enums.QuestionStatusEnum;
 import com.coachqa.service.QuestionService;
 import com.coachqa.service.UserService;
@@ -53,8 +54,8 @@ public class QuestionControllor {
 		WSUtil.setLocationHeader(request, response, addedQuestion.getQuestionId());
 
 
-		Integer addedQuestionId = addedQuestion.getQuestionId();
-		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 0, user);
+//		Integer addedQuestionId = addedQuestion.getQuestionId();
+//		List<Question> similarQuestionIds = questionService.findSimilarQuestions(addedQuestion, 0, user);
 
 		return addedQuestion;
 	}
@@ -202,9 +203,11 @@ public class QuestionControllor {
 		AppUser user = WSUtil.getUser(userService);
 		answer.setAnsweredByUserId(user.getAppUserId());
 		answer.setPostedBy(user);
+		answer.setPostDate(new Date());
 		answer.setAccount(user.getAccount());
+		answer.setPostTypeEnum(PostTypeEnum.ANSWER);
 
-		return questionService.postAnswer(user.getAppUserId(), answer);
+		return questionService.postAnswer(user, answer);
 
 	}
 

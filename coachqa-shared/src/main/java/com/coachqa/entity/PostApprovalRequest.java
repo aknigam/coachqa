@@ -2,8 +2,6 @@ package com.coachqa.entity;
 
 import com.coachqa.enums.PostTypeEnum;
 
-import java.util.Date;
-
 public class PostApprovalRequest extends ApprovalRequest {
 
     private Post post;

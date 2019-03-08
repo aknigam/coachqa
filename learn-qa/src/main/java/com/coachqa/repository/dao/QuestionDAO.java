@@ -34,4 +34,7 @@ public interface QuestionDAO {
 	boolean isFavorite(Integer questionId, Integer appUserId);
 
     List<Question> findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser, int noOfPaginatedResults);
+
+    List<Question> getQuestions(List<Integer> questionIds);
+
 }

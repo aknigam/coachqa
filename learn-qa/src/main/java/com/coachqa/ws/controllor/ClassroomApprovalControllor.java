@@ -43,7 +43,7 @@ public class ClassroomApprovalControllor {
 	public void requestClassroomMembership(@RequestBody ClassroomMembership membership)
 	{
 		AppUser user = WSUtil.getUser( userService);
-		classroomService.requestClassroomMembership(user.getAppUserId(), membership.getClassroomId(),  membership
+		classroomService.requestClassroomMembership(user, membership.getClassroomId(),  membership
 				.getRequestComments());
 		return;
 	}

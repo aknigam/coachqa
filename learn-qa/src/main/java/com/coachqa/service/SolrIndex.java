@@ -1,13 +1,11 @@
 package com.coachqa.service;
 
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
-import com.coachqa.entity.Tag;
-import com.coachqa.service.impl.QuestionServiceImpl;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
@@ -27,13 +25,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Refer: http://lucene.apache.org/solr/guide/7_6/using-solrj.html
  */
-@Component
-public class SolrIndex implements IndexService{
+@Component("solrindex")
+public class SolrIndex implements IndexSearchService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SolrIndex.class);
 
@@ -83,6 +80,11 @@ public class SolrIndex implements IndexService{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<Integer> searchQuestions(Question criteria, int page, AppUser user) {
+        return null;
     }
 
     public static void main(String[] args) {

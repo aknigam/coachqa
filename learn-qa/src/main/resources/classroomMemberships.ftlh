@@ -12,7 +12,7 @@ membershipstartdate  as startDate,
 membershipexpirartiondate as expirationDate,
 membershiprequestdate  as membershipRequestDate,
 comments as requestComments
-FROM crajee.classroommember cm
+FROM classroommember cm
 JOIN classroom c on c.classroomid = cm.classroomid
 JOIN appuser u on u.appuserid =  cm.appuserid
 and c.ClassOwner = ${ownerid}

@@ -2,6 +2,7 @@ package com.coachqa.ws.controllor;
 
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.UserTypeEnum;
 import com.coachqa.service.UserService;
 import com.coachqa.ws.util.WSUtil;
 import notification.entity.NotificationPreference;
@@ -30,6 +31,31 @@ public class UserControllor {
 	 * @return
 	 */
 
+
+	/*
+	this endpoint should be used to create following users
+	1 - Account admin - can be done by application_admin
+	2 - Classroom admin - can be done by account_admin and classroom_admin
+	by the account admins to create classroom admins
+	 */
+	@PostMapping
+	@ResponseBody
+	public AppUser addUser( @RequestBody AppUser user ) {
+
+		AppUser addedBy = WSUtil.getUser(userService);
+
+		if(user.getUserType() == UserTypeEnum.account_admin && addedBy.getUserType() != UserTypeEnum.application_admin) {
+			throw new RuntimeException("only application admin can add new account users");
+		}
+		if(user.getUserType() == UserTypeEnum.classroom_admin &&
+				!(addedBy.getUserType() == UserTypeEnum.account_admin || addedBy.getUserType() == UserTypeEnum
+						.account_admin)) {
+			throw new RuntimeException("only classroom adming or account admin can add classroom admins");
+		}
+		userService.addUser(user);
+		return user;
+
+	}
 
 	@ResponseBody
 	@RequestMapping(value="/{userId}/notification/preference", method = RequestMethod.POST)

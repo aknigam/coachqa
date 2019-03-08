@@ -4,6 +4,7 @@ import com.coachqa.entity.Account;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.ClassroomSettings;
+import com.coachqa.entity.UserTypeEnum;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomNotExistsException;
@@ -43,11 +44,6 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Autowired
 	private ClassroomDAO classroomDAO;
 
-	@Autowired
-	private UserService userService;
-
-    @Autowired
-    private AccountDAO accountDao;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -74,26 +70,36 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	 * On approval the membership will be activated.
 	 */
 	@Override
-	public void requestClassroomMembership(Integer appUserId, Integer classroomId, String comments) {
+	public void requestClassroomMembership(AppUser user, Integer classroomId, String comments) {
 
+		validateUserAndClassroomAccount(user, classroomId);
+		// classroom should be open and user should be active
 		try{
 			transactionTemplate.execute(new TransactionCallback<String>() {
 				@Override
 				public String doInTransaction(TransactionStatus transactionStatus) {
-					classroomDAO.joinClassroom(appUserId, classroomId, ClassroomMembershipStatusEnum
+					classroomDAO.joinClassroom(user.getAppUserId(), classroomId, ClassroomMembershipStatusEnum
 							.PENDING_APPROVAL, comments);
 					return "success";
 
 				}
 			});
-		}catch(DuplicateKeyException e){
-			LOGGER.warn("User %d already requested for classroom %d membership", appUserId, classroomId, e);
-		}catch (Exception e){
+		} catch(DuplicateKeyException e){
+			LOGGER.warn("User %d already requested for classroom %d membership", user, classroomId, e);
+		} catch (Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add membership");
 			throw e;
 		}
 
-		notifyAdministrator(classroomId, appUserId);
+		notifyAdministrator(classroomId, user.getAppUserId());
+	}
+
+	private void validateUserAndClassroomAccount(AppUser user, Integer classroomId) {
+		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
+		if(!classroom.getAccount().getAccountId().equals(user.getAccount().getAccountId())) {
+			throw new RuntimeException("For membership user needs to be in the same account as classroom");
+
+		}
 	}
 
 	private void notifyAdministrator(Integer classroomId, Integer userId) {
@@ -106,11 +112,10 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Override
 	public Classroom createClassroom(Classroom classroom) {
 
-        Account account = accountDao.fetchAccountByName(classroom.getAccount().getAccountName());
-        if(account == null) {
-            throw new RuntimeException("Classroom cannot be created as the provided account" +
-					" does not exist.");
-        }
+		AppUser createdBy = classroom.getClassOwner();
+		if(createdBy.getUserType() == UserTypeEnum.application_user) {
+			throw new RuntimeException("You need to have admin rights to create classroom");
+		}
 		Classroom addedClassroom =  classroomDAO.createClassroom(classroom);
 		return addedClassroom;
 	}
@@ -142,29 +147,15 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		for(Integer mId: membershipRequests) {
 			ClassroomMembership cm = classroomDAO.getMembership(mId);
 			Classroom classroom = classroomDAO.getClassroomByIdentifier(cm.getClassroomId());
-			validateApprover(classroom.getClassroomId(), approver.getAppUserId());
-
-
+			if(!classroom.isClassroomAdmin(approver)){
+				throw new NotAuthorisedToApproveException(ApplicationErrorCode.NOT_AUTHORIZEDTO_APPROVE, "Only admin can approve the request");
+			}
 			classroomDAO.findRequestAndApprove(isApprove ? ClassroomMembershipStatusEnum.ACTIVE :
 					ClassroomMembershipStatusEnum.REJECTED, mId);
 
 			notifyUserForMembershipApproval(classroom.getClassroomId(), cm.getMemberId(), isApprove);
 
 		}
-
-	}
-
-
-
-	protected void validateApprover(Integer classroomId, Integer approverUserId) throws NotAuthorisedToApproveException {
-
-
-		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
-		if(!classroom.getClassOwner().getAppUserId().equals(approverUserId)) {
-			throw new NotAuthorisedToApproveException(ApplicationErrorCode.NOT_AUTHORIZEDTO_APPROVE, "Only admin can approve the request");
-		}
-
-//        throw new InvalidEventForApprovalException(ApplicationErrorCode.IN_VALID_EVENT, "Invalid event type");
 
 	}
 
@@ -189,12 +180,10 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, "Invalid classroom " +
 						"identifier provided");
 			}
-			if (!classroom.getClassOwner().getAppUserId().equals(user.getAppUserId())) {
+			if ( !classroom.isClassroomAdmin(user)) {
 				throw new NotAuthorisedToViewMembershipRequestsException(user, classroom);
 			}
-
 		}
-
 		return  classroomDAO.getMembershipRequests(classroomId, user.getAppUserId(), page);
 	}
 

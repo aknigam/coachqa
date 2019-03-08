@@ -21,4 +21,11 @@ public class DBAccountDao implements AccountDAO {
     public Account fetchCompleteAccountDetails(int accountId) {
         return accountMapper.fetchCompleteAccountDetails(accountId);
     }
+
+    @Override
+    public Account createAccount(Account account) {
+        int accountId =  accountMapper.createAccount(account);
+        account.setAccountId(accountId);
+        return account;
+    }
 }

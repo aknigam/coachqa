@@ -77,18 +77,33 @@ public interface PostMapper {
     int addPost(Post post);
 
 //    @Select("select postId, posttype, postedby, postdate, votes, classroomid from post where postid = #{postId}")
-    @Select("select p.postType, p.postedby, p.postdate,  u.firstname, u.middlename, u.lastname, u.email, " +
-            "  CASE " +
-            "  WHEN a.answerid IS NULL " +
+    @Select("select " +
+            "  p.postType, " +
+            "  p.postedby, " +
+            "  p.postdate, " +
+            "  u.firstname, " +
+            "  u.middlename, " +
+            "  u.lastname, " +
+            "  u.email " +
+            "  ,CASE WHEN a.answerid IS NULL " +
+            "    THEN c.classroomid " +
+            "  ELSE ac.classroomid END AS classroomid " +
+            "  ,CASE WHEN a.answerid IS NULL " +
+            "    THEN c.classname " +
+            "  ELSE ac.classname END AS classname " +
+            "  ,CASE WHEN a.answerid IS NULL " +
             "    THEN q.questionid " +
-            "  ELSE a.questionid " +
-            "  END AS postId " +
-            "from post p " +
-            "LEFT JOIN answer a on a.answerid =  p.postid " +
-            "LEFT JOIN question q on q.questionid =  p.postid " +
-            "LEFT JOIN classroom c on c.classroomid = q.classroomid and c.classowner = #{appUserId} " +
-            " LEFT JOIN appuser u on u.appuserid = p.postedby " +
-            " where p.approvalstatus = 0 " +
+            "  ELSE a.questionid END AS postId " +
+            " from  post p " +
+            "  LEFT JOIN answer a ON a.answerid = p.postid " +
+            "  LEFT JOIN question aq on aq.questionid = a.questionid " +
+            "  LEFT JOIN classroom ac on ac.classroomid = aq.classroomId " +
+            "  LEFT JOIN question q on q.questionid = p.postid " +
+            "  LEFT JOIN classroom c on c.classroomid = p.classroomId " +
+            "  LEFT JOIN appuser u on u.appuserid = p.postedby " +
+            " where p.approvalstatus =0 " +
+            " and ((ac.classowner is not null and  ac.classowner = #{appUserId}) " +
+            "   or (c.classowner is not null and c.classowner= #{appUserId})) " +
             " order by p.postdate desc limit #{page}, 5 ")
     @Results({
 
@@ -99,6 +114,8 @@ public interface PostMapper {
             @Result(column = "lastName", property= "postedBy.lastName"),
             @Result(column = "middlename", property= "postedBy.middleName"),
             @Result(column = "email", property= "postedBy.email"),
+            @Result(column = "classname", property= "classroom.className"),
+            @Result(column = "classroomid", property= "classroom.classroomId")
     })
     /*
     Potentially duplicate postId can be returned becuase a post can have multiple answers

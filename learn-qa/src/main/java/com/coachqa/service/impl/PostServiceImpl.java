@@ -14,8 +14,10 @@ import notification.entity.ApplicationEvent;
 import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class PostServiceImpl implements PostService {
 
 	@Autowired
@@ -65,6 +67,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	@CacheEvict(value="questions", key="#postApproval.postId")
 	public void updateApprovalStatus(PostApproval postApproval) {
 		Post post = postDao.getPostById(postApproval.getPostId());
 		postDao.updatePostApproval(postApproval);

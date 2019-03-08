@@ -27,6 +27,8 @@ public class AppUser extends AccountEntity {
 
 	private String lastName;
 
+	private UserTypeEnum userType;
+
 	public AppUser() {
 	}
 
@@ -112,5 +114,11 @@ public class AppUser extends AccountEntity {
 		this.lastName = lastName;
 	}
 
+	public UserTypeEnum getUserType() {
+		return userType;
+	}
 
+	public void setUserType(UserTypeEnum userType) {
+		this.userType = userType;
+	}
 }

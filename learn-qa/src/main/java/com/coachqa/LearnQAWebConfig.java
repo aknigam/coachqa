@@ -18,8 +18,10 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration;
+import org.springframework.boot.autoconfigure.solr.SolrAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -86,6 +88,7 @@ todo: works as expected.
 @SpringBootApplication
 @EnableSwagger2
 @EnableAuthorizationServer
+@EnableAutoConfiguration(exclude = {SolrAutoConfiguration.class})
 @MapperScan("com.coachqa.repository.dao.mybatis.mapper")
 public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
 
@@ -252,7 +255,8 @@ public class LearnQAWebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .select()                 .apis(RequestHandlerSelectors.basePackage("com.coachqa.ws.controllor"))
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.coachqa.ws.controllor"))
 //                .paths(regex("/api*"))
                 .build();
     }

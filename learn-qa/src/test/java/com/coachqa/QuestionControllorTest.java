@@ -31,19 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/*
-Refer: https://spring.io/guides/gs/testing-web/
- */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = LearnQAWebConfig.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT )
-public class QuestionControllorTest {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-    private String bearer;
+public class QuestionControllorTest  extends BaseControllorTest {
 
     private int questionNumber;
 
@@ -103,12 +91,6 @@ public class QuestionControllorTest {
 
     }
 
-    private ResponseEntity<Question> submitQuestion(HttpEntity<Object> entity) {
-        return this.restTemplate.exchange("http://localhost:" + port + "/api/questions",
-                HttpMethod.POST,
-                entity,
-                Question.class);
-    }
 
 
     private Question getQuestion() {
@@ -121,14 +103,5 @@ public class QuestionControllorTest {
     }
 
 
-    private HttpHeaders getAuthHttpHeaders() {
-        return getAuthHttpHeaders("bearer " + bearer);
-    }
-
-    private HttpHeaders getAuthHttpHeaders(String s) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", s);
-        return headers;
-    }
 
 }

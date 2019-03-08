@@ -37,28 +37,32 @@ public interface QuestionMybatisMapper {
             " lastactivedate, title) " +
             "values (#{postId},#{refSubjectId},1, #{statusId} ,  now(), #{title})")
     void addQuestion(Question question);
-    @Select({"select " +
-            "questionid," +
-            "refsubjectid," +
-            "questionlevelid," +
-            "p.postedby," +
-            "p.posttype," +
-            "u.firstname," +
-            "u.middlename," +
-            "u.lastName," +
-            "refquestionstatusid," +
-            "title," +
-            "p.content," +
-            "p.noofviews," +
-            "p.postdate," +
-            "lastactivedate," +
-            "p.votes,    " +
-            "p.classroomid," +
-            "p.approvalstatus" +
-            " from question q    " +
-            " join post p on p.postid = q.questionid" +
-            " join appuser u on u.appuserId = p.postedby " +
-            " where questionid = #{questionId}"})
+
+
+//    @Select({"select " +
+//            "questionid," +
+//            "refsubjectid," +
+//            "questionlevelid," +
+//            "p.postedby," +
+//            "p.posttype," +
+//            "u.firstname," +
+//            "u.middlename," +
+//            "u.lastName," +
+//            "refquestionstatusid," +
+//            "title," +
+//            "p.content," +
+//            "p.noofviews," +
+//            "p.postdate," +
+//            "lastactivedate," +
+//            "p.votes,    " +
+//            "p.classroomid," +
+//            "p.approvalstatus" +
+//            " from question q    " +
+//            " join post p on p.postid = q.questionid" +
+//            " join appuser u on u.appuserId = p.postedby " +
+//            " where questionid = #{questionId}"})
+    @Lang(FreeMarkerLanguageDriver.class)
+    @Select("questions.ftlh")
     @Results({
             @Result(column = "questionId", property = "questionId"),
             @Result(column = "refsubjectid", property = "refSubjectId"),
@@ -102,33 +106,6 @@ public interface QuestionMybatisMapper {
 
     @Lang(FreeMarkerLanguageDriver.class)
     @Select("questions.ftlh")
-//
-//    @Select({"select questionid," +
-//            "s.refsubjectid," +
-//            "questionlevelid," +
-//            "p.postedby," +
-//            "p.posttype," +
-//            "u.firstname," +
-//            "u.middlename," +
-//            "u.lastName," +
-//            "refquestionstatusid," +
-//            "title," +
-//            "p.content," +
-//            "p.noofviews," +
-//            "p.postdate," +
-//            "lastactivedate," +
-//            "p.votes,    " +
-//            "p.classroomid," +
-//            "p.approvalstatus," +
-//            "c.ClassName, " +
-//            "s.subjectname" +
-//            " from question q    " +
-//            " join post p on p.postid = q.questionid" +
-//            " join appuser u on u.appuserId = p.postedby " +
-//            " JOIN classroom c ON  c.classroomid = p.classroomid " +
-//            " JOIN refsubject s ON  q.refsubjectid = s.refsubjectid" +
-//            " where p.postedby = #{appUserId}" +
-//            " order by p.postdate desc limit #{page}, 5 "})
     // TODO: 27/01/18 remove hardcoded page size of 5 above
     @Results({
             @Result(column = "questionid", property = "questionId"),
@@ -271,4 +248,7 @@ public interface QuestionMybatisMapper {
 
     @Select("SELECT count(Id) from favoritepost where userid = #{appUserId} and questionid = #{questionId}")
     boolean isFavorite( @Param("questionId") Integer questionId, @Param("appUserId") Integer appUserId);
+
+    // TODO: 03/03/19 provide implementation
+    List<Question> getQuestions(List<Integer> questionIds);
 }

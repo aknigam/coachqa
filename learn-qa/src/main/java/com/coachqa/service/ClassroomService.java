@@ -11,7 +11,7 @@ public interface ClassroomService {
 
 	Classroom getClassroom(Integer classroomId);
 
-	void requestClassroomMembership(Integer appUserId, Integer classroomId, String comments);
+	void requestClassroomMembership(AppUser user, Integer classroomId, String comments);
 
 	Classroom createClassroom(Classroom classroom);
 

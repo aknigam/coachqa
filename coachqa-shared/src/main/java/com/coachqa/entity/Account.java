@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Account {
 
-    private int accountId;
+    private Integer accountId;
 
     private String accountName;
 
@@ -40,7 +40,7 @@ public class Account {
         return a;
     }
 
-    public int getAccountId() {
+    public Integer getAccountId() {
         return accountId;
     }
 
