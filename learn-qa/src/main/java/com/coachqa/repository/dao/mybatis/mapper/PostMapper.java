@@ -42,7 +42,8 @@ public interface PostMapper {
     @Results({
             @Result(column = "posttype", property= "postTypeEnum", javaType = PostTypeEnum.class,
                     typeHandler = PostTypeEnumTypeHandler.class),
-            @Result(column = "postedby", property = "postedBy.appUserId")
+            @Result(column = "postedby", property = "postedBy.appUserId"),
+            @Result(column = "classroomid", property = "classroom.classroomId")
     })
 
     Post getPostById(@Param("postId") Integer postId);
@@ -66,11 +67,13 @@ public interface PostMapper {
     List<QuestionVote> getUserVotedQuestions(Integer userId);
 
 
-    @Update("Update post set classroomid = #{classroomId} , approvalstatus =  #{approvalStatus} ,  content = #{content}  where postId = #{postId} ")
+    @Update("Update post set classroomid = #{classroom.classroomId} , approvalstatus =  #{approvalStatus} ,  content " +
+            "= " +
+            "#{content}  where postId = #{postId} ")
     void updateQuestion(Question updatedQuestion);
 
     @Insert("insert into post ( postdate, postedby, content, posttype, classroomid, approvalstatus, accountId)  " +
-            " values ( #{postDate}, #{postedBy.appUserId}, #{content},  #{postTypeEnum.type}, #{classroomId}, " +
+            " values ( #{postDate}, #{postedBy.appUserId}, #{content},  #{postTypeEnum.type}, #{classroom.classroomId}, " +
             " #{approvalStatus} , #{account.accountId})"
     )
     @Options(useGeneratedKeys=true, keyProperty="postId")

@@ -3,6 +3,7 @@ package com.coachqa.service.impl;
 import com.coachqa.entity.Account;
 import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Post;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.Tag;
@@ -92,7 +93,7 @@ public class QuestionServiceImpl implements QuestionService {
 
 		questionPostCommonValidations(question);
 
-		boolean approvalRequired = isApprovalRequired(question.getPostedBy());
+		boolean approvalRequired = isApprovalRequired(question.getPostedBy(), question.getClassroom());
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
             @Override
             public Question doInTransaction(TransactionStatus transactionStatus) {
@@ -120,7 +121,7 @@ public class QuestionServiceImpl implements QuestionService {
 		questionEditValidations(updatedQuestion, user, existingQuestion);
 		questionPostCommonValidations(updatedQuestion);
 
-		boolean approvalRequired =isApprovalRequired(user);
+		boolean approvalRequired =isApprovalRequired(user, existingQuestion.getClassroom());
 		Question qstn = transactionTemplate.execute(new TransactionCallback<Question>() {
 			@Override
 			public Question doInTransaction(TransactionStatus transactionStatus) {
@@ -156,7 +157,7 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE, "Private question can only be posted to a valid classroom");
 		}
 
-		if(isUserMemberOfClassroom(question.getClassroomId(), question.getPostedBy().getAppUserId())){
+		if(isUserMemberOfClassroom(question.getClassroom().getClassroomId(), question.getPostedBy().getAppUserId())){
 			throw new QuestionPostException( ApplicationErrorCode.QUESTION_POST_PRIVATE);
 		}
 	}
@@ -200,7 +201,19 @@ public class QuestionServiceImpl implements QuestionService {
 	    if a user comes and just wants to post a question then it can go to a default classroom which is public
 	    this classroom will belong to a public organisation
 	 */
-	private boolean isApprovalRequired(AppUser postedBy) {
+	private boolean isApprovalRequired(AppUser postedBy, Classroom classroom) {
+
+		// if the posted by is the class owner then approval not required
+		AppUser owner = classroom.getClassOwner();
+
+		if (owner == null) {
+			classroom = classroomService.getClassroom(classroom.getClassroomId());
+			owner = classroom.getClassOwner();
+		}
+		if(owner.equals(postedBy)) {
+			return false;
+		}
+
         Account account = postedBy.getAccount();
         account = accountDAO.fetchCompleteAccountDetails(account.getAccountId());
 
@@ -214,7 +227,7 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	private boolean isClassroomProvided(Question question) {
-		return question.getClassroomId() != null;
+		return question.getClassroom() != null && question.getClassroom().getClassroomId() != null;
 	}
 
 	private void validateTags(List<Tag> tags) {
@@ -233,11 +246,11 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 		Question question = questionDao.getQuestionById(answer.getQuestionId());
 
-		if(isUserMemberOfClassroom(question.getClassroomId(), user.getAppUserId())){
+		if(isUserMemberOfClassroom(question.getClassroom().getClassroomId(), user.getAppUserId())){
 			throw new AnswerPostException(ApplicationErrorCode.ANSWER_PRIVATE_QUESTION);
 		}
 
-		boolean approvalRequired =isApprovalRequired(user);
+		boolean approvalRequired =isApprovalRequired(user, question.getClassroom());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
@@ -283,6 +296,12 @@ public class QuestionServiceImpl implements QuestionService {
 
 		Question question = questionDao.getQuestionById(questionId);
 
+		if(question == null) {
+			throw new RuntimeException("Question with given id not found");
+		}
+		if(!question.getApprovalStatus() && question.getClassroom().isClassroomAdmin(user) ) {
+			question.loggedInUserCanApprove(true);
+		}
 		if(question.getPostedBy().getAppUserId().equals(user.getAppUserId())) {
 			question.setMyPost(true);
 		}
@@ -375,7 +394,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public List<Question> findSimilarQuestions(Question criteria, int page, AppUser user) {
 
-		Integer classroomId = criteria.getClassroomId();
+//		Integer classroomId = criteria.getClassroom().getClassroomId();
 
 		/*
 		1. get the questionIds from solr index

@@ -90,7 +90,7 @@ public class PostControllor {
 
         PostApproval postApproval = new PostApproval();
         postApproval.setApproved(isApproved);
-        postApproval.setApprovedBy(user.getAppUserId());
+        postApproval.setApprovedBy(user);
         postApproval.setPostId(postId);
 
         postService.updateApprovalStatus(postApproval);

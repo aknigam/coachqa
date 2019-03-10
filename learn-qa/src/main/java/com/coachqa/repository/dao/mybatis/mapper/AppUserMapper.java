@@ -22,12 +22,14 @@ public interface AppUserMapper {
     @Options(useGeneratedKeys=true, keyProperty="appUserId")
     int addUer(AppUser user);
 
-    @Select("select appuserid, firstname, email, lastname, accountId, usertypeid  from appuser" +
+    @Select("select appuserid, firstname, email, lastname, u.accountId, usertypeid , a.accountName " +
+            " from appuser u join account a on a.accountId = u.accountId" +
             " where email = #{userEmail}")
     @Results({
             @Result(column = "usertypeid", property= "userType", javaType = UserTypeEnum.class,
                     typeHandler = UserTypeEnumHandler.class),
-            @Result(column = "accountId", property= "account.accountId")
+            @Result(column = "accountId", property= "account.accountId"),
+            @Result(column = "accountName", property= "account.accountName")
     })
     AppUser getUserByEmail(String userEmail);
 }

@@ -12,6 +12,7 @@ public class AppUser extends AccountEntity {
 
 	private Integer appUserId;
 
+
 	private Integer userReputationId;
 
 	@NotNull
@@ -120,5 +121,33 @@ public class AppUser extends AccountEntity {
 
 	public void setUserType(UserTypeEnum userType) {
 		this.userType = userType;
+	}
+
+
+	public boolean equals(final Object o) {
+		if (o == this) return true;
+		if (!(o instanceof AppUser)) return false;
+		final AppUser other = (AppUser) o;
+		if (!other.canEqual((Object) this)) return false;
+		final Object this$appUserId = this.getAppUserId();
+		final Object other$appUserId = other.getAppUserId();
+		if (this$appUserId == null ? other$appUserId != null : !this$appUserId.equals(other$appUserId)) return false;
+		return true;
+	}
+
+	protected boolean canEqual(final Object other) {
+		return other instanceof AppUser;
+	}
+
+	public int hashCode() {
+		final int PRIME = 59;
+		int result = 1;
+		final Object $appUserId = this.getAppUserId();
+		result = result * PRIME + ($appUserId == null ? 43 : $appUserId.hashCode());
+		return result;
+	}
+
+	public String toString() {
+		return "AppUser(appUserId=" + this.getAppUserId() + ", userReputationId=" + this.getUserReputationId() + ", email=" + this.getEmail() + ", password=" + this.getPassword() + ", firstName=" + this.getFirstName() + ", middleName=" + this.getMiddleName() + ", lastName=" + this.getLastName() + ", userType=" + this.getUserType() + ")";
 	}
 }

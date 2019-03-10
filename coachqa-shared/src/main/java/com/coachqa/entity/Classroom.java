@@ -31,6 +31,11 @@ public class Classroom extends AccountEntity {
 		classroomId = id;
 	}
 
+	public Classroom(int id) {
+		this.classroomId = id;
+
+	}
+
 	public Integer getClassroomId() {
 		return this.classroomId;
 	}
@@ -102,7 +107,7 @@ public class Classroom extends AccountEntity {
 
 
 	public boolean isClassroomAdmin(AppUser approver) {
-		return classOwner.getAppUserId().equals(approver.getAppUserId());
+		return classOwner.equals(approver);
 	}
 
 	/*

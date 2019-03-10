@@ -114,6 +114,7 @@ public interface QuestionMybatisMapper {
             @Result(column = "subjectname", property = "subject.subjectName"),
             @Result(column = "classroomid", property = "classroom.classroomId"),
             @Result(column = "ClassName", property = "classroom.className"),
+            @Result(column = "classowner", property = "classroom.classOwner.appUserId"),
             @Result(column = "questionlevelid", property= "questionLevelEnum", javaType = QuestionLevelEnum.class,
                     typeHandler = QuestionLevelEnumTypeHandler.class),
             @Result(column = "refquestionstatusid", property= "refQuestionStatusId", javaType = QuestionStatusEnum.class,

@@ -127,7 +127,7 @@ public class QuestionControllor {
 			criteria.setSubject(s);
 		}
 		if(classroomId != null) {
-			criteria.setClassroomId(classroomId);
+			criteria.setClassroom(new Classroom( classroomId));
 			Classroom c = new Classroom();
 			c.setClassroomId(classroomId);
 			criteria.setClassroom(c);

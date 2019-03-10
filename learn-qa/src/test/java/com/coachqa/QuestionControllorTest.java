@@ -1,5 +1,6 @@
 package com.coachqa;
 
+import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Question;
 import com.coachqa.entity.Tag;
 import com.coachqa.ws.controllor.QuestionControllor;
@@ -96,7 +97,7 @@ public class QuestionControllorTest  extends BaseControllorTest {
     private Question getQuestion() {
         Question question = new Question();
         question.setContent(++questionNumber + "test content");
-        question.setClassroomId(1);
+        question.setClassroom( new Classroom(1));
         question.setRefSubjectId(1);
         question.setTags(Collections.singletonList(new Tag(18)));
         return question;

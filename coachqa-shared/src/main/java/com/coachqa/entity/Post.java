@@ -30,10 +30,10 @@ public class Post extends AccountEntity {
     
     private String approvalComment;
 
-    private Integer classroomId;
     private Classroom classroom;
 
     private boolean myPost = false;
+    private boolean loggedInUserCanApprove = false;
 
     public boolean isMyPost() {
         return myPost;
@@ -130,12 +130,11 @@ public class Post extends AccountEntity {
         this.postTypeEnum = postTypeEnum;
     }
 
-
-    public Integer getClassroomId() {
-        return classroom == null ? classroomId : classroom.getClassroomId();
+    public void loggedInUserCanApprove(boolean canApprove) {
+        loggedInUserCanApprove = canApprove;
     }
 
-    public void setClassroomId(Integer classroomId) {
-        this.classroomId = classroomId;
+    public boolean isLoggedInUserCanApprove() {
+        return loggedInUserCanApprove;
     }
 }

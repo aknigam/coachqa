@@ -1,5 +1,7 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.entity.Post;
 import com.coachqa.entity.PostApprovalRequest;
 import com.coachqa.enums.PostTypeEnum;
@@ -7,6 +9,7 @@ import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.QAEntityNotFoundException;
 import com.coachqa.repository.dao.PostDAO;
+import com.coachqa.service.ClassroomService;
 import com.coachqa.service.PostService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.PostApproval;
@@ -34,6 +37,9 @@ public class PostServiceImpl implements PostService {
 	@Autowired
 	@Lazy
 	private EventPublisher postPublisher;
+
+	@Autowired
+	private ClassroomService classroomService;
 
 	// TODO: 17/04/17 to be implemented
 	@Override
@@ -70,6 +76,11 @@ public class PostServiceImpl implements PostService {
 	@CacheEvict(value="questions", key="#postApproval.postId")
 	public void updateApprovalStatus(PostApproval postApproval) {
 		Post post = postDao.getPostById(postApproval.getPostId());
+
+		AppUser approver = postApproval.getApprovedBy();
+		if(!isApproverClassroomAdmin(approver, post.getClassroom())) {
+			throw new RuntimeException("Only classroom admin can approve the post");
+		}
 		postDao.updatePostApproval(postApproval);
 
 		ApplicationEvent event = new ApplicationEvent(EventType.POST_APPROVED, postApproval.getPostId(), post
@@ -77,6 +88,15 @@ public class PostServiceImpl implements PostService {
 				new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()));
 		event.setStage(EventStage.STAGE_TWO);
 		postPublisher.publishEvent(event);
+	}
+
+	private boolean isApproverClassroomAdmin(AppUser approver, Classroom classroom) {
+
+		if(classroom.getClassOwner() == null) {
+			classroom = classroomService.getClassroom(classroom.getClassroomId());
+		}
+
+		return classroom.getClassOwner().equals(approver);
 	}
 
 	@Override

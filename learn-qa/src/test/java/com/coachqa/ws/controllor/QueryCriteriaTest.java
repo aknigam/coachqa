@@ -2,6 +2,7 @@ package com.coachqa.ws.controllor;
 
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.repository.dao.impl.QuestionQueryBuilder;
 import com.coachqa.util.CollectionUtils;
 
@@ -23,7 +24,7 @@ public class QueryCriteriaTest {
                 .withJoin("post", "p", "postId", "q", "questionid", 1)
                 .withJoin("questiontag", "qt", "questionid", "q", "questionid", 3)
                 .withSubject(1)
-                .withClassroom(1)
+                .withClassroom(new Classroom( 1) )
                 .withTag(Arrays.asList(new Integer[]{1, 2}))
                 .withPostedByUser(new AppUser(1, "", "", "", ""))
                 .withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)

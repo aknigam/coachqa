@@ -17,6 +17,7 @@ p.votes,
 p.classroomid,
 p.approvalstatus,
 c.ClassName,
+c.classowner,
 s.subjectname
  from question q
  join post p on p.postid = q.questionid

@@ -76,6 +76,7 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 
 	@Override
+	@CacheEvict(value="questions", key="#postApproval.postId")
 	public void updatePostApproval(PostApproval postApproval) {
 
 		postMapper.updatePostApproval(postApproval);

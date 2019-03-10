@@ -33,7 +33,7 @@ public class GCPCloudVisionImageProcessorTest {
 
 
     @Test
-//    @Ignore
+    @Ignore
     public void testExtractText() throws IOException {
 
         GCPCloudVisionImageProcessor processor = new GCPCloudVisionImageProcessor();

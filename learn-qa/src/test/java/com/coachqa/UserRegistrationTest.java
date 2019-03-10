@@ -34,6 +34,7 @@ public class UserRegistrationTest extends BaseControllorTest{
     }
 
     @Test
+    @Ignore
     public void testAccountCreationAndUserRegistration(){
 
         Account account = new Account();

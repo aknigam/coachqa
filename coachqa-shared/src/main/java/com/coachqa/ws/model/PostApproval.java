@@ -1,5 +1,6 @@
 package com.coachqa.ws.model;
 
+import com.coachqa.entity.AppUser;
 import com.coachqa.enums.PostTypeEnum;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
  */
 public class PostApproval {
 
-    private Integer approvedBy;
+    private AppUser approvedBy;
     @NotNull
     private Integer postId;
 
@@ -22,11 +23,11 @@ public class PostApproval {
 
     public PostApproval(){}
 
-    public Integer getApprovedBy() {
+    public AppUser getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(Integer approvedBy) {
+    public void setApprovedBy(AppUser approvedBy) {
         this.approvedBy = approvedBy;
     }
 

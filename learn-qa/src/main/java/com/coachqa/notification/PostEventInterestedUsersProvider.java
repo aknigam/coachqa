@@ -71,9 +71,9 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
                     // all the people who have either asked the question or answered the question should be alerted
                     registeredUsers.addAll(classroomService.getAllContributors(postId));
                 }
-
-                if(post.getClassroomId() != null) {
-                    Classroom clasroom = classroomService.getClassroom(post.getClassroomId());
+                Classroom c = post.getClassroom();
+                if(c != null && c.getClassroomId() !=  null) {
+                    Classroom clasroom = classroomService.getClassroom(post.getClassroom().getClassroomId());
                     return Arrays.asList(clasroom.getClassOwner().getAppUserId());
 
                 }
@@ -82,7 +82,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
 
             // if not approved - return the list of approver. we can use stage to identify if it is approved
 
-            Integer classroomId = post.getClassroomId();
+            Integer classroomId = post.getClassroom().getClassroomId();
             ApplicationEvent classroomEvent = new ApplicationEvent(event.getEventType(), classroomId, event.getEventRaisedByEntityId());
             registeredUsers.addAll(eventRegistrationDao.getRegisteredUsers(classroomEvent));
             Classroom classroom = classroomService.getClassroom(classroomId);

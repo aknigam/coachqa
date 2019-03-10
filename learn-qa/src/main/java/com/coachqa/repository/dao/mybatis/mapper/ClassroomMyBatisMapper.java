@@ -33,7 +33,7 @@ public interface ClassroomMyBatisMapper {
 
 //    @SelectProvider(type=ClassSqlProvider.class, method="getClassroomSql")
     @Select("select classroomid,minreputationtojoinid,classowner ,u.firstname,u.middlename,u.lastName," +
-            " classname,ispublic, subjectId  from classroom c" +
+            " classname,ispublic, subjectId , c.accountId from classroom c" +
             " join appuser u ON u.appuserId = classowner where c.classroomid = #{classroomId}")
     @Results({
             @Result(column = "classroomid", property = "classroomId"),
@@ -45,6 +45,7 @@ public interface ClassroomMyBatisMapper {
 
             @Result(column = "classname", property = "className"),
             @Result(column = "ispublic", property = "isPublic"),
+            @Result(column = "accountId", property = "account.accountId"),
             @Result(column = "subjectId", property = "subject.refSubjectId")
     })
 

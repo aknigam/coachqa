@@ -261,7 +261,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 				.withJoin("classroom", "c", "classroomid", "p", "classroomid", 3)
 				.withJoin("refsubject", "s", "refsubjectid", "q", "refsubjectid", 4)
 				.withSubject(q.getRefSubjectId())
-				.withClassroom(q.getClassroomId())
+				.withClassroom(q.getClassroom())
 				.withPostedByUser(q.getPostedBy())
 				// TODO: 10/02/19 this is a bug
 //				.withPublicOnly(true)
