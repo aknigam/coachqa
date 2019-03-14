@@ -86,7 +86,7 @@ public class QuestionControllorTest  extends BaseControllorTest {
 
 
         // validate that the even is generated and sent
-        LoggingNotifier n = LoggingNotifier.getInstance();
+        LoggingNotifier n = (LoggingNotifier) LoggingNotifier.getInstance();
         assertThat(n.getMessages().size()).isEqualTo(1);
 
 
