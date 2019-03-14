@@ -1,1 +1,0 @@
-INSERT INTO crajee.classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Chemistry classes', 1, '2018-04-08 00:00:00', 'Chemistry classes', 1);

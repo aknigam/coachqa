@@ -1,1 +1,0 @@
-INSERT INTO crajee.appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'admin@learnqa.com', 'admin', 'Admin', null, 'admin', 2);

@@ -1,3 +1,11 @@
+CREATE TABLE account
+(
+    accountId INT(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    accountName VARCHAR(50) NOT NULL,
+    accountDescription TEXT
+);
+ALTER TABLE account AUTO_INCREMENT = 100;
+
 CREATE TABLE answer
 (
     answerid INT(10) unsigned PRIMARY KEY NOT NULL,
@@ -18,7 +26,8 @@ CREATE TABLE appuser
     firstname VARCHAR(20) NOT NULL,
     middlename VARCHAR(20),
     lastname VARCHAR(20) NOT NULL,
-    usertypeid TINYINT(4) DEFAULT '1'
+    usertypeid TINYINT(4) DEFAULT '1',
+    accountId INT(10) unsigned NOT NULL
 );
 CREATE TABLE appuserdetail
 (
@@ -35,7 +44,8 @@ CREATE TABLE classroom
     ispublic TINYINT(1) NOT NULL,
     lastupdatedate DATETIME NOT NULL,
     description VARCHAR(200) NOT NULL,
-    subjectId INT(10) unsigned NOT NULL
+    subjectId INT(10) unsigned NOT NULL,
+    accountId INT(10) unsigned NOT NULL
 );
 CREATE TABLE classroommember
 (
@@ -47,6 +57,12 @@ CREATE TABLE classroommember
     membershipexpirartiondate DATETIME NOT NULL,
     membershiprequestdate DATETIME NOT NULL,
     comments VARCHAR(150) NOT NULL
+);
+CREATE TABLE classroomsubject
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    classroomId INT(10) unsigned NOT NULL,
+    subjectId INT(10) unsigned NOT NULL
 );
 CREATE TABLE favoritepost
 (
@@ -65,12 +81,14 @@ CREATE TABLE post
     content TEXT NOT NULL,
     approvalstatus TINYINT(1) DEFAULT '1' NOT NULL,
     approvalcomment VARCHAR(250),
-    classroomid INT(10) unsigned
+    classroomid INT(10) unsigned,
+    accountId INT(10) unsigned NOT NULL
 );
 CREATE TABLE postmedia
 (
     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    imagecontent LONGBLOB NOT NULL
+    imagecontent LONGBLOB NOT NULL,
+    accountId INT(10) unsigned NOT NULL
 );
 CREATE TABLE postvote
 (
@@ -87,10 +105,10 @@ CREATE TABLE question
     refsubjectid INT(10) unsigned NOT NULL,
     questionlevelid INT(10) unsigned NOT NULL,
     refquestionstatusid INT(10) unsigned NOT NULL,
-    title VARCHAR(50) NOT NULL,
+    title VARCHAR(50),
     lastactivedate DATETIME NOT NULL,
-    ispublic TINYINT(1) NOT NULL,
-    classroomId INT(10) unsigned
+    classroomId INT(10) unsigned,
+    question_type_id INT(10) unsigned
 );
 CREATE TABLE questionclassroom
 (
@@ -144,7 +162,8 @@ CREATE TABLE refsubject
 CREATE TABLE refusertype
 (
     usertypeid TINYINT(4) PRIMARY KEY NOT NULL,
-    usertype VARCHAR(20)
+    usertype VARCHAR(20),
+    description VARCHAR(255)
 );
 CREATE TABLE tag
 (
@@ -157,92 +176,85 @@ CREATE TABLE userreputation
     userreputationid INT(10) unsigned PRIMARY KEY NOT NULL,
     reputationname VARCHAR(20) NOT NULL
 );
-CREATE TABLE classroomsubject
+CREATE TABLE account_preference
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    postsNeedApproval TINYINT(4) DEFAULT '1' COMMENT 'by default posts need approval',
+    accountId INT(10) unsigned NOT NULL
+);
+CREATE TABLE questionnaire
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    start_time DATETIME,
+    end_time DATETIME,
+    visibilityId INT(10) unsigned,
+    statusId INT(10) unsigned,
+    instructions TEXT
+);
+CREATE TABLE questionnaire_question
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    questionId INT(10) unsigned NOT NULL,
+    questionnaireId INT(10) unsigned NOT NULL
+);
+CREATE TABLE ref_questionnaire_visibility
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL
+);
+CREATE TABLE ref_questionnaire_status
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL
+);
+CREATE TABLE question_type
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(250)
+);
+CREATE TABLE question_choice
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    choice TEXT NOT NULL,
+    questionId INT(10) unsigned NOT NULL
+);
+CREATE TABLE answer_mc
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    answerId INT(10) unsigned NOT NULL,
+    question_choice_id INT(10) unsigned NOT NULL
+);
+CREATE TABLE role
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL
+);
+CREATE TABLE role_privilege
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    roleId INT(10) unsigned NOT NULL,
+    privilegeId INT(10) unsigned NOT NULL
+);
+CREATE TABLE post_extracted_text
 (
     id INT(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    classroomId INT(10) unsigned NOT NULL,
-    subjectId INT(10) unsigned NOT NULL
+    postId INT(10) unsigned NOT NULL,
+    extracted_text TEXT NOT NULL
 );
-CREATE TABLE account
+CREATE TABLE post_ocr_text
 (
-    accountId INT(10) unsigned PRIMARY KEY NOT NULL,
-    accountName VARCHAR(50) NOT NULL,
-    accountDescription TEXT
+    id INT(10) unsigned PRIMARY KEY NOT NULL,
+    extracted_text LONGTEXT NOT NULL,
+    postId INT(10) unsigned NOT NULL
 );
-ALTER TABLE answer ADD FOREIGN KEY (answerid) REFERENCES post (postid);
-ALTER TABLE answer ADD FOREIGN KEY (questionid) REFERENCES question (questionid);
-CREATE INDEX answerpost_fk ON answer (answerid);
-CREATE INDEX answer_fkindex1 ON answer (questionid);
-ALTER TABLE answercomment ADD FOREIGN KEY (answerid) REFERENCES answer (answerid);
-CREATE INDEX answercomment_fkindex1 ON answercomment (answerid);
-ALTER TABLE appuser ADD FOREIGN KEY (userreputationid) REFERENCES userreputation (userreputationid);
-ALTER TABLE appuser ADD FOREIGN KEY (usertypeid) REFERENCES refusertype (usertypeid);
-CREATE INDEX appusertype___fk ON appuser (usertypeid);
-CREATE INDEX appuser_fkindex1 ON appuser (userreputationid);
-CREATE UNIQUE INDEX email_unique ON appuser (email);
-ALTER TABLE appuserdetail ADD FOREIGN KEY (appuserid) REFERENCES appuser (appuserid);
-CREATE INDEX appuserdetail_appuser_appuserid_fk ON appuserdetail (appuserid);
-ALTER TABLE classroom ADD FOREIGN KEY (minreputationtojoinid) REFERENCES userreputation (userreputationid);
-ALTER TABLE classroom ADD FOREIGN KEY (classowner) REFERENCES appuser (appuserid);
-ALTER TABLE classroom ADD FOREIGN KEY (subjectId) REFERENCES refsubject (refsubjectid);
-CREATE UNIQUE INDEX classname_unique ON classroom (classname);
-CREATE INDEX classroom_fkindex1 ON classroom (classowner);
-CREATE INDEX classroom_fkindex2 ON classroom (minreputationtojoinid);
-CREATE INDEX classroom_refsubject_RefSubjectId_fk ON classroom (subjectId);
-ALTER TABLE classroommember ADD FOREIGN KEY (appuserid) REFERENCES appuser (appuserid);
-ALTER TABLE classroommember ADD FOREIGN KEY (classroomid) REFERENCES classroom (classroomid);
-ALTER TABLE classroommember ADD FOREIGN KEY (status) REFERENCES refclassroommemberstatus (refclassroommemberstatusid);
-CREATE INDEX classroommember_fk2 ON classroommember (classroomid);
-CREATE INDEX classroommember_fk3 ON classroommember (status);
-CREATE INDEX classroommember_fkindex1 ON classroommember (classroomid);
-CREATE INDEX classroommember_fkindex2 ON classroommember (appuserid);
-CREATE UNIQUE INDEX classroommmebrukey ON classroommember (classroomid, appuserid);
-ALTER TABLE favoritepost ADD FOREIGN KEY (userid) REFERENCES appuser (appuserid);
-ALTER TABLE favoritepost ADD FOREIGN KEY (questionid) REFERENCES question (questionid);
-CREATE INDEX favoritepost_appuser_appuserid_fk ON favoritepost (userid);
-CREATE INDEX favoritepost_question_questionid_fk ON favoritepost (questionid);
-ALTER TABLE post ADD FOREIGN KEY (postedby) REFERENCES appuser (appuserid);
-ALTER TABLE post ADD FOREIGN KEY (classroomid) REFERENCES classroom (classroomid);
-CREATE INDEX fk_post_user ON post (postedby);
-CREATE INDEX postclassroom___fk ON post (classroomid);
-ALTER TABLE postvote ADD FOREIGN KEY (postid) REFERENCES post (postid);
-CREATE INDEX appuserfk_idx ON postvote (votedbyuserid);
-CREATE INDEX questionfk_idx ON postvote (postid);
-ALTER TABLE question ADD FOREIGN KEY (questionid) REFERENCES post (postid);
-ALTER TABLE question ADD FOREIGN KEY (refsubjectid) REFERENCES refsubject (refsubjectid);
-ALTER TABLE question ADD FOREIGN KEY (questionlevelid) REFERENCES refquestionlevel (questionlevelid);
-CREATE INDEX questionpost_fk ON question (questionid);
-CREATE INDEX question_fkindex1 ON question (refquestionstatusid);
-CREATE INDEX question_fkindex3 ON question (questionlevelid);
-CREATE INDEX question_fkindex4 ON question (refsubjectid);
-CREATE INDEX question___fk_2 ON question (classroomId);
-CREATE UNIQUE INDEX title_unique ON question (title);
-ALTER TABLE questionclassroom ADD FOREIGN KEY (classroomid) REFERENCES classroom (classroomid);
-ALTER TABLE questionclassroom ADD FOREIGN KEY (questionid) REFERENCES question (questionid);
-CREATE INDEX questionclassroom_fkindex1 ON questionclassroom (questionid);
-CREATE INDEX questionclassroom_fkindex2 ON questionclassroom (classroomid);
-ALTER TABLE questionrating ADD FOREIGN KEY (questionlevelid) REFERENCES refquestionlevel (questionlevelid);
-ALTER TABLE questionrating ADD FOREIGN KEY (ratedbyuserid) REFERENCES appuser (appuserid);
-CREATE INDEX `appuser+fk_idx` ON questionrating (ratedbyuserid);
-CREATE INDEX questionlevel_fk_idx ON questionrating (questionlevelid);
-ALTER TABLE questionratingsummary ADD FOREIGN KEY (questionid) REFERENCES question (questionid);
-CREATE INDEX question_fk_idx ON questionratingsummary (questionid);
-ALTER TABLE questiontag ADD FOREIGN KEY (questionid) REFERENCES question (questionid);
-ALTER TABLE questiontag ADD FOREIGN KEY (tagid) REFERENCES tag (tagid);
-CREATE UNIQUE INDEX questiontaguniquekey ON questiontag (questionid, tagid);
-CREATE INDEX questiontag_fkindex1 ON questiontag (tagid);
-CREATE INDEX questiontag_fkindex2 ON questiontag (questionid);
-CREATE UNIQUE INDEX classroommemberstatusname_unique ON refclassroommemberstatus (classroommemberstatusname);
-ALTER TABLE classroomsubject ADD FOREIGN KEY (classroomId) REFERENCES classroom (classroomid);
-ALTER TABLE classroomsubject ADD FOREIGN KEY (subjectId) REFERENCES refsubject (refsubjectid);
-CREATE INDEX classroomsubject_classroom_ClassroomId_fk ON classroomsubject (classroomId);
-CREATE INDEX classroomsubject_refsubject_RefSubjectId_fk ON classroomsubject (subjectId)CREATE PROCEDURE answeraddsproc(pquestionid INT, pansweredbyuserid INT, pcontent TEXT);
-CREATE PROCEDURE classroomgetbyid(pclassroomid INT);
-CREATE PROCEDURE classroomjoin(puserid INT, pclassroomid INT);
-CREATE PROCEDURE joinclassroomsproc(puserid INT, pclassroomid INT);
-CREATE PROCEDURE questionaddsproc(ppostedby INT, ptitle VARCHAR, pcontent TEXT, prefsubjectid INT, pclassroomid INT, pispublic TINYINT);
-CREATE PROCEDURE questionget(pquestionid INT);
-CREATE PROCEDURE questionupdatestats(pquestionid INT, pvotes INT);
-CREATE PROCEDURE useraddsproc(pemail VARCHAR, ppasword VARCHAR, pfirstname VARCHAR, pmiddlename VARCHAR, plastname VARCHAR);
-CREATE PROCEDURE userget(pappuserid INT, pemail VARCHAR);
-CREATE PROCEDURE userupdate(pappuserid INT, puserreputationid INT, pemail VARCHAR);
+CREATE TABLE contact
+(
+    id INT(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL
+);
