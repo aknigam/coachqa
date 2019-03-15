@@ -36,7 +36,7 @@ public class SolrIndex implements IndexSearchService {
 
     private static String COLLECTION_NAME = "learnqa";
 
-    final String node1SolrUrl = "http://localhost:7475/solr";
+//    final String node1SolrUrl = "http://localhost:7475/solr";
     final String node2SolrUrl = "http://localhost:8983/solr";
 
     private SolrClient client;
@@ -52,7 +52,8 @@ public class SolrIndex implements IndexSearchService {
 //                .withSocketTimeout(60000)
 //                .build();
 
-        List<String> urls = Arrays.asList(node1SolrUrl, node2SolrUrl);
+//        List<String> urls = Arrays.asList(node1SolrUrl, node2SolrUrl);
+        List<String> urls = Arrays.asList( node2SolrUrl);
         client = new CloudSolrClient.Builder(urls)
                 .withConnectionTimeout(10000)
                 .withSocketTimeout(60000)
