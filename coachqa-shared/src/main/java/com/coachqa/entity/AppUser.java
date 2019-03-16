@@ -29,6 +29,7 @@ public class AppUser extends AccountEntity {
 	private String lastName;
 
 	private UserTypeEnum userType;
+	private String androidToken;
 
 	public AppUser() {
 	}
@@ -149,5 +150,9 @@ public class AppUser extends AccountEntity {
 
 	public String toString() {
 		return "AppUser(appUserId=" + this.getAppUserId() + ", userReputationId=" + this.getUserReputationId() + ", email=" + this.getEmail() + ", password=" + this.getPassword() + ", firstName=" + this.getFirstName() + ", middleName=" + this.getMiddleName() + ", lastName=" + this.getLastName() + ", userType=" + this.getUserType() + ")";
+	}
+
+	public String getAndroidToken() {
+		return androidToken;
 	}
 }

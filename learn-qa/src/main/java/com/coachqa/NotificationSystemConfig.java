@@ -89,8 +89,8 @@ public class NotificationSystemConfig  {
     }
 
     @Bean
-    public NotifierFactory notifierFactory(UserService userService){
-        return new NotifierFactory(userService);
+    public NotifierFactory notifierFactory(){
+        return new NotifierFactory();
     }
 
     @Bean
