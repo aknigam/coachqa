@@ -35,6 +35,8 @@ public class ClassroomControllor {
 	@PostMapping
 	public Classroom createClassroom(@RequestBody Classroom classroom, HttpServletRequest request , HttpServletResponse response){
 
+		AppUser user = WSUtil.getUser(userService);
+		classroom.setAccount(user.getAccount());
 		classroom.setClassOwner(WSUtil.getUser( userService));
 		if(classroom.getSubject() == null) {
 			throw new RuntimeException("Classroom must have a subject");
@@ -53,7 +55,8 @@ public class ClassroomControllor {
 		if(classroom.getSubject() == null) {
 			throw new RuntimeException("Classroom must have a subject");
 		}
-		Classroom newClassroom = classroomService.createClassroom(classroom );
+		// TODO: 18/02/19
+		Classroom newClassroom = classroomService.updateClassroom(classroom );
 
 		WSUtil.setLocationHeader(request, response, newClassroom.getClassroomId());
 		return newClassroom;
@@ -66,7 +69,7 @@ public class ClassroomControllor {
 			false) boolean onlyLoginUserClassrooms)
 	{
 		AppUser user = WSUtil.getUser( userService);
-		return classroomService.searchClassrooms( user.getAppUserId(),page, onlyLoginUserClassrooms);
+		return classroomService.searchClassrooms( user, page, onlyLoginUserClassrooms);
 
 	}
 

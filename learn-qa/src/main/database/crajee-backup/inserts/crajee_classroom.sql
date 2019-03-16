@@ -1,0 +1,15 @@
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Chemistry classes', 1, '2018-04-08 00:00:00', 'Chemistry classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 9, 'Software classes', 1, '2018-09-01 00:00:00', 'Software classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math classes', 1, '2018-09-01 00:00:00', 'Math classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 9, 'Math1 classes', 1, '2018-09-01 00:00:00', 'Math classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 9, 'Anand classes', 1, '2018-09-02 00:00:00', 'Anand classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Crajee classes', 1, '2018-09-03 00:00:00', 'crajee classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-123 classes', 1, '2018-11-24 00:00:00', 'Math-123 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-1234 classes', 1, '2018-11-24 00:00:00', 'Math-1234 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-2234 classes', 1, '2018-11-25 00:00:00', 'Math-2234 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-12234 classes', 1, '2018-11-26 00:00:00', 'Math-2234 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-12235 classes', 1, '2018-12-01 00:00:00', 'Math-2235 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-12236 classes', 1, '2018-12-01 00:00:00', 'Math-2236 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-12237 classes', 1, '2018-12-01 00:00:00', 'Math-2237 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 2, 'Math-62234 classes', 1, '2018-12-04 00:00:00', 'Math-6234 classes', 1);
+INSERT INTO classroom (minreputationtojoinid, classowner, classname, ispublic, lastupdatedate, description, subjectId) VALUES (null, 1, 'Chemistry 101 classes', 0, '2019-02-17 00:00:00', 'Chemistry 101 classes', 1);

@@ -1,15 +1,18 @@
 package com.coachqa.repository.dao.impl;
 
+import com.coachqa.entity.Answer;
+import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.repository.dao.QuestionDAO;
+import com.coachqa.repository.dao.mapper.AnswerSprocMapper;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
+import com.coachqa.repository.dao.mybatis.mapper.AnswerMapper;
 import com.coachqa.repository.dao.mybatis.mapper.PostMapper;
 import com.coachqa.repository.dao.mybatis.mapper.QuestionMybatisMapper;
 import com.coachqa.repository.dao.mybatis.mapper.TagMapper;
 import com.coachqa.repository.dao.sp.AnswerAddSproc;
 import com.coachqa.util.CollectionUtils;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class QuestionDAOImpl extends BaseDao implements QuestionDAO, InitializingBean {
@@ -51,7 +55,10 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	@Autowired
 	private TagMapper tagMapper;
 
-	
+	@Autowired
+	private AnswerMapper answerMapper;
+
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		DataSource dataSource = getDataSource();
@@ -87,8 +94,12 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	public Question getQuestionById(Integer questionId) {
 		try{
 
-			Question question = questionMapper.getQuestionById(questionId);
-			return question;
+			List<Question> questions = questionMapper.getUsersQuestions(null, questionId, 3, 0);
+			if(org.springframework.util.CollectionUtils.isEmpty(questions)) {
+				throw new RuntimeException("Question not found");
+			}
+//			getQuestionById(questionId);
+			return questions.get(0);
 		}
 		catch (DataAccessException se){
 			LOGGER.error("question does not exists: "+ questionId, se);
@@ -98,8 +109,9 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	@Override
 	@CacheEvict(value="questions", key="#answer.questionId")
-	public void addAnswertoQuestion(AnswerModel answer) {
-		answerAddSproc.addAnswer(answer);
+	public void addAnswertoQuestion(Answer answer) {
+		postMapper.addPost(answer);
+		answerMapper.addAnswer(answer.getPostId(), answer.getQuestionId());
 	}
 
 	@Override
@@ -130,14 +142,14 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	}
 
 	@Override
-	public List<Question> findByQuery(QueryCriteria q, Integer page, Integer userId, int
+	public List<Question> findByQuery(QueryCriteria q, Integer page, AppUser loggedInUser, int
 			noOfPaginatedResults) {
 
 		QuestionQueryBuilder queryBuilder = new QuestionQueryBuilder("question", "q");
 
 		queryBuilder
 				= queryBuilder
-				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
 				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
@@ -167,7 +179,8 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 
 
-		queryBuilder.withPublicOnly(true)
+		queryBuilder
+				.withAccountId(loggedInUser.getAccount().getAccountId())
 				.withApprovedOnly()
 				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
                 .withLimit(page, noOfPaginatedResults);
@@ -180,6 +193,11 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		List<Question> qstns = jdbcTemplate.query(query, qm);
 
 		return qstns;
+	}
+
+	@Override
+	public List<Question> getQuestions(List<Integer> questionIds) {
+		return questionMapper.getQuestions(questionIds);
 	}
 
 
@@ -214,7 +232,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	 * @return
 	 */
 	@Override
-	public List<Question> findSimilarQuestions(Question q, int page, int userId, int noOfResults) {
+	public List<Question> findSimilarQuestions(Question q, int page, AppUser user, int noOfResults) {
 
 		// todo: access check should also be added here. i.e the logged in user should be the member of the classroom
 		// todo: if the question is private.
@@ -233,16 +251,21 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 		queryBuilder
 		 = queryBuilder
-				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate","ispublic"}))
+				.withSelectCols("q", Arrays.asList(new String[]{"questionid","refsubjectid","questionlevelid","refquestionstatusid","title","lastactivedate"}))
 				.withSelectCols("p", Arrays.asList(new String[]{"votes","postedby","content","postdate", "noofviews", "posttype", "classroomid", "approvalstatus"}))
 				.withSelectCols("u", Arrays.asList(new String[]{"firstname","middlename","lastName"}))
+				.withSelectCols("c", Arrays.asList(new String[]{"ClassName"}))
+				.withSelectCols("s", Arrays.asList(new String[]{"subjectname"}))
 				.withJoin("appuser", "u", "appuserId", "p", "postedby", 2)
 				.withJoin("post", "p", "postId", "q", "questionid", 1)
+				.withJoin("classroom", "c", "classroomid", "p", "classroomid", 3)
+				.withJoin("refsubject", "s", "refsubjectid", "q", "refsubjectid", 4)
 				.withSubject(q.getRefSubjectId())
-				.withClassroom(q.getClassroomId())
+				.withClassroom(q.getClassroom())
 				.withPostedByUser(q.getPostedBy())
 				// TODO: 10/02/19 this is a bug
 //				.withPublicOnly(true)
+				.withAccountId(user.getAccount().getAccountId())
 				.withApprovedOnly()
 				.withOderBy("p", "postdate", QuestionQueryBuilder.ORDER.DESC)
 				.withLimit(page, noOfResults);
@@ -259,6 +282,10 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 		return qstns;
 
 
+	}
+
+	public static void main(String[] args) {
+		System.out.println(UUID.randomUUID());
 	}
 
 	private boolean tagCriteriaExists(Question q) {
@@ -286,7 +313,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 	 */
 	@Override
 	public List<Question> getUsersPosts(Integer appUserId, Integer page) {
-		List<Question> questions =  questionMapper.getUsersQuestions(appUserId, page*PAGE_SIZE);
+		List<Question> questions =  questionMapper.getUsersQuestions(appUserId, null, 2,page*PAGE_SIZE);
 
 		return questions;
 	}
@@ -312,7 +339,7 @@ public class QuestionDAOImpl extends BaseDao implements QuestionDAO, Initializin
 
 	@Override
 	public List<Question> getMyFavorites(Integer appUserId, Integer page) {
-		return questionMapper.getFavoriteQuestions(appUserId, page*PAGE_SIZE);
+		return questionMapper.getUsersQuestions(appUserId, null, 1,page*PAGE_SIZE);
 	}
 
 	@Override

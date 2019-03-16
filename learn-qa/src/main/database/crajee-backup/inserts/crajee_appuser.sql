@@ -1,0 +1,11 @@
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'admin@learnqa.com', 'admin', 'Admin', null, 'admin', 2);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'anigam@expedia.com', 'pass', 'Anand', 'Kumar', 'Nigam', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'a.nigam@cvent.com', 'password', 'Anand', 'Kumar', 'Nigam', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'anigam@com', 'password', 'Anand', 'Kumar', 'Nigam', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'varun@com', 'password', 'Varun', null, 'Kubba', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'a@c.com', 'p', 'F', 'F', 'F', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'anupam@com', 'pass', 'Anupam', '', 'Sharma', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'varuan@com', 'password', 'Varun', null, 'Kubba', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'varuBn@com', 'password', 'Varun', null, 'Kubba', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'priya@com', 'paas', 'Priya', '', 'Nigam', 1);
+INSERT INTO appuser (userreputationid, email, pasword, firstname, middlename, lastname, usertypeid) VALUES (null, 'a.nigam', 'pass', 'Anand', 'Kumar', 'Nigam', 1);

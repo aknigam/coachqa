@@ -55,30 +55,8 @@ public class QuestionAddSproc
 	}
 
 
-	public Question addQuestion(Question model) {
-		MapSqlParameterSource in = new MapSqlParameterSource();
-		in.addValue(P_POSTEDBY, model.getPostedBy().getAppUserId());
-		in.addValue(P_TITLE, model.getTitle());
-		in.addValue(P_CONTENT, model.getContent());
-		in.addValue(P_SUBJECT, model.getRefSubjectId());
-		if(model.getClassroomId() != null)
-			in.addValue(P_CLASSROOMID,  model.getClassroomId());
-		else
-			in.addValue(P_CLASSROOMID,  null);
-		in.addValue(P_ISPUBLIC,  model.isPublicQuestion());
-
-		
-		Map<String, Object> out = addOrUpdateUserSproc.execute(in);
-		
-		List<Question> result = (List<Question>) out.get("question");
-		return result.get(0);
-	}
 
 
-	public AppUser getUserByIdentifier(Integer userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	static class UserMapper implements RowMapper<AppUser> {
 

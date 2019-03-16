@@ -1,6 +1,6 @@
 package com.coachqa.repository.dao.sp;
 
-import com.coachqa.repository.dao.mapper.AnswerMapper;
+import com.coachqa.repository.dao.mapper.AnswerSprocMapper;
 import com.coachqa.repository.dao.mapper.QuestionMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -28,7 +28,7 @@ public class QuestionGetSproc
 			new SqlParameter(P_QUESTIONID	,Types.INTEGER)
 		)
 		.returningResultSet("question", new QuestionMapper())
-		.returningResultSet("answers", new AnswerMapper())
+		.returningResultSet("answers", new AnswerSprocMapper())
 		.returningResultSet("tags", new TagJDBCMapper());
 	}
 

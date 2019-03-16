@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FileUploadDao  {
 
-    public String persist(byte[] bytes);
+    public String persist(byte[] bytes, int accountId);
 
-    public byte[] readImage(Integer imageId) ;
+    public byte[] readImage(Integer imageId);
+
 }

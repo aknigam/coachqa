@@ -25,7 +25,7 @@ spring:
     platform: "h2"
   datasource_oauth:
     driver: "com.mysql.jdbc.Driver"
-    url: "jdbc:mysql://localhost:3306/crajee"
+    url: "jdbc:mysql://localhost:3306/crajee_db"
     username: "root"
     password: "root"
     initialSize: 10
@@ -54,7 +54,7 @@ jmx:
 database:
   config:
     driver: "com.mysql.jdbc.Driver"
-    url: "jdbc:mysql://localhost:3306/crajee"
+    url: "jdbc:mysql://localhost:3306/crajee_db"
     username: "root"
     password: "root"
     initialSize: 10

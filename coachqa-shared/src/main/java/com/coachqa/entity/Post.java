@@ -8,9 +8,8 @@ import java.util.Date;
 /**
  * Created by Anand on 8/25/2015.
  */
-public class Post {
+public class Post extends AccountEntity {
 
-    
     private Integer postId;
 
     private PostTypeEnum postTypeEnum;
@@ -31,11 +30,29 @@ public class Post {
     
     private String approvalComment;
 
-    private Integer classroomId;
+    private Classroom classroom;
 
+    private boolean myPost = false;
+    private boolean loggedInUserCanApprove = false;
+
+    public boolean isMyPost() {
+        return myPost;
+    }
+
+    public void setMyPost(boolean myPost) {
+        this.myPost = myPost;
+    }
 
     public Post(){
 
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     public Integer getPostId() {
@@ -113,12 +130,11 @@ public class Post {
         this.postTypeEnum = postTypeEnum;
     }
 
-
-    public Integer getClassroomId() {
-        return classroomId;
+    public void loggedInUserCanApprove(boolean canApprove) {
+        loggedInUserCanApprove = canApprove;
     }
 
-    public void setClassroomId(Integer classroomId) {
-        this.classroomId = classroomId;
+    public boolean isLoggedInUserCanApprove() {
+        return loggedInUserCanApprove;
     }
 }

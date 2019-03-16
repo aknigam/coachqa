@@ -11,7 +11,7 @@ public interface ClassroomService {
 
 	Classroom getClassroom(Integer classroomId);
 
-	void requestClassroomMembership(Integer appUserId, Integer classroomId, String comments);
+	void requestClassroomMembership(AppUser user, Integer classroomId, String comments);
 
 	Classroom createClassroom(Classroom classroom);
 
@@ -31,13 +31,15 @@ public interface ClassroomService {
 
 	ClassroomSettings getClassroomSettings(Integer classroomId);
 
-    List<Classroom> searchClassrooms(Integer integer, Integer page, boolean onlyLoginUserClassrooms);
+    List<Classroom> searchClassrooms(AppUser user, Integer page, boolean onlyLoginUserClassrooms);
 
     List<Integer> getMembersList(Integer classroomId);
 
 	List<Integer> getAllContributors(Integer postId);
 
 	List<ClassroomMembership> getPendingMembershipRequests(Integer appUserId);
+
+	Classroom updateClassroom(Classroom classroom);
 
 //	void processClassroomJoinRequest(int classroomId, boolean isApproved, int requesterId, Integer approverUserId);
 

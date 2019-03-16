@@ -1,0 +1,11 @@
+master tables
+
+classroomsubject
+refclassroommemberstatus
+refsubject
+*refquestionlevel
+*refquestionstatus
+*refusertype
+
+
+* Are these needed

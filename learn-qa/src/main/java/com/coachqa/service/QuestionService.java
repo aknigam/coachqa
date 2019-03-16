@@ -1,10 +1,10 @@
 package com.coachqa.service;
 
+import com.coachqa.entity.Answer;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Question;
 import com.coachqa.enums.QuestionRatingEnum;
 import com.coachqa.ws.controllor.QueryCriteria;
-import com.coachqa.ws.model.AnswerModel;
 
 import java.util.List;
 
@@ -80,14 +80,14 @@ public interface QuestionService {
 	
 
 
-	Question postAnswer(Integer userId, AnswerModel model);
+	Question postAnswer(AppUser user, Answer answer);
 
 	Question getQuestionById(Integer questionId);
 
 	Question getQuestionByIdAndIncrementViewCount(Integer questionId, AppUser user);
 
 
-	List<Question> findSimilarQuestions(Question questionId, int noOfResults, Integer userId);
+	List<Question> findSimilarQuestions(Question questionId, int noOfResults, AppUser user);
 
 	List<Question> getQuestionsByTag(int tagId);
 
@@ -98,5 +98,5 @@ public interface QuestionService {
 
 	List<Question> getMyFavorites(Integer appUserId, Integer page);
 
-	List<Question> findByQuery(QueryCriteria searchQuery, Integer page, Integer appUserId);
+	List findByQuery(QueryCriteria searchQuery, Integer page, AppUser loggedInUser);
 }

@@ -1,0 +1,1 @@
+INSERT INTO account (accountName, accountDescription) VALUES ('internal_account', 'Internal account to which application admin can be assigned');

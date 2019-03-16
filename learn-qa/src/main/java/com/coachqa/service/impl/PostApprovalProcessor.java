@@ -40,7 +40,7 @@ public class PostApprovalProcessor extends ApprovalService {
     protected ApplicationEvent processApproval(ApplicationEvent event, boolean isRequestApproved, AppUser approver) {
         PostApproval postApproval = new PostApproval();
         postApproval.setApproved(true);
-        postApproval.setApprovedBy(approver.getAppUserId());
+        postApproval.setApprovedBy(approver);
         postApproval.setPostId(event.getEventSource());
         postService.updateApprovalStatus(postApproval);
         event.setStage(EventStage.STAGE_TWO);

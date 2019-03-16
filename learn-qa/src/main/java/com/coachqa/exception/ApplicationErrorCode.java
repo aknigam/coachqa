@@ -27,6 +27,7 @@ public enum ApplicationErrorCode {
     QUESTION_POST_CLASSROOM(4001, "You need to be a member of the classroom for posting the question"),
 
     ANSWER_PRIVATE_QUESTION(5001,"Cannot answer a private question" ),
+    ANSWER_WITHOUT_QUESTION(5002,"Question refernce needed for submitting answer" ),
 
     ENTITY_NOT_FOUND(6001,"Cannot find entity" ),
 

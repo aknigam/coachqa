@@ -1,7 +1,5 @@
 package com.coachqa.entity;
 
-import java.util.Date;
-
 public class MembershipApprovalRequest extends ApprovalRequest {
 
     private Classroom classroom;

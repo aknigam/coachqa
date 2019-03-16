@@ -76,6 +76,7 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 
 
 	@Override
+	@CacheEvict(value="questions", key="#postApproval.postId")
 	public void updatePostApproval(PostApproval postApproval) {
 
 		postMapper.updatePostApproval(postApproval);
@@ -89,6 +90,18 @@ public class PostDAOImpl extends BaseDao implements PostDAO {
 		} catch (BindingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void updatePostExtractedtext(Integer postId, String imageExtractedText) {
+
+		String existingText = postMapper.extractedTextExists(postId);
+		if(existingText == null || existingText.trim().equals("")) {
+			postMapper.addPostExtractedtext(postId, imageExtractedText);
+			return;
+		}
+
+		postMapper.updatePostExtractedtext(postId, imageExtractedText);
 	}
 
 

@@ -1,8 +1,10 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Account;
 import com.coachqa.entity.AndroidToken;
 import com.coachqa.entity.AppUser;
 import com.coachqa.exception.UserNotFoundException;
+import com.coachqa.repository.dao.AccountDAO;
 import com.coachqa.repository.dao.UserDAO;
 import com.coachqa.service.UserService;
 import notification.NotificationService;
@@ -10,6 +12,7 @@ import notification.entity.NotificationPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +25,9 @@ public class AppUserService implements UserService {
 	private UserDAO userDAO;
 
 	@Autowired
+	private AccountDAO accountDao;
+
+	@Autowired
 	private NotificationService notificationService;
 
 	/**
@@ -32,6 +38,19 @@ public class AppUserService implements UserService {
 	@Override
 	@Transactional
 	public AppUser addUser(AppUser user) {
+
+		if(user.getUserType() == null) {
+			throw new RuntimeException("User type must be specified");
+		}
+		// check of the account exists
+		if(user.getAccount() == null || StringUtils.isEmpty(user.getAccount().getAccountName() == null)) {
+			throw new RuntimeException("User registration cannot be completed as the provided account does not exist");
+		}
+		Account account = accountDao.fetchAccountByName(user.getAccount().getAccountName());
+		if(account == null) {
+			throw new RuntimeException("User registration cannot be completed as the provided account does not exist");
+		}
+		user.setAccount(account);
 		return userDAO.addUser(user);
 	}
 

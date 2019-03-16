@@ -10,7 +10,7 @@
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
                 <property name="password" value="root"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/crajee"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/crajee_db"/>
                 <property name="username" value="root"/>
                 
             </dataSource>

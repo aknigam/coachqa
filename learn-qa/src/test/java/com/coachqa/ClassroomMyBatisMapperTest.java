@@ -5,6 +5,7 @@ import com.coachqa.repository.dao.mybatis.mapper.ClassroomMyBatisMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,13 +15,14 @@ import java.util.List;
 public class ClassroomMyBatisMapperTest {
 
     @Test
+    @Ignore
     public void testGetClassrooms() throws IOException {
 
         SqlSessionFactory sf = getSessionFactory();
         sf.getConfiguration().addMapper(ClassroomMyBatisMapper.class);
 
         ClassroomMyBatisMapper m = sf.openSession().getMapper(ClassroomMyBatisMapper.class);
-        List<Classroom> c = m.searchClassrooms(0, 2, false);
+        List<Classroom> c = m.searchClassrooms(0, 2, false, 100);
 
         System.out.println(c.size());
 

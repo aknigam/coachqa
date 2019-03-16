@@ -1,6 +1,7 @@
 package com.coachqa.repository.dao.impl;
 
 import com.coachqa.entity.AppUser;
+import com.coachqa.entity.Classroom;
 import com.coachqa.enums.QuestionLevelEnum;
 import com.coachqa.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -85,9 +86,9 @@ public class QuestionQueryBuilder {
         return this;
     }
 
-    public QuestionQueryBuilder withClassroom(Integer classroomId) {
-        if(classroomId!= null ) {
-            conditions.add(new QueryCondition<Integer>("classroomid", classroomId));
+    public QuestionQueryBuilder withClassroom(Classroom classroom) {
+        if(classroom != null && classroom.getClassroomId() !=  null) {
+            conditions.add(new QueryCondition<Integer>("classroomid", classroom.getClassroomId()));
         }else{
             LOGGER.debug("classroom condition not added");
         }
@@ -132,7 +133,7 @@ public class QuestionQueryBuilder {
         conditions.add(new QueryCondition<Integer>("postedby", postedBy.getAppUserId()).withJoinType(JoinTypeEnum.EQUALS));
         return this;
     }
-
+    @Deprecated
     public QuestionQueryBuilder withPublicOnly(Boolean aPublic) {
         if(aPublic == null)
             return this;
@@ -240,6 +241,11 @@ public class QuestionQueryBuilder {
             return "'"+rhs+"'";
         }
         return rhs.toString();
+    }
+
+    public QuestionQueryBuilder withAccountId(int accountId) {
+        conditions.add(new QueryCondition("u.accountId", accountId).withJoinType(JoinTypeEnum.EQUALS));
+        return this;
     }
 
     public static class QueryCondition<T>{

@@ -23,6 +23,8 @@ public class Question extends Post implements java.io.Serializable {
 	private Integer questionId;
 	
 	private Integer refSubjectId;
+
+	private RefSubject subject;
 	
 	private QuestionLevelEnum questionLevelEnum;
 	
@@ -39,9 +41,6 @@ public class Question extends Post implements java.io.Serializable {
 
 	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private Date lastActiveDate;
-
-	
-	private boolean publicQuestion;
 
 	private boolean favorite;
 
@@ -62,8 +61,17 @@ public class Question extends Post implements java.io.Serializable {
 		setPostTypeEnum(PostTypeEnum.QUESTION);
 	}
 
+
+	public RefSubject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(RefSubject subject) {
+		this.subject = subject;
+	}
+
 	public Integer getQuestionId() {
-		return questionId;
+		return questionId == null ? getPostId() : questionId;
 	}
 
 	public void setQuestionId(Integer questionId) {
@@ -100,16 +108,6 @@ public class Question extends Post implements java.io.Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-
-
-	public boolean isPublicQuestion() {
-		return publicQuestion;
-	}
-
-	public void setPublicQuestion(boolean publicQuestion) {
-		this.publicQuestion = publicQuestion;
 	}
 
 	public List<Tag> getTags() {

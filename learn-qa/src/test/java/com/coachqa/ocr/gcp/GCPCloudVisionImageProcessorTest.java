@@ -37,7 +37,8 @@ public class GCPCloudVisionImageProcessorTest {
     public void testExtractText() throws IOException {
 
         GCPCloudVisionImageProcessor processor = new GCPCloudVisionImageProcessor();
-        String fileName = "/Users/a.nigam/Desktop/handwriting.jpeg";
+//        String fileName = "/Users/a.nigam/Desktop/handwriting.jpeg";
+        String fileName ="/Users/a.nigam/Documents/workspace/coachqa/learn-qa/src/test/resources/image/ieirodov1.jpg";
 
         // Reads the image file into memory
         Path path = Paths.get(fileName);

@@ -65,8 +65,8 @@ public class FileUploadResource {
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                return new FileInfo(fileUploadDao.persist(bytes));
-//                return new FileInfo("g-"+ UUID.randomUUID());
+
+                return new FileInfo(fileUploadDao.persist(bytes, user.getAccount().getAccountId()));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException("Unexpected error occurred while uploading file. Please try again", e);

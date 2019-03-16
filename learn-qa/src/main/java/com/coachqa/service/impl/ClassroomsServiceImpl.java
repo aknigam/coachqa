@@ -1,20 +1,24 @@
 package com.coachqa.service.impl;
 
+import com.coachqa.entity.Account;
 import com.coachqa.entity.AppUser;
 import com.coachqa.entity.Classroom;
 import com.coachqa.entity.ClassroomSettings;
+import com.coachqa.entity.UserTypeEnum;
 import com.coachqa.enums.ClassroomMembershipStatusEnum;
 import com.coachqa.exception.ApplicationErrorCode;
 import com.coachqa.exception.ClassroomNotExistsException;
 import com.coachqa.exception.NotAuthorisedToApproveException;
 import com.coachqa.exception.NotAuthorisedToViewMembershipRequestsException;
 import com.coachqa.exception.NotAuthorizedtoExistClassroomException;
+import com.coachqa.repository.dao.AccountDAO;
 import com.coachqa.repository.dao.ClassroomDAO;
 import com.coachqa.service.ClassroomService;
 import com.coachqa.service.UserService;
 import com.coachqa.service.listeners.question.EventPublisher;
 import com.coachqa.ws.model.ClassroomMembership;
 import notification.entity.ApplicationEvent;
+import notification.entity.EventStage;
 import notification.entity.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +44,6 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Autowired
 	private ClassroomDAO classroomDAO;
 
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -68,26 +70,36 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	 * On approval the membership will be activated.
 	 */
 	@Override
-	public void requestClassroomMembership(Integer appUserId, Integer classroomId, String comments) {
+	public void requestClassroomMembership(AppUser user, Integer classroomId, String comments) {
 
+		validateUserAndClassroomAccount(user, classroomId);
+		// classroom should be open and user should be active
 		try{
 			transactionTemplate.execute(new TransactionCallback<String>() {
 				@Override
 				public String doInTransaction(TransactionStatus transactionStatus) {
-					classroomDAO.joinClassroom(appUserId, classroomId, ClassroomMembershipStatusEnum
+					classroomDAO.joinClassroom(user.getAppUserId(), classroomId, ClassroomMembershipStatusEnum
 							.PENDING_APPROVAL, comments);
 					return "success";
 
 				}
 			});
-		}catch(DuplicateKeyException e){
-			LOGGER.warn("User %d already requested for classroom %d membership", appUserId, classroomId, e);
-		}catch (Exception e){
+		} catch(DuplicateKeyException e){
+			LOGGER.warn("User %d already requested for classroom %d membership", user, classroomId, e);
+		} catch (Exception e){
 			LOGGER.error("Unexpected excepted error occurred while trying to add membership");
 			throw e;
 		}
 
-		notifyAdministrator(classroomId, appUserId);
+		notifyAdministrator(classroomId, user.getAppUserId());
+	}
+
+	private void validateUserAndClassroomAccount(AppUser user, Integer classroomId) {
+		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
+		if(!classroom.getAccount().getAccountId().equals(user.getAccount().getAccountId())) {
+			throw new RuntimeException("For membership user needs to be in the same account as classroom");
+
+		}
 	}
 
 	private void notifyAdministrator(Integer classroomId, Integer userId) {
@@ -100,6 +112,10 @@ public class ClassroomsServiceImpl implements ClassroomService{
 	@Override
 	public Classroom createClassroom(Classroom classroom) {
 
+		AppUser createdBy = classroom.getClassOwner();
+		if(createdBy.getUserType() == UserTypeEnum.application_user) {
+			throw new RuntimeException("You need to have admin rights to create classroom");
+		}
 		Classroom addedClassroom =  classroomDAO.createClassroom(classroom);
 		return addedClassroom;
 	}
@@ -131,29 +147,15 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		for(Integer mId: membershipRequests) {
 			ClassroomMembership cm = classroomDAO.getMembership(mId);
 			Classroom classroom = classroomDAO.getClassroomByIdentifier(cm.getClassroomId());
-			validateApprover(classroom.getClassroomId(), approver.getAppUserId());
-
-
+			if(!classroom.isClassroomAdmin(approver)){
+				throw new NotAuthorisedToApproveException(ApplicationErrorCode.NOT_AUTHORIZEDTO_APPROVE, "Only admin can approve the request");
+			}
 			classroomDAO.findRequestAndApprove(isApprove ? ClassroomMembershipStatusEnum.ACTIVE :
 					ClassroomMembershipStatusEnum.REJECTED, mId);
 
 			notifyUserForMembershipApproval(classroom.getClassroomId(), cm.getMemberId(), isApprove);
 
 		}
-
-	}
-
-
-
-	protected void validateApprover(Integer classroomId, Integer approverUserId) throws NotAuthorisedToApproveException {
-
-
-		Classroom classroom = classroomDAO.getClassroomByIdentifier(classroomId);
-		if(!classroom.getClassOwner().getAppUserId().equals(approverUserId)) {
-			throw new NotAuthorisedToApproveException(ApplicationErrorCode.NOT_AUTHORIZEDTO_APPROVE, "Only admin can approve the request");
-		}
-
-//        throw new InvalidEventForApprovalException(ApplicationErrorCode.IN_VALID_EVENT, "Invalid event type");
 
 	}
 
@@ -164,7 +166,7 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				classroomId, requesterUserId,
 				new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis()));
-
+		approvedEvent.setStage(EventStage.STAGE_TWO);
 		publisher.publishEvent(approvedEvent);
 	}
 
@@ -178,19 +180,16 @@ public class ClassroomsServiceImpl implements ClassroomService{
 				throw new ClassroomNotExistsException(ApplicationErrorCode.CLASSROOM_NOT_FOUND, "Invalid classroom " +
 						"identifier provided");
 			}
-			if (!classroom.getClassOwner().getAppUserId().equals(user.getAppUserId())) {
+			if ( !classroom.isClassroomAdmin(user)) {
 				throw new NotAuthorisedToViewMembershipRequestsException(user, classroom);
 			}
-
 		}
-
 		return  classroomDAO.getMembershipRequests(classroomId, user.getAppUserId(), page);
 	}
 
 	@Override
 	public boolean isActiveMemberOf(Integer classroomId, int user) {
 		return  classroomDAO.isActiveMemberOf(classroomId, user);
-
 	}
 
 	@Override
@@ -199,14 +198,13 @@ public class ClassroomsServiceImpl implements ClassroomService{
 		return classrooms;
 	}
 
-
 	@Override
 	public ClassroomSettings getClassroomSettings(Integer classroomId) {
 		return new ClassroomSettings();
 	}
 
 	@Override
-	public List<Classroom> searchClassrooms(Integer userId, Integer page, boolean onlyLoginUserClassrooms) {
+	public List<Classroom> searchClassrooms(AppUser userId, Integer page, boolean onlyLoginUserClassrooms) {
 		return classroomDAO.searchClassrooms(page, userId, onlyLoginUserClassrooms);
 	}
 
@@ -228,8 +226,14 @@ public class ClassroomsServiceImpl implements ClassroomService{
 
 	}
 
+    @Override
+    public Classroom updateClassroom(Classroom classroom) {
+        // TODO: 18/02/19 provide implementation
+        return null;
+    }
 
-	private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
+
+    private boolean isRequestorAuthorized(Integer classOwnerId, Integer requestedByUserId, Integer memberId) {
 
 		if(isRequesterClassroomOwner(classOwnerId, requestedByUserId)){
 			return true;
