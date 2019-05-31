@@ -58,7 +58,7 @@ public class AppUserService implements UserService {
 	public AppUser getUserDetails(Integer userId) {
 		return userDAO.getUserByIdentifier(userId);
 	}
-	
+	// todo following method should throw error if the user is not found
 	@Override
 	@Transactional
 	public AppUser getUserByEmail(String userEmail) {
@@ -79,6 +79,11 @@ public class AppUserService implements UserService {
 	@Override
 	public void addAndroidUserToken(AndroidToken androidToken) {
 		userDAO.addAndroidUserToken(androidToken);
+	}
+
+	@Override
+	public void addAndroidToken(String androidToken, Integer appUserId) {
+		userDAO.addAndroidToken(androidToken, appUserId);
 	}
 
 

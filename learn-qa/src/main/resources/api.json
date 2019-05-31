@@ -1,0 +1,2654 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Api Documentation",
+    "version": "1.0",
+    "title": "Api Documentation",
+    "termsOfService": "urn:tos",
+    "contact": {},
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "classroom-approval-controllor",
+      "description": "Classroom Approval Controllor"
+    },
+    {
+      "name": "notification-controller",
+      "description": "Notification Controller"
+    },
+    {
+      "name": "client-app-controlllor",
+      "description": "Client App Controlllor"
+    },
+    {
+      "name": "account-resource",
+      "description": "Account Resource"
+    },
+    {
+      "name": "question-controllor",
+      "description": "Question Controllor"
+    },
+    {
+      "name": "tag-controllor",
+      "description": "Tag Controllor"
+    },
+    {
+      "name": "user-controllor",
+      "description": "User Controllor"
+    },
+    {
+      "name": "file-upload-resource",
+      "description": "File Upload Resource"
+    },
+    {
+      "name": "classroom-controllor",
+      "description": "Classroom Controllor"
+    },
+    {
+      "name": "post-controllor",
+      "description": "Post Controllor"
+    },
+    {
+      "name": "regsitration-resource",
+      "description": "Regsitration Resource"
+    }
+  ],
+  "paths": {
+    "/acknowledge": {
+      "post": {
+        "tags": [
+          "notification-controller"
+        ],
+        "summary": "notificationAcknowledged",
+        "operationId": "notificationAcknowledgedUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userId",
+            "description": "userId",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "body",
+            "name": "event",
+            "description": "event",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ApplicationEvent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/account": {
+      "post": {
+        "tags": [
+          "account-resource"
+        ],
+        "summary": "create",
+        "operationId": "createUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "account",
+            "description": "account",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Account"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Account"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classroommembership": {
+      "post": {
+        "tags": [
+          "classroom-approval-controllor"
+        ],
+        "summary": "requestClassroomMembership",
+        "operationId": "requestClassroomMembershipUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "membership",
+            "description": "membership",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClassroomMembership"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classroommembership/approvals": {
+      "get": {
+        "tags": [
+          "classroom-approval-controllor"
+        ],
+        "summary": "showJoinRequests",
+        "operationId": "showJoinRequestsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "classroomId",
+            "in": "query",
+            "description": "classroomId",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ClassroomMembership"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classroommembership/processjoinrequests/{isApproved}": {
+      "post": {
+        "tags": [
+          "classroom-approval-controllor"
+        ],
+        "summary": "processJoinRequests",
+        "operationId": "processJoinRequestsUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "membershipIds",
+            "description": "membershipIds",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "isApproved",
+            "in": "path",
+            "description": "isApproved",
+            "required": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classroommembership/usermemberships": {
+      "get": {
+        "tags": [
+          "classroom-approval-controllor"
+        ],
+        "summary": "getUsermemberships",
+        "operationId": "getUsermembershipsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Classroom"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classroommembership/{membershipId}/leave": {
+      "post": {
+        "tags": [
+          "classroom-approval-controllor"
+        ],
+        "summary": "requestMembershipTermination",
+        "operationId": "requestMembershipTerminationUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "membershipId",
+            "in": "query",
+            "description": "membershipId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classrooms": {
+      "post": {
+        "tags": [
+          "classroom-controllor"
+        ],
+        "summary": "createClassroom",
+        "operationId": "createClassroomUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "classroom",
+            "description": "classroom",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "classroom-controllor"
+        ],
+        "summary": "updateClassroom",
+        "operationId": "updateClassroomUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "classroom",
+            "description": "classroom",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classrooms/id/{classroomId}": {
+      "get": {
+        "tags": [
+          "classroom-controllor"
+        ],
+        "summary": "showClassroomById",
+        "operationId": "showClassroomByIdUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "classroomId",
+            "in": "path",
+            "description": "classroomId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classrooms/name/{name}": {
+      "get": {
+        "tags": [
+          "classroom-controllor"
+        ],
+        "summary": "showClassroomByName",
+        "operationId": "showClassroomByNameUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Classroom"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/classrooms/search": {
+      "get": {
+        "tags": [
+          "classroom-controllor"
+        ],
+        "summary": "searchClassrooms",
+        "operationId": "searchClassroomsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "onlyLoginUserClassrooms",
+            "in": "query",
+            "description": "onlyLoginUserClassrooms",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Classroom"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/client/register": {
+      "get": {
+        "tags": [
+          "client-app-controlllor"
+        ],
+        "summary": "register",
+        "operationId": "registerUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "token",
+            "description": "token",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/image": {
+      "post": {
+        "tags": [
+          "file-upload-resource"
+        ],
+        "summary": "handleFileUpload",
+        "operationId": "handleFileUploadUsingPOST",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "file",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FileInfo"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/image/{imageId}": {
+      "get": {
+        "tags": [
+          "file-upload-resource"
+        ],
+        "summary": "getImageAsResponseEntity",
+        "operationId": "getImageAsResponseEntityUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "path",
+            "description": "imageId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/posts/approval/{postId}/{isApproved}": {
+      "post": {
+        "tags": [
+          "post-controllor"
+        ],
+        "summary": "processApprovalRequest",
+        "operationId": "processApprovalRequestUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "postId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "isApproved",
+            "in": "path",
+            "description": "isApproved",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/posts/approvals": {
+      "get": {
+        "tags": [
+          "post-controllor"
+        ],
+        "summary": "alerts",
+        "operationId": "alertsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PostApprovalRequest"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/posts/rate/{postId}": {
+      "post": {
+        "tags": [
+          "post-controllor"
+        ],
+        "summary": "rate",
+        "operationId": "rateUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "{postId}",
+            "in": "path",
+            "description": "{postId}",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "rating",
+            "description": "rating",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/posts/{postId}": {
+      "delete": {
+        "tags": [
+          "post-controllor"
+        ],
+        "summary": "deletePost",
+        "operationId": "deletePostUsingDELETE",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "{postId}",
+            "in": "path",
+            "description": "{postId}",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/posts/{postId}/{type}/vote/{vote}": {
+      "post": {
+        "tags": [
+          "post-controllor"
+        ],
+        "summary": "vote",
+        "operationId": "voteUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "postId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "vote",
+            "in": "path",
+            "description": "vote",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions": {
+      "post": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "submitQuestion",
+        "operationId": "submitQuestionUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "question",
+            "description": "question",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Question"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Question"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/answer": {
+      "post": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "submitAnswer",
+        "operationId": "submitAnswerUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "answer",
+            "description": "answer",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Answer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Question"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/favorite": {
+      "get": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "getMyFavorites",
+        "operationId": "getMyFavoritesUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Question"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/favorite/{questionId}": {
+      "post": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "markAsFavorite",
+        "operationId": "markAsFavoriteUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "description": "questionId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "isFavorite",
+            "in": "query",
+            "description": "isFavorite",
+            "required": true,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/myquestions": {
+      "get": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "getMyQuestions",
+        "operationId": "getMyQuestionsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Question"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/search": {
+      "get": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "searchQuestions",
+        "operationId": "searchQuestionsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "query",
+            "description": "tagId",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "classroomId",
+            "in": "query",
+            "description": "classroomId",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "description": "ownerId",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "subjectId",
+            "in": "query",
+            "description": "subjectId",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "isPublic",
+            "in": "query",
+            "description": "isPublic",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Question"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/searchbyquery": {
+      "get": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "searchQuestions",
+        "operationId": "searchQuestionsUsingGET_1",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "postedby",
+            "in": "query",
+            "description": "postedby",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "subject",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "tag",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "classroom",
+            "in": "query",
+            "description": "classroom",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Question"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/{questionId}": {
+      "get": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "getQuestion",
+        "operationId": "getQuestionUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "description": "questionId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Question"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "updateQuestion",
+        "operationId": "updateQuestionUsingPUT",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "description": "questionId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "question",
+            "description": "question",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Question"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/questions/{questionId}/requestanswer": {
+      "post": {
+        "tags": [
+          "question-controllor"
+        ],
+        "summary": "requestToAnswer",
+        "operationId": "requestToAnswerUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "description": "questionId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "userIds",
+            "description": "userIds",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/tags": {
+      "post": {
+        "tags": [
+          "tag-controllor"
+        ],
+        "summary": "addTag",
+        "operationId": "addTagUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "tag",
+            "description": "tag",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/tags/search": {
+      "get": {
+        "tags": [
+          "tag-controllor"
+        ],
+        "summary": "getMatchingTagsByName",
+        "operationId": "getMatchingTagsByNameUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "q",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Tag"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/tags/{name}": {
+      "get": {
+        "tags": [
+          "tag-controllor"
+        ],
+        "summary": "getTagByName",
+        "operationId": "getTagByNameUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tag"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "tags": [
+          "user-controllor"
+        ],
+        "summary": "addUser",
+        "operationId": "addUserUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users/ping": {
+      "get": {
+        "tags": [
+          "user-controllor"
+        ],
+        "summary": "ping",
+        "operationId": "pingUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "ping",
+            "description": "ping",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "get": {
+        "tags": [
+          "user-controllor"
+        ],
+        "summary": "getUserDetails",
+        "operationId": "getUserDetailsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/androidtoken": {
+      "post": {
+        "tags": [
+          "user-controllor"
+        ],
+        "summary": "addAndroidUserToken",
+        "operationId": "addAndroidUserTokenUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "androidToken",
+            "description": "androidToken",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AndroidToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/notification/preference": {
+      "post": {
+        "tags": [
+          "user-controllor"
+        ],
+        "summary": "addOrUpdateUserNotificationPreference",
+        "operationId": "addOrUpdateUserNotificationPreferenceUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "preference",
+            "description": "preference",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NotificationPreference"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/deregister": {
+      "post": {
+        "tags": [
+          "notification-controller"
+        ],
+        "summary": "DeRegisterForEvent",
+        "operationId": "DeRegisterForEventUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userId",
+            "description": "userId",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "body",
+            "name": "event",
+            "description": "event",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ApplicationEvent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "notification-controller"
+        ],
+        "summary": "registerForEvent",
+        "operationId": "registerForEventUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userId",
+            "description": "userId",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "body",
+            "name": "event",
+            "description": "event",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ApplicationEvent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "tags": [
+          "regsitration-resource"
+        ],
+        "summary": "registration",
+        "operationId": "registrationUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": [
+          "notification-controller"
+        ],
+        "summary": "getUserNotifications",
+        "operationId": "getUserNotificationsUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserEventNotification"
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Account": {
+      "type": "object",
+      "properties": {
+        "accountDescription": {
+          "type": "string"
+        },
+        "accountId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "accountPreferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AccountPreference"
+          }
+        }
+      }
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/Account"
+        },
+        "approvalComment": {
+          "type": "string"
+        },
+        "approvalStatus": {
+          "type": "boolean"
+        },
+        "classroom": {
+          "$ref": "#/definitions/Classroom"
+        },
+        "classroomId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "content": {
+          "type": "string"
+        },
+        "myPost": {
+          "type": "boolean"
+        },
+        "noOfViews": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postTypeEnum": {
+          "type": "string",
+          "enum": [
+            "QUESTION",
+            "ANSWER"
+          ]
+        },
+        "postedBy": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "votes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "PostApprovalRequest": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/Post"
+        },
+        "postType": {
+          "type": "string",
+          "enum": [
+            "QUESTION",
+            "ANSWER"
+          ]
+        },
+        "requestedBy": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "requestedOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ClassroomMembership": {
+      "type": "object",
+      "properties": {
+        "classroom": {
+          "$ref": "#/definitions/Classroom"
+        },
+        "classroomId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "member": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "memberId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "membershipId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "membershipRequestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "membershipStatus": {
+          "type": "string",
+          "enum": [
+            "NOT_MEMBER",
+            "PENDING_APPROVAL",
+            "ACTIVE",
+            "EXPIRED",
+            "REJECTED"
+          ]
+        },
+        "requestComments": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ApplicationEvent": {
+      "type": "object",
+      "properties": {
+        "eventDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "eventRaisedByEntityId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "eventSource": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "eventType": {
+          "type": "string",
+          "enum": [
+            "POST_VOTED",
+            "POST_VIEWED",
+            "POST_UPDATED",
+            "POST_DELETED",
+            "POST_APPROVED",
+            "POST_REJECTED",
+            "QUESTION_POSTED",
+            "QUESTION_ANSWERED",
+            "MEMBERSHIP_REQUEST",
+            "MEMBERSHIP_APPROVED",
+            "MEMBERSHIP_REJECTED"
+          ]
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "retryCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "STAGE_ONE",
+            "STAGE_TWO"
+          ]
+        }
+      }
+    },
+    "UserEventNotification": {
+      "type": "object",
+      "properties": {
+        "event": {
+          "$ref": "#/definitions/ApplicationEvent"
+        },
+        "eventNotificationStatus": {
+          "type": "string",
+          "enum": [
+            "NEW",
+            "NOTIFIED",
+            "NOTIFICATION_FAILED",
+            "ACKNOWLEDGED"
+          ]
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "notificationType": {
+          "type": "string",
+          "enum": [
+            "EMAIL",
+            "APP",
+            "LOG"
+          ]
+        },
+        "notificationmessage": {
+          "type": "string"
+        },
+        "user": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "AppUser": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/Account"
+        },
+        "appUserId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "middleName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "userReputationId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "userType": {
+          "type": "string",
+          "enum": [
+            "application_admin",
+            "account_admin",
+            "classroom_admin",
+            "application_user"
+          ]
+        }
+      }
+    },
+    "Answer": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/Account"
+        },
+        "answerId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "answeredByUserId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "approvalComment": {
+          "type": "string"
+        },
+        "approvalStatus": {
+          "type": "boolean"
+        },
+        "classroom": {
+          "$ref": "#/definitions/Classroom"
+        },
+        "classroomId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "content": {
+          "type": "string"
+        },
+        "myPost": {
+          "type": "boolean"
+        },
+        "noOfViews": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postTypeEnum": {
+          "type": "string",
+          "enum": [
+            "QUESTION",
+            "ANSWER"
+          ]
+        },
+        "postedBy": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "votes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "NotificationPreference": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "notificationType": {
+          "type": "string",
+          "enum": [
+            "EMAIL",
+            "APP",
+            "LOG"
+          ]
+        },
+        "userId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "FileInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Classroom": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/Account"
+        },
+        "className": {
+          "type": "string"
+        },
+        "classOwner": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "classroomId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "description": {
+          "type": "string"
+        },
+        "isPublic": {
+          "type": "boolean"
+        },
+        "loggedInUserStatus": {
+          "type": "string",
+          "enum": [
+            "NOT_MEMBER",
+            "PENDING_APPROVAL",
+            "ACTIVE",
+            "EXPIRED",
+            "REJECTED"
+          ]
+        },
+        "minReputationToJoinId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "subject": {
+          "$ref": "#/definitions/RefSubject"
+        }
+      }
+    },
+    "AndroidToken": {
+      "type": "object",
+      "properties": {
+        "androidToken": {
+          "type": "string"
+        },
+        "appUserId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "RefSubject": {
+      "type": "object",
+      "properties": {
+        "refSubjectId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "subjectDescription": {
+          "type": "string"
+        },
+        "subjectName": {
+          "type": "string"
+        }
+      }
+    },
+    "Question": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/Account"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Answer"
+          }
+        },
+        "approvalComment": {
+          "type": "string"
+        },
+        "approvalStatus": {
+          "type": "boolean"
+        },
+        "classroom": {
+          "$ref": "#/definitions/Classroom"
+        },
+        "classroomId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "content": {
+          "type": "string"
+        },
+        "favorite": {
+          "type": "boolean"
+        },
+        "lastActiveDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "myPost": {
+          "type": "boolean"
+        },
+        "noOfViews": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "postTypeEnum": {
+          "type": "string",
+          "enum": [
+            "QUESTION",
+            "ANSWER"
+          ]
+        },
+        "postedBy": {
+          "$ref": "#/definitions/AppUser"
+        },
+        "questionId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "questionLevelEnum": {
+          "type": "string",
+          "enum": [
+            "MEDIUM",
+            "HARD",
+            "EASY"
+          ]
+        },
+        "refQuestionStatusId": {
+          "type": "string",
+          "enum": [
+            "NEW"
+          ]
+        },
+        "refSubjectId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "statusId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "subject": {
+          "$ref": "#/definitions/RefSubject"
+        },
+        "tagIds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tag"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "votes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "noOfTaggedQuestions": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "tagDescription": {
+          "type": "string"
+        },
+        "tagId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "tagName": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountPreference": {
+      "type": "object"
+    }
+  }
+}

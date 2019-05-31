@@ -68,13 +68,21 @@ public class ClassroomDAOImpl extends BaseDao implements ClassroomDAO {
 	public void joinClassroom(Integer appUserId, Integer classroomId, ClassroomMembershipStatusEnum pendingApproval, String comments) {
 
 		DateTime expirationDate =  new DateTime(System.currentTimeMillis()).plusYears(1);
-		jdbcTemplate.update(addMembershipQuery, new Object[]{appUserId
-				, classroomId
-				, pendingApproval.getId()
-				, comments
-				, new Date(System.currentTimeMillis())
-				, new Date(System.currentTimeMillis())
-				, new Date(expirationDate.toDate().getTime())});
+		try {
+
+
+			jdbcTemplate.update(addMembershipQuery, new Object[]{appUserId
+					, classroomId
+					, pendingApproval.getId()
+					, comments
+					, new Date(System.currentTimeMillis())
+					, new Date(System.currentTimeMillis())
+					, new Date(expirationDate.toDate().getTime())});
+		}
+		catch (DuplicateKeyException e) {
+			classroomMapper.updateMembershipStatus(appUserId, classroomId, ClassroomMembershipStatusEnum.PENDING_APPROVAL.getId());
+
+		}
 
 	}
 

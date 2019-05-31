@@ -37,7 +37,7 @@ public class GCPFileUploadDao implements FileUploadDao {
 
     public static final String BUCKET_CRAJEE_DEV = "crajee-dev001";
 
-    public static final String GCP_STORAGE_PREFIX = "g-";
+
 
     private Storage storage;
 
@@ -64,7 +64,7 @@ public class GCPFileUploadDao implements FileUploadDao {
     public String persist(byte[] bytes, int accountId) {
         // TODO: 18/02/19 use the accountId to segregate this accounts files
         ImageData id = ImageProcessor.resizeToStandardSize(bytes);
-        String imageName = UUID.randomUUID().toString();
+        String imageName = GCP_STORAGE_PREFIX + UUID.randomUUID().toString();
         persistsToGCPAndGetImageId(id.thumbnailImage, imageName+"_t");
         return persistsToGCPAndGetImageId(id.standardImage, imageName);
 
@@ -94,7 +94,7 @@ public class GCPFileUploadDao implements FileUploadDao {
             metadata.put( GCP_STORAGE_ETAG ,  blobInfo.getEtag());
             metadata.put( GCP_STORAGE_CRC32 ,  blobInfo.getCrc32c());
 
-            String imageId = GCP_STORAGE_PREFIX + blobInfo.getBlobId().getName();
+            String imageId = blobInfo.getBlobId().getName();
 
             LOGGER.info("Uploaded image id {}", imageId);
 
@@ -113,7 +113,7 @@ public class GCPFileUploadDao implements FileUploadDao {
     }
 
 
-    public byte[] readImage(Integer imageId) {
+    public byte[] readImage(String imageId) {
 
 
         return null;

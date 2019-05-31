@@ -81,29 +81,7 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 	@Cacheable(value="usersByIdCache", key="#userId")
 	@Override
 	public AppUser getUserByIdentifier(Integer userId) {
-
-		List<AppUser> users = jdbcTemplate.query(m_userByIdQuery, new Integer[]{userId}, new RowMapper<AppUser>() {
-
-			@Override
-			public AppUser mapRow(ResultSet rs, int i)
-					throws SQLException {
-
-				AppUser user = new AppUser();
-				user.setAppUserId(rs.getInt("appuserid"));
-				user.setEmail(rs.getString("email"));
-				user.setFirstName(rs.getString("firstname"));
-				user.setMiddleName(rs.getString("middlename"));
-				user.setLastName(rs.getString("lastname"));
-				return user;
-			}
-		});
-		if(users.size() == 1)
-			return users.get(0);
-		else
-		{
-			throw new UserNotFoundException("User with identifier ["+userId+"] does not exists.");
-		}
-
+		return  appUserMapper.getUserById(userId);
 	}
 
 
@@ -147,6 +125,11 @@ public class AppUserDAO extends BaseDao implements UserDAO, InitializingBean {
 			}
 		});
 
+	}
+
+	@Override
+	public void addAndroidToken(String androidToken, Integer appUserId) {
+		appUserMapper.addAndroidToken(androidToken, appUserId);
 	}
 
 
