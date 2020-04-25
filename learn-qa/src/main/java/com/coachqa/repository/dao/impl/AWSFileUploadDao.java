@@ -48,7 +48,7 @@ import java.util.concurrent.CompletableFuture;
  */
 
 
-@Repository("AWSFileUploadDao")
+//@Repository("AWSFileUploadDao")
 public class AWSFileUploadDao implements FileUploadDao {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AWSFileUploadDao.class);

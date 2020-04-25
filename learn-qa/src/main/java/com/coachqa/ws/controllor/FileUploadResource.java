@@ -38,7 +38,7 @@ import java.util.UUID;
 public class FileUploadResource {
 
     @Autowired
-    @Qualifier("AWSFileUploadDao")
+    @Qualifier("DBFileUploadDao")
     private FileUploadDao fileUploadDao;
 
     @Autowired
