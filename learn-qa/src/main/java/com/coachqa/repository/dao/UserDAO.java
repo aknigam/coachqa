@@ -20,4 +20,6 @@ public interface UserDAO {
 	void addAndroidUserToken(AndroidToken androidToken);
 
 	List<String> getAndroidTokens(Integer userId);
+
+    void addAndroidToken(String androidToken, Integer appUserId);
 }

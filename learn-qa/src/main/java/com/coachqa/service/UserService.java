@@ -20,4 +20,6 @@ public interface UserService extends UserDetailService {
 	List<Integer> getPublicPostContentApprovers();
 
 	void addAndroidUserToken(AndroidToken androidToken);
+
+    void addAndroidToken(String androidToken, Integer appUserId);
 }

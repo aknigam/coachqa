@@ -38,15 +38,15 @@ import java.util.UUID;
 public class FileUploadResource {
 
     @Autowired
-    @Qualifier("GCPFileUploadDao")
+    @Qualifier("AWSFileUploadDao")
     private FileUploadDao fileUploadDao;
 
     @Autowired
     private UserService userService;
 
-
+    // TODO: 22/04/19 change the API to accept String imageId
     @GetMapping(value="/{imageId}")
-    public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable(value = "imageId") Integer imageId)  {
+    public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable(value = "imageId") String imageId)  {
         ResponseEntity<byte[]> responseEntity;
         final HttpHeaders headers = new HttpHeaders();
 

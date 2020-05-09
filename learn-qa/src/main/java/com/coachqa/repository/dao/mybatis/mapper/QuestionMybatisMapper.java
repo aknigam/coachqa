@@ -136,6 +136,7 @@ public interface QuestionMybatisMapper {
 
 
     })
+//    refer: https://stackoverflow.com/questions/41098499/mybatis-relation-one-to-one-send-multi-parameters
     List<Question> getUsersQuestions(@Param("appUserId")Integer appUserId,
                                      @Param("questionId")Integer questionId,
                                      @Param("requestType")Integer requestType, // 1 fav, 2 my, 3 specific

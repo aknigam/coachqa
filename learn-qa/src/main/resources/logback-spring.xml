@@ -21,9 +21,9 @@
         <appender-ref ref="ASYNC" />
     </logger>
     <!--Refer: https://stackoverflow.com/questions/21718097/how-to-configure-logback-for-mybatis-to-print-my-sql -->
-    <!--<logger name="com.coachqa.repository.dao.mybatis.mapper" level="INFO"  additivity="false">-->
-        <!--<appender-ref ref="ASYNC" />-->
-    <!--</logger>-->
+    <logger name="com.coachqa.repository.dao.mybatis.mapper" level="DEBUG"  additivity="false">
+        <appender-ref ref="ASYNC" />
+    </logger>
 
     <logger name="org.hibernate" level="ERROR" additivity="false">
         <appender-ref ref="ASYNC" />

@@ -86,12 +86,14 @@ public class FirebaseServerTest {
     public void sendToToken() throws FirebaseMessagingException {
         // [START send_to_token]
         // This registration token comes from the client FCM SDKs.
-        String registrationToken = "ea3MHjI0W3E:APA91bH1LL8R1tG16JtkK4j3Up1CUAdvVhfdBfJC38zvdeGrLrsQ3bzFoVrgqlENRKM88f41VkM7pE5fMaUtCDn8BVHkDA_jmc74BOoO5tJHhKbkKGSnF3_J2nXWZNWfhFjzpT2nVDHr";
+//        String registrationToken = "ea3MHjI0W3E:APA91bH1LL8R1tG16JtkK4j3Up1CUAdvVhfdBfJC38zvdeGrLrsQ3bzFoVrgqlENRKM88f41VkM7pE5fMaUtCDn8BVHkDA_jmc74BOoO5tJHhKbkKGSnF3_J2nXWZNWfhFjzpT2nVDHr";
+        String registrationToken = "f1ZopkTtXas:APA91bFZVD3HVC9UHWCfwnp6IbOUQRdTM0TOKjuRy" +
+                "-6yoDDqJW9t1N1bncjRmvnp4qVGbH1Ncf32eOfdC6hImCIeFPgDI8pbQXs3PFnSCTmOgjBdiV_yyuYSUhK9IsRGvhq68ik0LQga";
         FirebaseApp app = FirebaseApp.initializeApp("crajee");
         FirebaseMessaging.getInstance(app);
         // See documentation on defining a message payload.
         Message message = Message.builder()
-                .setNotification(new Notification("hello abhi - 1","message from code !"))
+                .setNotification(new Notification("hello abhiii - 1","message from code !"))
                 .putData("score", "850")
                 .putData("time", "2:45")
                 .setToken(registrationToken)

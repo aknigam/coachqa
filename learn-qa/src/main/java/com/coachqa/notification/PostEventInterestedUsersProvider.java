@@ -92,7 +92,7 @@ public class PostEventInterestedUsersProvider implements EventRegisteredUsersPro
                 registeredUsers.add(classroom.getClassOwner().getAppUserId());
 
             }
-
+            registeredUsers.add(post.getPostedBy().getAppUserId());
             return registeredUsers;
         }
         catch (QAEntityNotFoundException e){

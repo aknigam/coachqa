@@ -109,6 +109,10 @@ public interface ClassroomMyBatisMapper {
     })
     ClassroomMembership getMembershipDetails(Integer membershipId);
 
+    @Update("UPDATE classroommember set status = #{status} where classroomid = #{classroomId} and appuserid = #{appUserId}")
+    void updateMembershipStatus( @Param("appUserId") Integer appUserId, @Param("classroomId") Integer classroomId, @Param("status")
+                                 Integer status);
+
 
     @Update("UPDATE classroommember set status = #{status} where classroommemberid = #{membershipId}")
     void changeMembershipStatus( @Param("membershipId") Integer membershipId, @Param("status") Integer status);
@@ -146,4 +150,6 @@ public interface ClassroomMyBatisMapper {
             "  JOIN classroom c on c.classroomid = cm.classroomid and c.classowner = #{approverId} " +
             "where status = 1")
     List<ClassroomMembership> getPendingMembershipRequests(Integer approverId);
+
+
 }

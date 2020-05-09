@@ -25,21 +25,25 @@ public class UserControllor {
 	
 	@Autowired
 	private UserService userService;
+
+
+	@PostMapping(value = "/androidtoken")
+	@ResponseBody
+	public void addAndroidToken( @RequestBody String androidToken ) {
+		AppUser loggedInUser = WSUtil.getUser(userService);
+		userService.addAndroidToken(androidToken, loggedInUser.getAppUserId());
+	}
+
 	/**
 	 * Basic validation will be done using spring validation framework
-	 * @param request
-	 * @param response
 	 * @return
-	 */
-
-
-	/*
+	 *
 	this endpoint should be used to create following users
 	1 - Account admin - can be done by application_admin
 	2 - Classroom admin - can be done by account_admin and classroom_admin
 	by the account admins to create classroom admins
 	 */
-	@PostMapping
+	@PostMapping()
 	@ResponseBody
 	public AppUser addUser( @RequestBody AppUser user ) {
 

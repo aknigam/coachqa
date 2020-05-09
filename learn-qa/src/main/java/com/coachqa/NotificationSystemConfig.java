@@ -136,6 +136,7 @@ public class NotificationSystemConfig  {
         defaultRegistrationProviderMap.put(EventType.POST_UPDATED, postEventInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.POST_VIEWED, postEventInterestedUsersProvider);
         defaultRegistrationProviderMap.put(EventType.POST_VOTED, postEventInterestedUsersProvider);
+        defaultRegistrationProviderMap.put(EventType.POST_APPROVED, postEventInterestedUsersProvider);
 
 
         return new DefaultRegsitrationProviderFactory(defaultRegistrationProviderMap);

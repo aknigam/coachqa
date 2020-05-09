@@ -52,9 +52,10 @@ public class DBFileUploadDao extends BaseDao implements FileUploadDao {
 
 
 
-    public byte[] readImage(Integer imageId) {
+    public byte[] readImage(String imageId) {
 
-        return jdbcTemplate.queryForObject(imageReadQuery, new Integer[]{imageId}, new RowMapper<byte[]>() {
+        return jdbcTemplate.queryForObject(imageReadQuery, new Integer[]{Integer.valueOf(imageId)}, new
+                RowMapper<byte[]>() {
             @Override
             public byte[] mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getBytes("imagecontent");
